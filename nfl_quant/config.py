@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -58,11 +58,10 @@ class Settings(BaseSettings):
     # Validation
     MIN_GAMES_FOR_FEATURE: int = 3
 
-    class Config:
-        """Pydantic config."""
-
-        env_file = ".env"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+    )
 
     def validate_season(self, season: Optional[int] = None) -> int:
         """Validate season is 2025.

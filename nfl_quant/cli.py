@@ -363,7 +363,7 @@ def simulate(
 
 @app.command()
 def train_models() -> None:
-    """Train player prop prediction models (usage and efficiency).
+    """Train V12 interaction model for player prop predictions.
 
     Examples:
         quant train-models
@@ -371,12 +371,17 @@ def train_models() -> None:
     try:
         import subprocess
         import sys
+        from pathlib import Path
 
-        logger.info("Training player prop models...")
+        logger.info("Training V12 interaction model...")
 
-        # Run the train_player_models script
+        script_path = Path(__file__).parent.parent / "scripts" / "train" / "train_v12_interaction_model_v2.py"
+        if not script_path.exists():
+            typer.echo(f"Training script not found: {script_path}")
+            raise typer.Exit(code=1)
+
         result = subprocess.run(
-            [sys.executable, "train_player_models.py"],
+            [sys.executable, str(script_path)],
             capture_output=True,
             text=True,
         )
@@ -385,11 +390,9 @@ def train_models() -> None:
             logger.error(f"Model training failed: {result.stderr}")
             raise typer.Exit(code=1)
 
-        # Show output
         print(result.stdout)
-
-        typer.echo("✅ Player prop models trained successfully")
-        typer.echo("📁 Models saved to data/models/")
+        typer.echo("V12 interaction model trained successfully")
+        typer.echo("Model saved to data/models/v12_interaction_classifier.joblib")
 
     except Exception as e:
         logger.error(f"Train models command failed: {e}")
@@ -398,37 +401,63 @@ def train_models() -> None:
 
 @app.command()
 def props(
-    week: int = typer.Option(8, help="Week number (1-18)"),
-    trials: int = typer.Option(50000, help="Monte Carlo trials"),
+    week: int = typer.Option(..., help="Week number (1-18)"),
 ) -> None:
-    """Generate player prop projections for a given week.
+    """Generate player prop predictions and recommendations for a given week.
+
+    This runs the full prediction pipeline:
+    1. generate_model_predictions.py - Monte Carlo simulations
+    2. generate_unified_recommendations_v3.py - V12 validated recommendations
 
     Examples:
-        quant props --week 8
-        quant props --week 9 --trials 100000
+        quant props --week 13
     """
     try:
         import subprocess
         import sys
+        from pathlib import Path
 
-        logger.info(f"Generating player prop projections for week {week}...")
+        scripts_dir = Path(__file__).parent.parent / "scripts" / "predict"
 
-        # Run the generate_player_props script
+        # Step 1: Generate predictions
+        logger.info(f"Generating model predictions for week {week}...")
+        pred_script = scripts_dir / "generate_model_predictions.py"
+        if not pred_script.exists():
+            typer.echo(f"Prediction script not found: {pred_script}")
+            raise typer.Exit(code=1)
+
         result = subprocess.run(
-            [sys.executable, "generate_player_props.py"],
+            [sys.executable, str(pred_script), str(week)],
             capture_output=True,
             text=True,
         )
-
         if result.returncode != 0:
-            logger.error(f"Props generation failed: {result.stderr}")
+            logger.error(f"Prediction generation failed: {result.stderr}")
+            print(result.stdout)
             raise typer.Exit(code=1)
-
-        # Show output
         print(result.stdout)
 
-        typer.echo(f"✅ Player props generated for week {week}")
-        typer.echo(f"📁 Results saved to reports/PLAYER_PROPS_WEEK{week}.csv")
+        # Step 2: Generate recommendations
+        logger.info(f"Generating V12 recommendations for week {week}...")
+        rec_script = scripts_dir / "generate_unified_recommendations_v3.py"
+        if not rec_script.exists():
+            typer.echo(f"Recommendations script not found: {rec_script}")
+            raise typer.Exit(code=1)
+
+        result = subprocess.run(
+            [sys.executable, str(rec_script), "--week", str(week)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            logger.error(f"Recommendations generation failed: {result.stderr}")
+            print(result.stdout)
+            raise typer.Exit(code=1)
+        print(result.stdout)
+
+        typer.echo(f"Player prop predictions generated for week {week}")
+        typer.echo(f"Results saved to data/model_predictions_week{week}.csv")
+        typer.echo(f"Recommendations saved to reports/")
 
     except Exception as e:
         logger.error(f"Props command failed: {e}")

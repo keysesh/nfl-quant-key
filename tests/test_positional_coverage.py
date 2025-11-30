@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 from nfl_quant.constants import RECEIVING_POSITIONS, RUSHING_POSITIONS
-from nfl_quant.validation import validate_historical_stats
+from nfl_quant.player_validation import validate_historical_stats
 
 
 class TestPositionalCoverage:

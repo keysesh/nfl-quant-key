@@ -1,9 +1,12 @@
 # Environment and secrets
 .env
 .env.bak
-*.env
+.env.local
 credentials.json
 api_keys.txt
+
+# Keep .env.example tracked
+!.env.example
 
 # R libraries (large, reinstallable)
 Rlib/

@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Game(BaseModel):
@@ -64,10 +64,7 @@ class TeamWeekFeatures(BaseModel):
     game_count: int  # Games included in rolling window
     is_rolling_avg: bool = False
 
-    class Config:
-        """Config."""
-
-        frozen = False
+    model_config = ConfigDict(frozen=False)
 
 
 class InjuryImpact(BaseModel):
@@ -124,10 +121,7 @@ class SimulationInput(BaseModel):
     # Other contextual
     home_is_favored: Optional[bool] = None
 
-    class Config:
-        """Config."""
-
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class SimulationOutput(BaseModel):
@@ -166,10 +160,7 @@ class SimulationOutput(BaseModel):
     home_pace: Optional[float] = None  # Home team pace
     away_pace: Optional[float] = None  # Away team pace
 
-    class Config:
-        """Config."""
-
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class OddsRecord(BaseModel):
@@ -208,10 +199,7 @@ class BetSizing(BaseModel):
     potential_win: float
     potential_loss: float
 
-    class Config:
-        """Config."""
-
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class ExportRecord(BaseModel):
@@ -247,10 +235,7 @@ class ExportRecord(BaseModel):
 
     export_timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        """Config."""
-
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class PlayerPropInput(BaseModel):
@@ -354,10 +339,7 @@ class PlayerPropInput(BaseModel):
     injury_wr1_status: Optional[str] = None  # WR1 injury status
     injury_rb1_status: Optional[str] = None  # RB1 injury status
 
-    class Config:
-        """Config."""
-
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
 class PlayerPropOutput(BaseModel):
@@ -383,19 +365,10 @@ class PlayerPropOutput(BaseModel):
     over_prob_raw: Optional[float] = None
     over_prob_calibrated: Optional[float] = None
 
-    class Config:
-        """Config."""
-
-        frozen = True
+    model_config = ConfigDict(frozen=True)
 
 
-
-"""
-Contextual factors schemas for matchups, QB connections, and situational context.
-"""
-
-from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field
+# Contextual factors schemas for matchups, QB connections, and situational context.
 
 
 class MatchupRecord(BaseModel):
