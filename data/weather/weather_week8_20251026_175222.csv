@@ -1,0 +1,6 @@
+team,stadium,is_dome,temperature,wind_speed,precipitation,snowfall,total_adjustment,passing_adjustment,severity,notes
+ARI,State Farm Stadium,True,,,,,0.0,0.0,None (Dome),Indoor stadium - no weather impact
+ATL,Mercedes-Benz Stadium,True,,,,,0.0,0.0,None (Dome),Indoor stadium - no weather impact
+BAL,M&T Bank Stadium,False,58.7,6.2,0.0,0.0,0.0,0.0,None,Good conditions
+BUF,Highmark Stadium,False,44.9,9.3,0.0,0.0,0.0,0.0,None,Good conditions
+CAR,Bank of America Stadium,False,51.9,13.5,0.0,0.0,0.0,-0.05,None,Breezy (13.5 mph)

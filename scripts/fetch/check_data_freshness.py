@@ -1,0 +1,304 @@
+#!/usr/bin/env python3
+"""
+Check data freshness and refresh if stale.
+
+Run this BEFORE generating predictions to ensure data is current.
+
+Usage:
+    python scripts/fetch/check_data_freshness.py
+    python scripts/fetch/check_data_freshness.py --week 13
+
+    # Force refresh regardless of staleness
+    python scripts/fetch/check_data_freshness.py --force
+"""
+
+import os
+import sys
+import argparse
+from pathlib import Path
+from datetime import datetime, timedelta
+import subprocess
+import glob as glob_module
+
+# Project root (adjust if needed)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+
+# Current season
+CURRENT_SEASON = 2025
+
+
+def get_current_week():
+    """Estimate current NFL week based on date."""
+    # NFL 2025 season starts Sept 4, 2025 (Week 1)
+    season_start = datetime(2025, 9, 4)
+    today = datetime.now()
+    if today < season_start:
+        return 1
+    days_since_start = (today - season_start).days
+    return min(18, max(1, (days_since_start // 7) + 1))
+
+
+def get_staleness_thresholds(week: int = None):
+    """Get staleness thresholds including dynamic week-based checks."""
+    if week is None:
+        week = get_current_week()
+
+    thresholds = {
+        # NFLverse core data - refresh if >12 hours old
+        'data/nflverse/weekly_stats.parquet': 12,
+        'data/nflverse/snap_counts.parquet': 12,
+        'data/nflverse/ngs_receiving.parquet': 12,
+        'data/nflverse/ngs_rushing.parquet': 12,
+
+        # PBP - check both combined and season-specific
+        'data/nflverse/pbp.parquet': 12,
+        f'data/nflverse/pbp_{CURRENT_SEASON}.parquet': 12,
+
+        # Rosters change less frequently
+        'data/nflverse/rosters.parquet': 24,
+        f'data/nflverse/rosters_{CURRENT_SEASON}.csv': 24,
+
+        # Injuries - check both locations
+        'data/nflverse/injuries.parquet': 6,
+        f'data/injuries/injuries_{CURRENT_SEASON}.csv': 6,
+
+        # Current week's odds (CRITICAL for predictions)
+        f'data/odds_player_props_week{week}.csv': 4,
+        f'data/odds_week{week}.csv': 4,
+    }
+    return thresholds
+
+
+# Optional files - warn but don't fail
+OPTIONAL_FILES = [
+    f'data/injuries/injuries_{CURRENT_SEASON}.csv',
+    'data/nflverse/injuries.parquet',
+    'data/nflverse/ngs_receiving.parquet',
+    'data/nflverse/ngs_rushing.parquet',
+    f'data/nflverse/rosters_{CURRENT_SEASON}.csv',
+    'data/nflverse/rosters.parquet',
+]
+
+
+def get_file_age_hours(filepath: Path) -> float:
+    """Get file age in hours."""
+    if not filepath.exists():
+        return float('inf')
+    
+    mtime = datetime.fromtimestamp(filepath.stat().st_mtime)
+    age = datetime.now() - mtime
+    return age.total_seconds() / 3600
+
+
+def format_age(hours: float) -> str:
+    """Format age for display."""
+    if hours == float('inf'):
+        return "MISSING"
+    elif hours < 1:
+        return f"{hours * 60:.0f}m"
+    elif hours < 24:
+        return f"{hours:.1f}h"
+    else:
+        return f"{hours / 24:.1f}d"
+
+
+def check_freshness(verbose: bool = True, week: int = None) -> tuple[bool, list[str], list[str]]:
+    """
+    Check freshness of all data files.
+
+    Args:
+        verbose: Print detailed output
+        week: NFL week to check odds for (default: auto-detect)
+
+    Returns:
+        (all_fresh, stale_files, missing_required) tuple
+    """
+    stale_files = []
+    missing_required = []
+    now = datetime.now()
+
+    if week is None:
+        week = get_current_week()
+
+    staleness_thresholds = get_staleness_thresholds(week)
+
+    if verbose:
+        print("=" * 70)
+        print(f"DATA FRESHNESS CHECK - {now.strftime('%Y-%m-%d %H:%M')} (Week {week})")
+        print("=" * 70)
+        print(f"{'File':<50} {'Age':>8} {'Max':>6} {'Status':>8}")
+        print("-" * 70)
+
+    for rel_path, max_hours in staleness_thresholds.items():
+        full_path = PROJECT_ROOT / rel_path
+
+        # Check if this is an optional file
+        is_optional = any(opt in rel_path for opt in ['injuries', 'ngs_', 'rosters'])
+
+        # For odds files, also check alternative naming patterns
+        if 'odds_' in rel_path and not full_path.exists():
+            # Try to find any matching odds file for this week
+            pattern = f"data/odds*week{week}*.csv"
+            matches = list(PROJECT_ROOT.glob(pattern))
+            if matches:
+                full_path = matches[0]
+                rel_path = str(full_path.relative_to(PROJECT_ROOT))
+
+        age_hours = get_file_age_hours(full_path)
+        age_str = format_age(age_hours)
+
+        if age_hours == float('inf'):
+            status = "⚠️ MISSING" if is_optional else "❌ MISSING"
+            if not is_optional:
+                missing_required.append(rel_path)
+                stale_files.append(rel_path)
+        elif age_hours > max_hours:
+            status = "⚠️ STALE"
+            stale_files.append(rel_path)
+        else:
+            status = "✅ FRESH"
+
+        if verbose:
+            # Truncate path for display
+            display_path = rel_path if len(rel_path) <= 48 else "..." + rel_path[-45:]
+            print(f"{display_path:<50} {age_str:>8} {max_hours:>5}h {status:>8}")
+
+    if verbose:
+        print("=" * 70)
+
+    all_fresh = len(stale_files) == 0
+
+    return all_fresh, stale_files, missing_required
+
+
+def refresh_nflverse_data():
+    """Refresh NFLverse data using the extended fetch script."""
+    fetch_script = PROJECT_ROOT / 'scripts' / 'fetch' / 'fetch_nflverse_extended.py'
+    
+    if not fetch_script.exists():
+        # Fallback: try to find any NFLverse fetch script
+        fetch_scripts = list((PROJECT_ROOT / 'scripts' / 'fetch').glob('*nflverse*.py'))
+        if fetch_scripts:
+            fetch_script = fetch_scripts[0]
+        else:
+            print("❌ No NFLverse fetch script found!")
+            print("   Expected: scripts/fetch/fetch_nflverse_extended.py")
+            return False
+    
+    print(f"\n🔄 Running: python {fetch_script.relative_to(PROJECT_ROOT)}")
+    result = subprocess.run(
+        [sys.executable, str(fetch_script)],
+        cwd=PROJECT_ROOT,
+        capture_output=False
+    )
+    
+    return result.returncode == 0
+
+
+def refresh_rosters():
+    """Refresh roster data from NFLverse GitHub."""
+    print("\n🔄 Refreshing rosters...")
+    
+    try:
+        import pandas as pd
+        url = 'https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2025.csv'
+        df = pd.read_csv(url)
+        
+        output_path = PROJECT_ROOT / 'data' / 'nflverse' / 'rosters_2025.csv'
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(output_path, index=False)
+        
+        print(f"   ✅ Saved {len(df)} roster entries")
+        return True
+    except Exception as e:
+        print(f"   ❌ Failed to refresh rosters: {e}")
+        return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Check and refresh data freshness')
+    parser.add_argument('--force', action='store_true', help='Force refresh regardless of staleness')
+    parser.add_argument('--no-refresh', action='store_true', help='Check only, do not refresh')
+    parser.add_argument('--quiet', '-q', action='store_true', help='Minimal output')
+    parser.add_argument('--week', '-w', type=int, help='NFL week to check (default: auto-detect)')
+    args = parser.parse_args()
+
+    verbose = not args.quiet
+    week = args.week
+
+    if args.force:
+        print("🔄 Force refresh requested...")
+        refresh_nflverse_data()
+        refresh_rosters()
+        print("\n✅ Refresh complete. Re-checking freshness...")
+        all_fresh, stale_files, missing = check_freshness(verbose=verbose, week=week)
+        return 0
+
+    all_fresh, stale_files, missing_required = check_freshness(verbose=verbose, week=week)
+    
+    if all_fresh:
+        if verbose:
+            print("\n✅ All data is fresh. Ready for predictions.")
+        return 0
+    
+    # Report issues
+    if verbose:
+        print(f"\n⚠️  {len(stale_files)} file(s) are stale or missing:")
+        for f in stale_files[:5]:
+            print(f"   - {f}")
+        if len(stale_files) > 5:
+            print(f"   ... and {len(stale_files) - 5} more")
+    
+    if missing_required:
+        print(f"\n❌ CRITICAL: {len(missing_required)} required file(s) missing!")
+        for f in missing_required:
+            print(f"   - {f}")
+    
+    if args.no_refresh:
+        print("\n⚠️  Skipping refresh (--no-refresh specified)")
+        return 1 if missing_required else 0
+    
+    # Prompt for refresh
+    try:
+        response = input("\n🔄 Refresh stale data now? [Y/n]: ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
+        response = 'n'
+        print()
+    
+    if response != 'n':
+        print()
+        
+        # Determine what to refresh
+        needs_nflverse = any('nflverse' in f or 'weekly' in f or 'snap' in f or 'ngs' in f or 'pbp' in f 
+                            for f in stale_files)
+        needs_rosters = any('roster' in f for f in stale_files)
+        
+        if needs_nflverse:
+            refresh_nflverse_data()
+        
+        if needs_rosters:
+            refresh_rosters()
+        
+        # Re-check
+        print("\n📋 Re-checking freshness after refresh...")
+        all_fresh, stale_files, missing = check_freshness(verbose=verbose, week=week)
+
+        if all_fresh:
+            print("\n✅ All data is now fresh. Ready for predictions.")
+            return 0
+        else:
+            print(f"\n⚠️  Some files still stale. May need manual intervention.")
+            # Check if odds are missing - provide instructions
+            odds_missing = [f for f in stale_files if 'odds' in f]
+            if odds_missing:
+                print(f"\n📋 ODDS FILES MISSING/STALE:")
+                print(f"   Run: python scripts/fetch/fetch_comprehensive_odds.py")
+                print(f"   Or manually download from sportsbook")
+            return 1
+    else:
+        print("\n⚠️  Skipping refresh. Data may be stale.")
+        return 1 if missing_required else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

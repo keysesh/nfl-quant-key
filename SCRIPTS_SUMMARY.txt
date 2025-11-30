@@ -1,0 +1,172 @@
+================================================================================
+NFL QUANT SCRIPTS ANALYSIS - EXECUTIVE SUMMARY
+================================================================================
+
+PROJECT: /Users/keyonnesession/Desktop/NFL QUANT
+TOTAL SCRIPTS: 202 Python + R scripts across 27 directories
+ANALYSIS DATE: November 15, 2025
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+1. NEW UNIFIED PIPELINE (scripts/rebuild/)
+   - Master orchestrator: scripts/rebuild/master_pipeline.py
+   - Entry point for all operations (fetch → train → predict → backtest)
+   - Commands: --full-rebuild, --weekly-update, --retrain-calibrators, --predict-only
+   - This is THE core of the entire system
+
+2. CORE PREDICTION PIPELINE (22 essential scripts)
+   - Fetch: fetch_nflverse_data.R (preferred over Python)
+   - Train: Position-specific TD calibrators, game line calibrators
+   - Predict: generate_current_week_recommendations.py is main output
+   - Backtest: backtest_player_props.py, walk_forward_validation.py
+   - Calibrate: walk_forward_calibration_training.py for proper training
+
+3. DATA FETCHING DECISION
+   - PREFER: scripts/fetch/fetch_nflverse_data.R (native R nflreadr)
+   - AVOID: Python nflreadpy wrappers (slower, caching issues)
+   - ALTERNATE: scripts/fetch/fetch_nflverse_data.py (secondary)
+
+4. SIMULATOR & CALIBRATION
+   - ACTIVE: Monte Carlo v3 (PlayerSimulator with correlations)
+   - METHOD: Walk-forward isotonic calibration (proper, no data leakage)
+   - DEPRECATED: v1, v2, simple scaling approaches
+
+5. DEPRECATED & EXPERIMENTAL (21 scripts to archive)
+   - scripts/regime/ - Regime detection never integrated (4 scripts)
+   - scripts/improvements/ - Phase improvements superseded (3 scripts)
+   - scripts/integration/ - Old calibrator integration (4 scripts)
+   - scripts/migrate_to_v3.py - Migration tool no longer needed
+   - scripts/analysis/ - One-off analysis mostly deprecated
+   - scripts/diagnostics/ - Old diagnostic tools replaced
+
+================================================================================
+SCRIPT CATEGORIZATION
+================================================================================
+
+CORE PIPELINE (22 scripts - KEEP ACTIVE)
+├── Orchestration (4 scripts in rebuild/)
+│   ├── master_pipeline.py (MAIN ENTRY POINT)
+│   ├── complete_system_rebuild.py
+│   ├── walk_forward_calibration_training.py
+│   └── cleanup_system.py
+├── Fetching (5 scripts)
+│   ├── fetch_nflverse_data.R (PREFERRED)
+│   ├── fetch_nflverse_data.py (alternate)
+│   ├── fetch_comprehensive_odds.py
+│   ├── fetch_injuries_api.py
+│   └── fetch_nflverse_simple.R
+├── Model Training (6 scripts)
+│   ├── train_position_specific_td_calibrators.py
+│   ├── train_game_line_calibrator.py
+│   ├── update_calibrators_weekly.py
+│   ├── train_missing_market_calibrators.py
+│   ├── train_usage_predictor_v4_with_defense.py
+│   └── train_efficiency_predictor_v2_with_defense.py
+├── Prediction Generation (4 scripts)
+│   ├── generate_current_week_recommendations.py (MAIN OUTPUT)
+│   ├── generate_model_predictions.py
+│   ├── generate_player_props.py
+│   └── generate_optimized_parlays.py
+├── Backtesting & Validation (3 scripts)
+│   ├── backtest_player_props.py
+│   ├── walk_forward_validation.py
+│   └── betting_simulation_v3.py
+└── Historical Data (3 scripts)
+    ├── collect_game_line_calibration_data.py
+    ├── run_historical_game_simulations.py
+    └── simulate_historical_props.py
+
+DEPRECATED (21 scripts - ARCHIVE)
+├── Regime Detection (4): scripts/regime/*
+├── Phase Improvements (3): scripts/improvements/*
+├── Old Integration (4): scripts/integration/integrate*, train_improved*, verify*
+├── Migration Tool (1): migrate_to_v3.py
+├── Old Data Fetchers (2): scripts/data/{nflreadpy,nflverse}_fetcher.py
+├── Old Resimulations (3): scripts/data/resimulate_*.py
+├── Other (4): compare_v1_v3, regime_adjusted_analysis, demo_odds, etc.
+
+UTILITY & ANALYSIS (148 scripts - KEEP AS NEEDED)
+├── Dashboard Generation (8 scripts) - scripts/dashboard/
+├── Analysis Tools (20 scripts) - scripts/analyze/
+├── Backtesting Analysis (21 scripts) - scripts/backtest/
+├── Validation Framework (11 scripts) - scripts/validate/
+├── Helper Functions (27 scripts) - scripts/utils/
+└── Other utilities (61 scripts) - audit, diagnostics, testing, etc.
+
+UNCERTAIN (11 scripts - NEEDS MANUAL REVIEW)
+├── scripts/integration/nflverse_draftkings_integration.py
+├── scripts/workflows/weekly_backtest.py
+├── scripts/backtest/backtest_td_predictions_integrated.py
+└── 8 others (see full analysis)
+
+================================================================================
+RECOMMENDED ACTIONS
+================================================================================
+
+IMMEDIATE (HIGH PRIORITY)
+1. Archive scripts/regime/ (never integrated, 4 scripts)
+2. Archive scripts/improvements/ (superseded by rebuild/, 3 scripts)
+3. Remove scripts/migrate_to_v3.py (migration complete)
+4. Clean scripts/diagnostics/ (replaced by validation framework)
+5. Move to archive: scripts/data/{nflreadpy,nflverse}_fetcher.py
+
+MEDIUM PRIORITY
+1. Review & consolidate scripts/integration/ (move to core or archive)
+2. Audit scripts/analysis/ (decide what analysis is still needed)
+3. Archive old resimulation scripts in scripts/data/
+4. Consolidate duplicate validation frameworks
+
+LONG-TERM
+1. Consolidate duplicate dashboard scripts (8 variants exists)
+2. Merge analyze/ and backtest/ analysis scripts
+3. Establish single source of truth for each capability
+
+================================================================================
+HOW TO RUN THE PIPELINE
+================================================================================
+
+# Full rebuild from scratch
+python scripts/rebuild/master_pipeline.py --full-rebuild
+
+# Weekly update (fetch new data, regenerate predictions)
+python scripts/rebuild/master_pipeline.py --weekly-update
+
+# Just retrain calibrators
+python scripts/rebuild/master_pipeline.py --retrain-calibrators
+
+# Generate predictions only
+python scripts/rebuild/master_pipeline.py --predict-only
+
+# Walk-forward calibration training
+python scripts/rebuild/walk_forward_calibration_training.py --weeks 1-10
+
+# Backtest v3 system
+python scripts/backtest/backtest_player_props.py --weeks 1-10
+
+================================================================================
+TECHNICAL STACK
+================================================================================
+
+Data Fetching: R nflreadr (preferred) or Python pandas/requests
+Simulation: Monte Carlo v3 (PlayerSimulator) with correlations
+Modeling: XGBoost/LightGBM for usage/efficiency prediction
+Calibration: Isotonic regression (scikit-learn)
+Backtesting: Walk-forward validation, ROI analysis
+Output: CSV files, dashboards (various formats)
+
+================================================================================
+COMPLETE ANALYSIS DOCUMENTS
+================================================================================
+
+JSON Format (machine-readable):
+  /Users/keyonnesession/Desktop/NFL QUANT/SCRIPTS_ANALYSIS.json
+
+Markdown Report (detailed breakdown):
+  /Users/keyonnesession/Desktop/NFL QUANT/SCRIPTS_ANALYSIS.md
+
+Text Summary (this file):
+  /Users/keyonnesession/Desktop/NFL QUANT/SCRIPTS_SUMMARY.txt
+
+================================================================================

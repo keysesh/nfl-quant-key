@@ -1,0 +1,188 @@
+{
+  "Pittsburgh Steelers": {
+    "off_epa_adj": -0.108,
+    "def_epa_adj": 0.054,
+    "off_impact": 3.6,
+    "def_impact": 1.8
+  },
+  "Buffalo Bills": {
+    "off_epa_adj": -0.0612,
+    "def_epa_adj": 0.0132,
+    "off_impact": 2.04,
+    "def_impact": 0.44
+  },
+  "Cincinnati Bengals": {
+    "off_epa_adj": -0.0672,
+    "def_epa_adj": 0.0522,
+    "off_impact": 2.24,
+    "def_impact": 1.74
+  },
+  "Atlanta Falcons": {
+    "off_epa_adj": -0.03,
+    "def_epa_adj": 0.015,
+    "off_impact": 1.0,
+    "def_impact": 0.5
+  },
+  "Miami Dolphins": {
+    "off_epa_adj": -0.051,
+    "def_epa_adj": 0.0282,
+    "off_impact": 1.7,
+    "def_impact": 0.94
+  },
+  "New York Giants": {
+    "off_epa_adj": -0.093,
+    "def_epa_adj": 0.045,
+    "off_impact": 3.1,
+    "def_impact": 1.5
+  },
+  "Tennessee Titans": {
+    "off_epa_adj": -0.045,
+    "def_epa_adj": 0.006,
+    "off_impact": 1.5,
+    "def_impact": 0.2
+  },
+  "Arizona Cardinals": {
+    "off_epa_adj": -0.045,
+    "def_epa_adj": 0.084,
+    "off_impact": 1.5,
+    "def_impact": 2.8
+  },
+  "Houston Texans": {
+    "off_epa_adj": -0.006,
+    "def_epa_adj": 0.054,
+    "off_impact": 0.2,
+    "def_impact": 1.8
+  },
+  "Chicago Bears": {
+    "off_epa_adj": -0.045,
+    "def_epa_adj": 0.0582,
+    "off_impact": 1.5,
+    "def_impact": 1.94
+  },
+  "Las Vegas Raiders": {
+    "off_epa_adj": -0.018,
+    "def_epa_adj": 0.0273,
+    "off_impact": 0.6,
+    "def_impact": 0.91
+  },
+  "Denver Broncos": {
+    "off_epa_adj": -0.0252,
+    "def_epa_adj": 0.1092,
+    "off_impact": 0.84,
+    "def_impact": 3.64
+  },
+  "Carolina Panthers": {
+    "off_epa_adj": -0.045,
+    "def_epa_adj": 0.069,
+    "off_impact": 1.5,
+    "def_impact": 2.3
+  },
+  "New Orleans Saints": {
+    "off_epa_adj": -0.042,
+    "def_epa_adj": 0.0804,
+    "off_impact": 1.4,
+    "def_impact": 2.68
+  },
+  "Seattle Seahawks": {
+    "off_epa_adj": -0.033,
+    "def_epa_adj": 0.0222,
+    "off_impact": 1.1,
+    "def_impact": 0.74
+  },
+  "Cleveland Browns": {
+    "off_epa_adj": -0.0,
+    "def_epa_adj": 0.102,
+    "off_impact": 0.0,
+    "def_impact": 3.4
+  },
+  "New York Jets": {
+    "off_epa_adj": -0.0402,
+    "def_epa_adj": 0.033,
+    "off_impact": 1.34,
+    "def_impact": 1.1
+  },
+  "Green Bay Packers": {
+    "off_epa_adj": -0.063,
+    "def_epa_adj": 0.0552,
+    "off_impact": 2.1,
+    "def_impact": 1.84
+  },
+  "San Francisco 49ers": {
+    "off_epa_adj": -0.006,
+    "def_epa_adj": 0.078,
+    "off_impact": 0.2,
+    "def_impact": 2.6
+  },
+  "Los Angeles Rams": {
+    "off_epa_adj": -0.021,
+    "def_epa_adj": 0.036,
+    "off_impact": 0.7,
+    "def_impact": 1.2
+  },
+  "Detroit Lions": {
+    "off_epa_adj": -0.015,
+    "def_epa_adj": 0.057,
+    "off_impact": 0.5,
+    "def_impact": 1.9
+  },
+  "Philadelphia Eagles": {
+    "off_epa_adj": -0.015,
+    "def_epa_adj": 0.021,
+    "off_impact": 0.5,
+    "def_impact": 0.7
+  },
+  "Indianapolis Colts": {
+    "off_epa_adj": -0.027,
+    "def_epa_adj": 0.021,
+    "off_impact": 0.9,
+    "def_impact": 0.7
+  },
+  "Baltimore Ravens": {
+    "off_epa_adj": -0.015,
+    "def_epa_adj": 0.051,
+    "off_impact": 0.5,
+    "def_impact": 1.7
+  },
+  "Minnesota Vikings": {
+    "off_epa_adj": -0.0,
+    "def_epa_adj": 0.021,
+    "off_impact": 0.0,
+    "def_impact": 0.7
+  },
+  "Tampa Bay Buccaneers": {
+    "off_epa_adj": -0.03,
+    "def_epa_adj": 0.0432,
+    "off_impact": 1.0,
+    "def_impact": 1.44
+  },
+  "Los Angeles Chargers": {
+    "off_epa_adj": -0.015,
+    "def_epa_adj": 0.006,
+    "off_impact": 0.5,
+    "def_impact": 0.2
+  },
+  "Kansas City Chiefs": {
+    "off_epa_adj": -0.03,
+    "def_epa_adj": 0.0192,
+    "off_impact": 1.0,
+    "def_impact": 0.64
+  },
+  "Jacksonville Jaguars": {
+    "off_epa_adj": -0.0,
+    "def_epa_adj": 0.0,
+    "off_impact": 0.0,
+    "def_impact": 0.0
+  },
+  "Dallas Cowboys": {
+    "off_epa_adj": -0.012,
+    "def_epa_adj": 0.0072,
+    "off_impact": 0.4,
+    "def_impact": 0.24
+  },
+  "New England Patriots": {
+    "off_epa_adj": -0.0,
+    "def_epa_adj": 0.0,
+    "off_impact": 0.0,
+    "def_impact": 0.0
+  }
+}

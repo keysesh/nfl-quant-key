@@ -1,0 +1,6 @@
+{
+  "market": "player_pass_yds",
+  "training_samples": 1099,
+  "trained_date": "2025-11-10T15:48:47.097584",
+  "improvement_over_baseline": "46x more training data (302 -> 13,915 samples)"
+}

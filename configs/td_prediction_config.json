@@ -1,0 +1,135 @@
+{
+  "_comment": "Touchdown prediction parameters for Poisson-based TD model",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-02",
+  "_calibration_note": "Baseline rates include 1.15x multiplier from backtest calibration",
+
+  "baseline_td_rates": {
+    "QB": {
+      "passing_td_per_attempt": 0.052,
+      "rushing_td_per_carry": 0.075,
+      "_note": "QB rushing TDs higher rate due to designed plays"
+    },
+    "RB": {
+      "rushing_td_per_carry": 0.052,
+      "receiving_td_per_target": 0.092,
+      "_note": "RB receiving TDs from checkdowns and screens"
+    },
+    "WR": {
+      "receiving_td_per_target": 0.109,
+      "_note": "WRs highest receiving TD rate"
+    },
+    "TE": {
+      "receiving_td_per_target": 0.098,
+      "_note": "TEs high red zone target rate"
+    }
+  },
+
+  "red_zone_multipliers": {
+    "rushing": 4.5,
+    "passing": 3.2,
+    "_research": "Based on 2024 NFL data: 85.7% rush TDs and 69.9% pass TDs from red zone"
+  },
+
+  "game_script_sensitivity": {
+    "qb_passing": 0.02,
+    "qb_rushing": 0.01,
+    "rb_rushing": 0.025,
+    "rb_receiving": 0.015,
+    "wr_te_receiving": 0.02,
+    "_formula": "multiplier = 1.0 +/- (projected_point_diff * sensitivity)",
+    "_note": "Negative point diff (losing) increases passing, positive (winning) increases rushing"
+  },
+
+  "game_script_bounds": {
+    "qb_passing": [0.85, 1.20],
+    "qb_rushing": [0.90, 1.10],
+    "rb_rushing": [0.80, 1.25],
+    "rb_receiving": [0.85, 1.15],
+    "wr_te_receiving": [0.85, 1.20]
+  },
+
+  "scoring_environment": {
+    "base_team_total": 24.0,
+    "scoring_factor_exponent": 0.7,
+    "_formula": "scoring_factor = (team_total / base_team_total) ^ exponent"
+  },
+
+  "shrinkage": {
+    "min_weight": 0.25,
+    "per_game_decay": 0.15,
+    "_formula": "weight = max(min_weight, 1.0 - (n_games * decay))",
+    "_note": "Bayesian shrinkage toward baseline for small samples"
+  },
+
+  "league_averages": {
+    "td_rate_for_defensive_rating": 0.045,
+    "defensive_multiplier_min": 0.5,
+    "defensive_multiplier_max": 1.5
+  },
+
+  "usage_scenarios_by_position": {
+    "RB": {
+      "workhorse": {
+        "rush_attempts_threshold": 18,
+        "red_zone_share": 0.7,
+        "goal_line_role": 0.8,
+        "team_td_share": 0.25
+      },
+      "primary_committee": {
+        "rush_attempts_threshold": 12,
+        "red_zone_share": 0.5,
+        "goal_line_role": 0.5,
+        "team_td_share": 0.15
+      },
+      "secondary": {
+        "rush_attempts_threshold": 6,
+        "red_zone_share": 0.3,
+        "goal_line_role": 0.2,
+        "team_td_share": 0.08
+      },
+      "backup": {
+        "rush_attempts_threshold": 0,
+        "red_zone_share": 0.15,
+        "goal_line_role": 0.1,
+        "team_td_share": 0.04
+      }
+    },
+    "WR_TE": {
+      "wr1_te1": {
+        "targets_threshold": 9,
+        "red_zone_share": 0.6,
+        "team_td_share": 0.20
+      },
+      "wr2_te2": {
+        "targets_threshold": 6,
+        "red_zone_share": 0.4,
+        "team_td_share": 0.12
+      },
+      "wr3": {
+        "targets_threshold": 3,
+        "red_zone_share": 0.25,
+        "team_td_share": 0.08
+      },
+      "depth": {
+        "targets_threshold": 0,
+        "red_zone_share": 0.15,
+        "team_td_share": 0.04
+      }
+    },
+    "QB": {
+      "default": {
+        "red_zone_share": 0.8,
+        "goal_line_role": 0.3,
+        "team_td_share": 0.4
+      }
+    }
+  },
+
+  "probability_bounds": {
+    "min_any_td_prob": 0.02,
+    "max_any_td_prob": 0.95,
+    "min_first_td_prob": 0.01,
+    "max_first_td_prob": 0.25
+  }
+}

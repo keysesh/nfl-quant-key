@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-11-16T03:26:38.844940",
+  "n_samples": 390,
+  "weeks_covered": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "brier_before": 0.2353096015897436,
+  "brier_after": 0.2229880262975529,
+  "improvement_pct": 5.236324913622967,
+  "mean_absolute_calibration_error": 0.11814146516464774,
+  "n_thresholds": 19,
+  "status": "USABLE"
+}

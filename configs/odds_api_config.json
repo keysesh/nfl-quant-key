@@ -1,0 +1,21 @@
+{
+  "api_key": "1fa38c2a5b8df1b50ad9be8887386f04",
+  "base_url": "https://api.the-odds-api.com/v4",
+  "sport": "americanfootball_nfl",
+  "regions": "us",
+  "markets": [
+    "spreads",
+    "totals",
+    "player_pass_yds",
+    "player_rush_yds",
+    "player_reception_yds",
+    "player_receptions"
+  ],
+  "bookmakers": [
+    "draftkings"
+  ],
+  "poll_interval_minutes": 15,
+  "note": "DraftKings only - most reliable sportsbook for NFL",
+  "cost_per_request": 0.01,
+  "monthly_budget": 50.0
+}

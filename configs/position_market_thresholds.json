@@ -1,0 +1,169 @@
+{
+  "_comment": "Position and market-specific edge thresholds based on ROI diagnostics",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-16",
+  "_note": "Fixes overconfidence by requiring higher edges for poorly calibrated markets",
+
+  "edge_thresholds": {
+    "QB": {
+      "player_pass_yds": {
+        "min_edge": 0.05,
+        "optimal_edge": 0.07,
+        "aggressive_edge": 0.10,
+        "_roi_at_5pct": "+8.4%",
+        "_roi_at_10pct": "+63.1%",
+        "_calibration_quality": "Good"
+      },
+      "player_pass_tds": {
+        "min_edge": 0.10,
+        "optimal_edge": 0.15,
+        "aggressive_edge": 0.20,
+        "_calibration_quality": "Medium"
+      },
+      "player_pass_attempts": {
+        "min_edge": 0.08,
+        "optimal_edge": 0.12,
+        "aggressive_edge": 0.15,
+        "_calibration_quality": "Medium"
+      },
+      "player_completions": {
+        "min_edge": 0.08,
+        "optimal_edge": 0.12,
+        "aggressive_edge": 0.15,
+        "_calibration_quality": "Medium"
+      },
+      "player_interceptions": {
+        "min_edge": 0.15,
+        "optimal_edge": 0.20,
+        "aggressive_edge": 0.25,
+        "_calibration_quality": "Poor - High variance"
+      }
+    },
+
+    "RB": {
+      "player_rush_yds": {
+        "min_edge": 0.20,
+        "optimal_edge": 0.25,
+        "aggressive_edge": 0.30,
+        "_roi_at_5pct": "-1.3%",
+        "_roi_at_20pct": "+7.0%",
+        "_calibration_quality": "Poor - Model overconfident by 31%",
+        "_mean_bias": "Model underestimates RB rushing by ~15 yards"
+      },
+      "player_rush_attempts": {
+        "min_edge": 0.15,
+        "optimal_edge": 0.20,
+        "aggressive_edge": 0.25,
+        "_calibration_quality": "Medium"
+      },
+      "player_receptions": {
+        "min_edge": 0.15,
+        "optimal_edge": 0.20,
+        "aggressive_edge": 0.25,
+        "_calibration_quality": "Medium"
+      },
+      "player_reception_yds": {
+        "min_edge": 0.12,
+        "optimal_edge": 0.18,
+        "aggressive_edge": 0.22,
+        "_calibration_quality": "Medium"
+      },
+      "player_anytime_td": {
+        "min_edge": 0.20,
+        "optimal_edge": 0.25,
+        "aggressive_edge": 0.30,
+        "_calibration_quality": "Poor - High variance"
+      }
+    },
+
+    "WR": {
+      "player_reception_yds": {
+        "min_edge": 0.10,
+        "optimal_edge": 0.15,
+        "aggressive_edge": 0.20,
+        "_calibration_quality": "Medium"
+      },
+      "player_receptions": {
+        "min_edge": 0.10,
+        "optimal_edge": 0.15,
+        "aggressive_edge": 0.20,
+        "_calibration_quality": "Medium"
+      },
+      "player_targets": {
+        "min_edge": 0.12,
+        "optimal_edge": 0.18,
+        "aggressive_edge": 0.22,
+        "_calibration_quality": "Medium"
+      },
+      "player_anytime_td": {
+        "min_edge": 0.18,
+        "optimal_edge": 0.22,
+        "aggressive_edge": 0.28,
+        "_calibration_quality": "Poor - High variance"
+      }
+    },
+
+    "TE": {
+      "player_reception_yds": {
+        "min_edge": 0.12,
+        "optimal_edge": 0.18,
+        "aggressive_edge": 0.22,
+        "_calibration_quality": "Medium"
+      },
+      "player_receptions": {
+        "min_edge": 0.12,
+        "optimal_edge": 0.18,
+        "aggressive_edge": 0.22,
+        "_calibration_quality": "Medium"
+      },
+      "player_anytime_td": {
+        "min_edge": 0.20,
+        "optimal_edge": 0.25,
+        "aggressive_edge": 0.30,
+        "_calibration_quality": "Poor - High variance"
+      }
+    }
+  },
+
+  "confidence_tiers": {
+    "high": {
+      "min_edge_multiplier": 1.5,
+      "min_calibrated_prob": 0.55,
+      "max_bets_per_tier": 5
+    },
+    "medium": {
+      "min_edge_multiplier": 1.0,
+      "min_calibrated_prob": 0.52,
+      "max_bets_per_tier": 10
+    },
+    "low": {
+      "min_edge_multiplier": 0.8,
+      "min_calibrated_prob": 0.50,
+      "max_bets_per_tier": 3
+    }
+  },
+
+  "mean_bias_corrections": {
+    "_note": "Add these values to model predictions to correct systematic bias",
+    "RB_player_rush_yds": 8.5,
+    "RB_player_rush_attempts": 1.2,
+    "WR_player_reception_yds": 2.0,
+    "TE_player_reception_yds": 3.0,
+    "QB_player_pass_yds": -5.0,
+    "QB_player_pass_tds": -0.1
+  },
+
+  "volatility_adjustments": {
+    "_note": "Multiply edge requirement by these factors for high-variance markets",
+    "touchdown_markets": 1.5,
+    "low_volume_players": 1.3,
+    "weather_affected_games": 1.2,
+    "primetime_games": 1.1
+  },
+
+  "regression_indicators": {
+    "positive_regression_boost": 1.15,
+    "negative_regression_penalty": 0.85,
+    "_note": "Adjust edge requirements based on expected regression"
+  }
+}

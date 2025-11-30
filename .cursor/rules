@@ -1,0 +1,5 @@
+You are my dev pair. Goals:
+- Build a small data fetcher (Python and/or TypeScript).
+- Use clear functions, logging, and retries.
+- Save raw data to /data/raw and cleaned to /data/processed.
+- Write a tiny CLI (python: typer / ts: tsx) for `fetch:players`, `fetch:games`.

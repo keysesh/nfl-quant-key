@@ -1,0 +1,60 @@
+{
+  "display": {
+    "default_sort": "confidence",
+    "sort_options": ["confidence", "edge", "roi", "odds"],
+    "show_all_recommendations": true,
+    "items_per_page": 50,
+    "enable_pagination": true
+  },
+  "thresholds": {
+    "edge_emoji": {
+      "fire": 25.0,
+      "star": 20.0,
+      "diamond": 15.0,
+      "chart": 0.0
+    },
+    "confidence_tiers": {
+      "high": 0.70,
+      "medium": 0.60,
+      "low": 0.50
+    },
+    "card_styling": {
+      "fire_edge": 25.0,
+      "hot_edge": 20.0
+    }
+  },
+  "colors": {
+    "primary": "#1a73e8",
+    "success": "#0f9d58",
+    "warning": "#f4b400",
+    "danger": "#db4437",
+    "dark": "#202124",
+    "light": "#f8f9fa",
+    "border": "#dadce0",
+    "draftkings_green": "#53d337",
+    "hot": "#ff4444",
+    "fire": "#ff6b35"
+  },
+  "market_categories": {
+    "spread": "Spreads",
+    "total": "Totals",
+    "moneyline": "Moneylines",
+    "ml": "Moneylines",
+    "player_pass_yds": "Player Props: Passing Yards",
+    "player_rush_yds": "Player Props: Rushing Yards",
+    "player_rec_yds": "Player Props: Receiving Yards",
+    "player_receptions": "Player Props: Receptions",
+    "player_td": "Player Props: Touchdowns",
+    "default_player": "Player Props: Other",
+    "default": "Other"
+  },
+  "emojis": {
+    "fire": "🔥",
+    "star": "⭐",
+    "diamond": "💎",
+    "chart": "📊",
+    "football": "🏈",
+    "stadium": "🏟️",
+    "search": "🔍"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "_comment": "Machine learning model hyperparameters for training",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-02",
+
+  "usage_predictor": {
+    "n_estimators": 100,
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "random_state": 42,
+    "objective": "reg:squarederror",
+    "_comment": "Predicts snaps, targets/attempts, carries for QB/RB/WR"
+  },
+
+  "efficiency_predictor": {
+    "n_estimators": 100,
+    "max_depth": 5,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "random_state": 42,
+    "objective": "reg:squarederror",
+    "_comment": "Predicts yards per opportunity, completion %, TD rates"
+  },
+
+  "training_thresholds": {
+    "min_samples_per_model": 50,
+    "min_qb_attempts": 5,
+    "min_targets": 3,
+    "min_carries": 3,
+    "min_games_for_player": 3,
+    "trailing_window_weeks": 4
+  },
+
+  "validation": {
+    "test_size": 0.2,
+    "min_variance_threshold": 0.001,
+    "max_improvement_vs_baseline": 0.9,
+    "_comment": "Model must beat baseline by at least 10%"
+  }
+}

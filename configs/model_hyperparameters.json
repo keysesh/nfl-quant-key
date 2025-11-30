@@ -1,0 +1,56 @@
+{
+  "lightgbm": {
+    "objective": "binary",
+    "metric": "binary_logloss",
+    "num_leaves": 15,
+    "learning_rate": 0.02,
+    "min_data_in_leaf": 20,
+    "max_depth": 4,
+    "reg_alpha": 2.0,
+    "reg_lambda": 15.0,
+    "feature_fraction": 0.6,
+    "bagging_fraction": 0.6,
+    "bagging_freq": 5,
+    "verbose": -1,
+    "seed": 42,
+    "num_boost_round": 1000,
+    "early_stopping_rounds": 50
+  },
+  "isotonic_calibration": {
+    "out_of_bounds": "clip"
+  },
+  "training": {
+    "train_split": 0.70,
+    "calibration_split": 0.15,
+    "test_split": 0.15,
+    "min_samples_total": 200,
+    "min_bets_validation": 100
+  },
+  "features": {
+    "core": [
+      "line", "fair_over_prob", "fair_under_prob", "vig_pct",
+      "week", "is_early_season", "is_mid_season", "is_late_season"
+    ],
+    "player_performance": [
+      "targets_ewma_3", "targets_ewma_5", "targets_season_avg", "targets_trend",
+      "receptions_ewma_3", "carries_ewma_3",
+      "receiving_yards_ewma_3", "rushing_yards_ewma_3",
+      "yards_per_target_season", "yards_per_carry_season",
+      "games_played"
+    ],
+    "derived": [
+      "line_to_targets_ratio", "expected_vs_line", "expected_over_prob"
+    ],
+    "opponent_defense": [
+      "opp_defense_multiplier", "opp_unknown"
+    ],
+    "game_context": [
+      "game_avg_line", "game_line_std", "game_prop_count", "game_over_rate"
+    ],
+    "data_quality": [
+      "low_confidence_features"
+    ]
+  },
+  "version": "2.0",
+  "last_updated": "2025-11-16"
+}

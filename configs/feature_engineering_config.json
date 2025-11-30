@@ -1,0 +1,61 @@
+{
+  "_comment": "Feature engineering parameters: injury adjustments, matchup multipliers",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-02",
+
+  "injury_adjustments": {
+    "qb_out": {
+      "target_share_multiplier": 0.85,
+      "efficiency_multiplier": 0.90,
+      "_note": "Backup QB reduces receiving corps efficiency"
+    },
+    "wr1_out": {
+      "other_wr_target_share_boost": 1.15,
+      "other_wr_opportunity_multiplier": 1.15,
+      "_note": "WR2/WR3 absorb vacated targets"
+    },
+    "rb1_out": {
+      "rb2_carry_share_multiplier": 1.20,
+      "rb2_snap_share_multiplier": 1.20,
+      "rb2_opportunity_multiplier": 1.20,
+      "_note": "Backup RB gets significant workload boost"
+    },
+    "te1_out": {
+      "te2_target_share_boost": 1.10,
+      "_note": "TE2 moderate target increase"
+    }
+  },
+
+  "defensive_matchup_adjustments": {
+    "enabled": true,
+    "epa_based_multiplier_range": [0.85, 1.15],
+    "rank_based_sensitivity": 0.05,
+    "_note": "Opponent defensive strength adjusts projections"
+  },
+
+  "contextual_factors": {
+    "home_field_advantage": {
+      "enabled": true,
+      "offensive_boost": 1.02,
+      "defensive_boost": 0.98
+    },
+    "rest_advantage": {
+      "extra_rest_days_threshold": 3,
+      "boost_multiplier": 1.03
+    },
+    "altitude": {
+      "denver_altitude_ft": 5280,
+      "kicking_distance_boost": 1.05,
+      "fatigue_multiplier": 0.98
+    }
+  },
+
+  "correlation_factors": {
+    "qb_wr_correlation": 0.75,
+    "qb_te_correlation": 0.65,
+    "rb1_rb2_negative_correlation": -0.60,
+    "passing_yards_passing_tds": 0.80,
+    "rushing_attempts_rushing_yards": 0.85,
+    "_note": "Used for correlation-aware adjustments"
+  }
+}

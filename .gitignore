@@ -1,0 +1,73 @@
+# Environment and secrets
+.env
+.env.bak
+*.env
+credentials.json
+api_keys.txt
+
+# R libraries (large, reinstallable)
+Rlib/
+/Rlib
+
+# Backups (including folders with spaces)
+*BACKUP*
+NFL\ QUANT_BACKUP*/
+*.bak
+
+# Claude local settings
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+venv311/
+ENV/
+
+# Node
+node_modules/
+
+# Data files (large, regeneratable)
+data/nflverse/*.parquet
+data/nflverse/*.csv
+data/injuries/*.csv
+data/odds*.csv
+data/backtest/*.csv
+data/backtest/*.parquet
+data/nfl_player_props*.csv
+
+# Model files (large, regeneratable)
+data/models/*.joblib
+data/models/*.pkl
+data/models/*.h5
+
+# Reports and outputs (regeneratable)
+reports/*.csv
+reports/*.html
+reports/*.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+logs/

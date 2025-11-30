@@ -1,0 +1,47 @@
+{
+  "approvedTools": {
+    "Bash": [
+      {
+        "pattern": "PYTHONPATH=\"/Users/keyonnesession/Desktop/NFL QUANT:$PYTHONPATH\" timeout 300 .venv/bin/python:*",
+        "description": "Run Python scripts with PYTHONPATH and 5min timeout"
+      },
+      {
+        "pattern": "PYTHONPATH=\"/Users/keyonnesession/Desktop/NFL QUANT:$PYTHONPATH\" .venv/bin/python:*",
+        "description": "Run Python scripts with PYTHONPATH (no timeout)"
+      },
+      {
+        "pattern": "PYTHONPATH=\"/Users/keyonnesession/Desktop/NFL QUANT:$PYTHONPATH\" timeout 120 .venv/bin/python:*",
+        "description": "Run Python scripts with PYTHONPATH and 2min timeout"
+      },
+      {
+        "pattern": "PYTHONPATH=\"/Users/keyonnesession/Desktop/NFL QUANT:$PYTHONPATH\" timeout 600 .venv/bin/python:*",
+        "description": "Run Python scripts with PYTHONPATH and 10min timeout"
+      },
+      {
+        "pattern": "PYTHONPATH=\"/Users/keyonnesession/Desktop/NFL QUANT\" .venv/bin/python:*",
+        "description": "Run Python scripts with PYTHONPATH (alternate format)"
+      },
+      {
+        "pattern": "PYTHONPATH=\"/Users/keyonnesession/Desktop/NFL QUANT\" timeout 7200 .venv/bin/python:*",
+        "description": "Run Python scripts with PYTHONPATH and 2hr timeout (model training)"
+      },
+      {
+        "pattern": "pkill:*",
+        "description": "Kill processes by name"
+      },
+      {
+        "pattern": ".venv/bin/python:*",
+        "description": "Run Python scripts in virtual environment"
+      },
+      {
+        "pattern": "ps aux | grep python:*",
+        "description": "List Python processes"
+      },
+      {
+        "pattern": "chmod:*",
+        "description": "Change file permissions"
+      }
+    ]
+  },
+  "mcpServers": {}
+}

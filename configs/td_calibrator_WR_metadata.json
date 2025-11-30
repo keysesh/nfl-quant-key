@@ -1,0 +1,14 @@
+{
+  "position": "WR",
+  "trained_date": "2025-11-10T23:45:09.812513",
+  "training_samples": 2687,
+  "training_win_rate": 0.2337179010048381,
+  "brier_score_raw": 0.19074457297875022,
+  "brier_score_calibrated": 0.1729649308536455,
+  "brier_improvement": 0.017779642125104717,
+  "mace_raw": 0.051198874384580484,
+  "mace_calibrated": 0.0014771315099529891,
+  "mace_improvement": 0.049721742874627495,
+  "high_prob_threshold": 0.7,
+  "high_prob_shrinkage": 0.25
+}

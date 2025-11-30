@@ -1,0 +1,22 @@
+{
+  "name": "nfl-quant-fetcher",
+  "version": "1.0.0",
+  "description": "NFL data fetcher with Python and TypeScript implementations",
+  "type": "module",
+  "scripts": {
+    "fetch:players": "tsx src/fetch.ts players",
+    "fetch:games": "tsx src/fetch.ts games",
+    "fetch:csv": "tsx src/fetch.ts csv",
+    "fetch:json": "tsx src/fetch.ts json",
+    "install:all": "npm install && pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "papaparse": "^5.4.1",
+    "commander": "^11.0.0"
+  }
+}

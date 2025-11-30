@@ -1,0 +1,821 @@
+week,event_id,home_team,away_team,commence_time,market,player,prop_type,line,american_odds,market_last_update
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_pass_yds,Carson Wentz,over,212.5,-112,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_pass_yds,Carson Wentz,under,212.5,-112,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_pass_yds,Aaron Rodgers,over,202.5,-113,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_pass_yds,Aaron Rodgers,under,202.5,-111,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Justin Jefferson,over,75.5,-113,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Justin Jefferson,under,75.5,-111,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,DK Metcalf,over,48.5,-114,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,DK Metcalf,under,48.5,-110,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jordan Addison,over,39.5,-115,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jordan Addison,under,39.5,-109,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,T.J. Hockenson,over,39.5,-113,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,T.J. Hockenson,under,39.5,-111,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Calvin Austin III,over,35.5,-112,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Calvin Austin III,under,35.5,-112,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jonnu Smith,over,28.5,-114,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jonnu Smith,under,28.5,-110,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Pat Freiermuth,over,23.5,-109,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Pat Freiermuth,under,23.5,-115,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jaylen Warren,over,22.5,-108,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jaylen Warren,under,22.5,-117,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jalen Nailor,over,16.5,-113,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jalen Nailor,under,16.5,-111,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Kenneth Gainwell,over,12.5,-111,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Kenneth Gainwell,under,12.5,-113,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jordan Mason,over,11.5,-107,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Jordan Mason,under,11.5,-117,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Adam Thielen,over,7.5,-112,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_reception_yds,Adam Thielen,under,7.5,-112,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Justin Jefferson,over,5.5,-123,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Justin Jefferson,under,5.5,-103,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,DK Metcalf,over,3.5,-161,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,DK Metcalf,under,3.5,126,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,T.J. Hockenson,over,3.5,-160,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,T.J. Hockenson,under,3.5,125,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jordan Addison,over,3.5,102,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jordan Addison,under,3.5,-130,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jaylen Warren,over,3.5,105,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jaylen Warren,under,3.5,-134,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jonnu Smith,over,3.5,110,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jonnu Smith,under,3.5,-140,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Calvin Austin III,over,2.5,-166,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Calvin Austin III,under,2.5,130,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Pat Freiermuth,over,2.5,-110,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Pat Freiermuth,under,2.5,-115,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Kenneth Gainwell,over,2.5,137,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Kenneth Gainwell,under,2.5,-176,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jordan Mason,over,1.5,-146,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jordan Mason,under,1.5,114,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jalen Nailor,over,1.5,-105,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_receptions,Jalen Nailor,under,1.5,-121,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Jordan Mason,over,82.5,-110,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Jordan Mason,under,82.5,-114,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Jaylen Warren,over,52.5,-109,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Jaylen Warren,under,52.5,-115,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Kenneth Gainwell,over,23.5,-113,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Kenneth Gainwell,under,23.5,-111,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Carson Wentz,over,9.5,-109,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Carson Wentz,under,9.5,-115,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Aaron Rodgers,over,0.5,-114,2025-09-28T11:55:25Z
+4,4dd631102a977fd398f7ea594ed208f2,Pittsburgh Steelers,Minnesota Vikings,2025-09-28T13:31:00Z,player_rush_yds,Aaron Rodgers,under,0.5,-110,2025-09-28T11:55:25Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_pass_yds,Jared Goff,over,228.5,-113,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_pass_yds,Jared Goff,under,228.5,-111,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_pass_yds,Joe Flacco,over,224.5,-111,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_pass_yds,Joe Flacco,under,224.5,-113,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Amon-Ra St. Brown,over,66.5,-112,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Amon-Ra St. Brown,under,66.5,-112,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jerry Jeudy,over,48.5,-112,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jerry Jeudy,under,48.5,-112,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jameson Williams,over,42.5,-115,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jameson Williams,under,42.5,-109,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Sam LaPorta,over,39.5,-111,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Sam LaPorta,under,39.5,-113,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,David Njoku,over,36.5,-115,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,David Njoku,under,36.5,-109,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Cedric Tillman,over,33.5,-110,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Cedric Tillman,under,33.5,-114,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Harold Fannin Jr.,over,30.5,-115,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Harold Fannin Jr.,under,30.5,-109,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jahmyr Gibbs,over,28.5,-110,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jahmyr Gibbs,under,28.5,-114,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Quinshon Judkins,over,12.5,-108,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Quinshon Judkins,under,12.5,-117,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jerome Ford,over,11.5,-106,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,Jerome Ford,under,11.5,-119,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,David Montgomery,over,10.5,-108,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_reception_yds,David Montgomery,under,10.5,-116,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Amon-Ra St. Brown,over,5.5,-142,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Amon-Ra St. Brown,under,5.5,111,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,David Njoku,over,4.5,118,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,David Njoku,under,4.5,-151,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jerry Jeudy,over,4.5,123,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jerry Jeudy,under,4.5,-158,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Sam LaPorta,over,3.5,-154,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Sam LaPorta,under,3.5,121,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jahmyr Gibbs,over,3.5,-133,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jahmyr Gibbs,under,3.5,104,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Harold Fannin Jr.,over,3.5,-119,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Harold Fannin Jr.,under,3.5,-107,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Cedric Tillman,over,3.5,112,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Cedric Tillman,under,3.5,-143,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jameson Williams,over,2.5,-157,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jameson Williams,under,2.5,123,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jerome Ford,over,2.5,102,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Jerome Ford,under,2.5,-130,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Quinshon Judkins,over,1.5,-150,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,Quinshon Judkins,under,1.5,118,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,David Montgomery,over,1.5,-127,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_receptions,David Montgomery,under,1.5,100,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_rush_yds,Jahmyr Gibbs,over,62.5,-113,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_rush_yds,Jahmyr Gibbs,under,62.5,-111,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_rush_yds,Quinshon Judkins,over,55.5,-113,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_rush_yds,Quinshon Judkins,under,55.5,-111,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_rush_yds,David Montgomery,over,46.5,-114,2025-09-28T11:55:47Z
+4,bcb1f89cf378a586097c50585e53acce,Detroit Lions,Cleveland Browns,2025-09-28T17:00:00Z,player_rush_yds,David Montgomery,under,46.5,-110,2025-09-28T11:55:47Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_pass_yds,Justin Herbert,over,251.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_pass_yds,Justin Herbert,under,251.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_pass_yds,Jaxson Dart,over,195.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_pass_yds,Jaxson Dart,under,195.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Malik Nabers,over,63.5,-110,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Malik Nabers,under,63.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Ladd McConkey,over,62.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Ladd McConkey,under,62.5,-110,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Quentin Johnston,over,50.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Quentin Johnston,under,50.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Keenan Allen,over,47.5,-113,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Keenan Allen,under,47.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Wan'Dale Robinson,over,39.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Wan'Dale Robinson,under,39.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Oronde Gadsden II,over,24.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Oronde Gadsden II,under,24.5,-110,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Cam Skattebo,over,20.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Cam Skattebo,under,20.5,-110,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Theo Johnson,over,20.5,-108,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Theo Johnson,under,20.5,-116,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Omarion Hampton,over,19.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Omarion Hampton,under,19.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Darius Slayton,over,17.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Darius Slayton,under,17.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Tre Harris,over,9.5,-116,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_reception_yds,Tre Harris,under,9.5,-108,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Malik Nabers,over,6.5,117,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Malik Nabers,under,6.5,-149,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Ladd McConkey,over,5.5,109,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Ladd McConkey,under,5.5,-139,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Wan'Dale Robinson,over,4.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Wan'Dale Robinson,under,4.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Keenan Allen,over,4.5,-112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Keenan Allen,under,4.5,-114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Quentin Johnston,over,4.5,114,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Quentin Johnston,under,4.5,-146,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Cam Skattebo,over,3.5,136,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Cam Skattebo,under,3.5,-174,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Omarion Hampton,over,2.5,-144,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Omarion Hampton,under,2.5,112,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Oronde Gadsden II,over,2.5,104,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Oronde Gadsden II,under,2.5,-132,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Theo Johnson,over,2.5,125,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Theo Johnson,under,2.5,-161,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Darius Slayton,over,1.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_receptions,Darius Slayton,under,1.5,-115,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Omarion Hampton,over,70.5,-113,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Omarion Hampton,under,70.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Cam Skattebo,over,54.5,-113,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Cam Skattebo,under,54.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Jaxson Dart,over,35.5,-109,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Jaxson Dart,under,35.5,-115,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Justin Herbert,over,16.5,-113,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Justin Herbert,under,16.5,-111,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Devin Singletary,over,15.5,-113,2025-09-28T11:55:14Z
+4,d921b1e86b0a30ad91000ffc360d302d,New York Giants,Los Angeles Chargers,2025-09-28T17:00:00Z,player_rush_yds,Devin Singletary,under,15.5,-111,2025-09-28T11:55:14Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_pass_yds,Michael Penix Jr.,over,219.5,-113,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_pass_yds,Michael Penix Jr.,under,219.5,-111,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_pass_yds,Marcus Mariota,over,201.5,-111,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_pass_yds,Marcus Mariota,under,201.5,-113,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Drake London,over,62.5,-114,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Drake London,under,62.5,-110,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Deebo Samuel Sr.,over,53.5,-113,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Deebo Samuel Sr.,under,53.5,-111,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Darnell Mooney,over,43.5,-115,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Darnell Mooney,under,43.5,-110,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Zach Ertz,over,42.5,-110,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Zach Ertz,under,42.5,-114,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Kyle Pitts,over,39.5,-109,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Kyle Pitts,under,39.5,-115,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Bijan Robinson,over,25.5,-116,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Bijan Robinson,under,25.5,-108,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Chris Moore,over,23.5,-116,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Chris Moore,under,23.5,-108,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Luke McCaffrey,over,20.5,-115,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Luke McCaffrey,under,20.5,-109,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Jaylin Lane,over,20.5,-113,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Jaylin Lane,under,20.5,-111,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Ray-Ray McCloud III,over,17.5,-112,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_reception_yds,Ray-Ray McCloud III,under,17.5,-112,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Drake London,over,5.5,-106,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Drake London,under,5.5,-120,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Deebo Samuel Sr.,over,4.5,-137,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Deebo Samuel Sr.,under,4.5,107,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Zach Ertz,over,4.5,101,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Zach Ertz,under,4.5,-129,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Bijan Robinson,over,3.5,-116,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Bijan Robinson,under,3.5,-110,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Kyle Pitts,over,3.5,-115,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Kyle Pitts,under,3.5,-111,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Darnell Mooney,over,3.5,-106,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Darnell Mooney,under,3.5,-121,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Luke McCaffrey,over,2.5,129,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Luke McCaffrey,under,2.5,-166,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Jaylin Lane,over,2.5,135,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Jaylin Lane,under,2.5,-173,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Chris Moore,over,1.5,-172,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Chris Moore,under,1.5,134,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Ray-Ray McCloud III,over,1.5,-170,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_receptions,Ray-Ray McCloud III,under,1.5,133,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Bijan Robinson,over,80.5,-111,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Bijan Robinson,under,80.5,-113,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Chris Rodriguez Jr.,over,34.5,-116,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Chris Rodriguez Jr.,under,34.5,-108,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Marcus Mariota,over,33.5,-116,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Marcus Mariota,under,33.5,-108,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Tyler Allgeier,over,29.5,-115,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Tyler Allgeier,under,29.5,-109,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Jacory Croskey-Merritt,over,29.5,-112,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Jacory Croskey-Merritt,under,29.5,-112,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Deebo Samuel Sr.,over,7.5,-114,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Deebo Samuel Sr.,under,7.5,-110,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Michael Penix Jr.,over,4.5,-116,2025-09-28T11:55:10Z
+4,b7934d72587b62de0f563ac9acbaa770,Atlanta Falcons,Washington Commanders,2025-09-28T17:01:00Z,player_rush_yds,Michael Penix Jr.,under,4.5,-109,2025-09-28T11:55:10Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_pass_yds,Josh Allen,over,219.5,-113,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_pass_yds,Josh Allen,under,219.5,-111,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_pass_yds,Spencer Rattler,over,201.5,-113,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_pass_yds,Spencer Rattler,under,201.5,-111,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Chris Olave,over,57.5,-111,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Chris Olave,under,57.5,-113,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Juwan Johnson,over,42.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Juwan Johnson,under,42.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Keon Coleman,over,42.5,-110,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Keon Coleman,under,42.5,-114,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Khalil Shakir,over,40.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Khalil Shakir,under,40.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Rashid Shaheed,over,37.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Rashid Shaheed,under,37.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Dalton Kincaid,over,35.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Dalton Kincaid,under,35.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Joshua Palmer,over,24.5,-114,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Joshua Palmer,under,24.5,-110,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Alvin Kamara,over,19.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Alvin Kamara,under,19.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Brandin Cooks,over,16.5,-112,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Brandin Cooks,under,16.5,-112,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,James Cook,over,13.5,-114,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,James Cook,under,13.5,-110,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Dawson Knox,over,11.5,-113,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_reception_yds,Dawson Knox,under,11.5,-111,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Chris Olave,over,5.5,-138,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Chris Olave,under,5.5,108,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Juwan Johnson,over,4.5,-150,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Juwan Johnson,under,4.5,118,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Khalil Shakir,over,3.5,-133,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Khalil Shakir,under,3.5,104,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Dalton Kincaid,over,3.5,-112,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Dalton Kincaid,under,3.5,-114,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Rashid Shaheed,over,3.5,100,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Rashid Shaheed,under,3.5,-128,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Keon Coleman,over,3.5,105,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Keon Coleman,under,3.5,-134,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Alvin Kamara,over,3.5,109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Alvin Kamara,under,3.5,-139,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Joshua Palmer,over,2.5,117,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Joshua Palmer,under,2.5,-149,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,James Cook,over,1.5,-186,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,James Cook,under,1.5,145,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Brandin Cooks,over,1.5,-159,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_receptions,Brandin Cooks,under,1.5,124,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,James Cook,over,78.5,-111,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,James Cook,under,78.5,-113,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Alvin Kamara,over,49.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Alvin Kamara,under,49.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Josh Allen,over,26.5,-109,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Josh Allen,under,26.5,-115,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Ray Davis,over,17.5,-116,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Ray Davis,under,17.5,-108,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Spencer Rattler,over,17.5,-108,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Spencer Rattler,under,17.5,-116,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Kendre Miller,over,14.5,-113,2025-09-28T11:55:57Z
+4,d16a43752aaac66e9ff8768d8590b662,Buffalo Bills,New Orleans Saints,2025-09-28T17:01:00Z,player_rush_yds,Kendre Miller,under,14.5,-111,2025-09-28T11:55:57Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_pass_yds,Drake Maye,over,213.5,-112,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_pass_yds,Drake Maye,under,213.5,-112,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_pass_yds,Bryce Young,over,205.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_pass_yds,Bryce Young,under,205.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Tetairoa McMillan,over,65.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Tetairoa McMillan,under,65.5,-114,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Hunter Henry,over,41.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Hunter Henry,under,41.5,-114,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Stefon Diggs,over,35.5,-114,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Stefon Diggs,under,35.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Hunter Renfrow,over,31.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Hunter Renfrow,under,31.5,-114,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Kayshon Boutte,over,29.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Kayshon Boutte,under,29.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Tommy Tremble,over,22.5,-108,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Tommy Tremble,under,22.5,-116,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,David Moore,over,18.5,-115,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,David Moore,under,18.5,-109,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Chuba Hubbard,over,17.5,-109,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Chuba Hubbard,under,17.5,-115,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,TreVeyon Henderson,over,16.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,TreVeyon Henderson,under,16.5,-114,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,DeMario Douglas,over,14.5,-116,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,DeMario Douglas,under,14.5,-108,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Rhamondre Stevenson,over,12.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_reception_yds,Rhamondre Stevenson,under,12.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Tetairoa McMillan,over,4.5,-151,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Tetairoa McMillan,under,4.5,118,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Hunter Henry,over,3.5,-155,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Hunter Henry,under,3.5,121,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Hunter Renfrow,over,3.5,-116,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Hunter Renfrow,under,3.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Stefon Diggs,over,3.5,-104,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Stefon Diggs,under,3.5,-122,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Chuba Hubbard,over,2.5,-174,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Chuba Hubbard,under,2.5,136,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,TreVeyon Henderson,over,2.5,-117,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,TreVeyon Henderson,under,2.5,-109,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Tommy Tremble,over,2.5,-116,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Tommy Tremble,under,2.5,-110,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Rhamondre Stevenson,over,2.5,132,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Rhamondre Stevenson,under,2.5,-169,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Kayshon Boutte,over,2.5,138,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_receptions,Kayshon Boutte,under,2.5,-178,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Chuba Hubbard,over,51.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Chuba Hubbard,under,51.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,TreVeyon Henderson,over,40.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,TreVeyon Henderson,under,40.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Rhamondre Stevenson,over,33.5,-115,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Rhamondre Stevenson,under,33.5,-109,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Drake Maye,over,26.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Drake Maye,under,26.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Rico Dowdle,over,21.5,-113,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Rico Dowdle,under,21.5,-111,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Bryce Young,over,13.5,-107,2025-09-28T11:56:05Z
+4,f8fe40924827231233dc10f6999d8ff7,New England Patriots,Carolina Panthers,2025-09-28T17:01:00Z,player_rush_yds,Bryce Young,under,13.5,-117,2025-09-28T11:56:05Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_pass_yds,C.J. Stroud,over,220.5,-113,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_pass_yds,C.J. Stroud,under,220.5,-111,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_pass_yds,Cameron Ward,over,186.5,-112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_pass_yds,Cameron Ward,under,186.5,-112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Nico Collins,over,70.5,-112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Nico Collins,under,70.5,-112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Calvin Ridley,over,46.5,-112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Calvin Ridley,under,46.5,-112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Christian Kirk,over,39.5,-111,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Christian Kirk,under,39.5,-113,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Chigoziem Okonkwo,over,32.5,-109,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Chigoziem Okonkwo,under,32.5,-115,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Dalton Schultz,over,31.5,-115,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Dalton Schultz,under,31.5,-109,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Elic Ayomanor,over,29.5,-114,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Elic Ayomanor,under,29.5,-110,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Xavier Hutchinson,over,15.5,-108,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Xavier Hutchinson,under,15.5,-117,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Tyler Lockett,over,13.5,-117,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Tyler Lockett,under,13.5,-107,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Tony Pollard,over,11.5,-109,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Tony Pollard,under,11.5,-115,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Woody Marks,over,8.5,-119,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Woody Marks,under,8.5,-106,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Nick Chubb,over,5.5,-115,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_reception_yds,Nick Chubb,under,5.5,-109,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Nico Collins,over,5.5,104,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Nico Collins,under,5.5,-133,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Calvin Ridley,over,3.5,-143,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Calvin Ridley,under,3.5,112,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Christian Kirk,over,3.5,-115,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Christian Kirk,under,3.5,-110,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Chigoziem Okonkwo,over,3.5,-109,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Chigoziem Okonkwo,under,3.5,-117,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Dalton Schultz,over,3.5,111,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Dalton Schultz,under,3.5,-142,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Elic Ayomanor,over,2.5,-140,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Elic Ayomanor,under,2.5,110,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Tony Pollard,over,2.5,149,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Tony Pollard,under,2.5,-192,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Tyler Lockett,over,1.5,-111,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Tyler Lockett,under,1.5,-115,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Woody Marks,over,1.5,-105,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_receptions,Woody Marks,under,1.5,-121,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Tony Pollard,over,65.5,-110,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Tony Pollard,under,65.5,-114,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Nick Chubb,over,47.5,-113,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Nick Chubb,under,47.5,-111,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Woody Marks,over,27.5,-114,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Woody Marks,under,27.5,-110,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,C.J. Stroud,over,15.5,-114,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,C.J. Stroud,under,15.5,-110,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Cameron Ward,over,8.5,-109,2025-09-28T11:56:01Z
+4,85c9b76cd6bd575b611cb4e8feb7a0b0,Houston Texans,Tennessee Titans,2025-09-28T17:01:00Z,player_rush_yds,Cameron Ward,under,8.5,-115,2025-09-28T11:56:01Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_pass_yds,Baker Mayfield,over,221.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_pass_yds,Baker Mayfield,under,221.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_pass_yds,Jalen Hurts,over,191.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_pass_yds,Jalen Hurts,under,191.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,AJ Brown,over,64.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,AJ Brown,under,64.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Emeka Egbuka,over,59.5,-112,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Emeka Egbuka,under,59.5,-112,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,DeVonta Smith,over,49.5,-115,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,DeVonta Smith,under,49.5,-109,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Dallas Goedert,over,35.5,-110,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Dallas Goedert,under,35.5,-114,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Sterling Shepard,over,32.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Sterling Shepard,under,32.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Chris Godwin,over,30.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Chris Godwin,under,30.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Cade Otton,over,26.5,-109,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Cade Otton,under,26.5,-115,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Bucky Irving,over,22.5,-116,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Bucky Irving,under,22.5,-108,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Saquon Barkley,over,16.5,-117,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Saquon Barkley,under,16.5,-108,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Jahan Dotson,over,9.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Jahan Dotson,under,9.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Rachaad White,over,8.5,-107,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_reception_yds,Rachaad White,under,8.5,-117,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Emeka Egbuka,over,5.5,-102,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Emeka Egbuka,under,5.5,-125,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,AJ Brown,over,4.5,-146,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,AJ Brown,under,4.5,114,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,DeVonta Smith,over,4.5,103,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,DeVonta Smith,under,4.5,-131,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Dallas Goedert,over,3.5,-116,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Dallas Goedert,under,3.5,-110,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Bucky Irving,over,3.5,-108,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Bucky Irving,under,3.5,-119,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Sterling Shepard,over,3.5,104,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Sterling Shepard,under,3.5,-133,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Chris Godwin,over,2.5,-169,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Chris Godwin,under,2.5,132,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Cade Otton,over,2.5,-164,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Cade Otton,under,2.5,128,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Saquon Barkley,over,2.5,-118,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_receptions,Saquon Barkley,under,2.5,-108,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Saquon Barkley,over,76.5,-112,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Saquon Barkley,under,76.5,-112,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Bucky Irving,over,64.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Bucky Irving,under,64.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Jalen Hurts,over,39.5,-115,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Jalen Hurts,under,39.5,-109,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Baker Mayfield,over,18.5,-111,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Baker Mayfield,under,18.5,-113,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Rachaad White,over,17.5,-107,2025-09-28T11:56:12Z
+4,894976986c24d52cf1d45f0e6bb0e90c,Tampa Bay Buccaneers,Philadelphia Eagles,2025-09-28T17:01:00Z,player_rush_yds,Rachaad White,under,17.5,-118,2025-09-28T11:56:12Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_pass_yds,Matthew Stafford,over,253.5,-112,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_pass_yds,Matthew Stafford,under,253.5,-112,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_pass_yds,Daniel Jones,over,219.5,-111,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_pass_yds,Daniel Jones,under,219.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Puka Nacua,over,91.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Puka Nacua,under,91.5,-111,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Davante Adams,over,65.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Davante Adams,under,65.5,-111,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Michael Pittman Jr.,over,53.5,-110,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Michael Pittman Jr.,under,53.5,-114,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Tyler Warren,over,52.5,-111,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Tyler Warren,under,52.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Josh Downs,over,40.5,-110,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Josh Downs,under,40.5,-114,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Adonai Mitchell,over,32.5,-114,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Adonai Mitchell,under,32.5,-110,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Jonathan Taylor,over,14.5,-114,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Jonathan Taylor,under,14.5,-110,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Tyler Higbee,over,14.5,-112,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Tyler Higbee,under,14.5,-112,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Tutu Atwell,over,12.5,-111,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Tutu Atwell,under,12.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Kyren Williams,over,8.5,-120,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_reception_yds,Kyren Williams,under,8.5,-105,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Puka Nacua,over,7.5,-132,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Puka Nacua,under,7.5,104,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Davante Adams,over,4.5,-156,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Davante Adams,under,4.5,122,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Michael Pittman Jr.,over,4.5,-140,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Michael Pittman Jr.,under,4.5,110,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Tyler Warren,over,4.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Tyler Warren,under,4.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Josh Downs,over,3.5,-156,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Josh Downs,under,3.5,122,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Adonai Mitchell,over,2.5,-108,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Adonai Mitchell,under,2.5,-119,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Jonathan Taylor,over,2.5,121,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Jonathan Taylor,under,2.5,-154,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Kyren Williams,over,1.5,-166,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Kyren Williams,under,1.5,129,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Tyler Higbee,over,1.5,-153,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Tyler Higbee,under,1.5,120,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Tutu Atwell,over,1.5,115,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_receptions,Tutu Atwell,under,1.5,-148,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Jonathan Taylor,over,86.5,-113,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Jonathan Taylor,under,86.5,-111,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Kyren Williams,over,70.5,-115,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Kyren Williams,under,70.5,-110,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Daniel Jones,over,25.5,-116,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Daniel Jones,under,25.5,-109,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Blake Corum,over,21.5,-108,2025-09-28T11:55:26Z
+4,d90e0de2d5fa2d57e8812f31775ad0ba,Los Angeles Rams,Indianapolis Colts,2025-09-28T20:06:00Z,player_rush_yds,Blake Corum,under,21.5,-116,2025-09-28T11:55:26Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_pass_yds,Brock Purdy,over,243.5,-113,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_pass_yds,Brock Purdy,under,243.5,-111,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_pass_yds,Trevor Lawrence,over,225.5,-112,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_pass_yds,Trevor Lawrence,under,225.5,-112,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Ricky Pearsall,over,59.5,-112,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Ricky Pearsall,under,59.5,-112,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Brian Thomas Jr,over,57.5,-114,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Brian Thomas Jr,under,57.5,-110,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Christian McCaffrey,over,43.5,-113,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Christian McCaffrey,under,43.5,-111,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Jauan Jennings,over,43.5,-110,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Jauan Jennings,under,43.5,-114,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Brenton Strange,over,34.5,-110,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Brenton Strange,under,34.5,-114,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Travis Hunter,over,33.5,-113,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Travis Hunter,under,33.5,-111,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Jake Tonges,over,21.5,-115,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Jake Tonges,under,21.5,-109,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Travis Etienne Jr.,over,14.5,-114,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_reception_yds,Travis Etienne Jr.,under,14.5,-110,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Christian McCaffrey,over,5.5,-125,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Christian McCaffrey,under,5.5,-102,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Ricky Pearsall,over,4.5,-126,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Ricky Pearsall,under,4.5,-101,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Brian Thomas Jr,over,4.5,-103,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Brian Thomas Jr,under,4.5,-124,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Brenton Strange,over,3.5,-104,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Brenton Strange,under,3.5,-123,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Travis Hunter,over,3.5,112,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Travis Hunter,under,3.5,-142,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Travis Etienne Jr.,over,2.5,135,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_receptions,Travis Etienne Jr.,under,2.5,-173,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Christian McCaffrey,over,73.5,-113,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Christian McCaffrey,under,73.5,-111,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Travis Etienne Jr.,over,52.5,-115,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Travis Etienne Jr.,under,52.5,-109,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Bhayshul Tuten,over,22.5,-114,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Bhayshul Tuten,under,22.5,-110,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Brian Robinson Jr.,over,20.5,-108,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Brian Robinson Jr.,under,20.5,-116,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Trevor Lawrence,over,10.5,-118,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Trevor Lawrence,under,10.5,-106,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Brock Purdy,over,10.5,-107,2025-09-28T11:55:21Z
+4,09f55b4a19a83eb951a9400a11123477,San Francisco 49ers,Jacksonville Jaguars,2025-09-28T20:06:00Z,player_rush_yds,Brock Purdy,under,10.5,-117,2025-09-28T11:55:21Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_pass_yds,Patrick Mahomes,over,238.5,-113,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_pass_yds,Patrick Mahomes,under,238.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_pass_yds,Lamar Jackson,over,227.5,-112,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_pass_yds,Lamar Jackson,under,227.5,-112,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Zay Flowers,over,64.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Zay Flowers,under,64.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Xavier Worthy,over,48.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Xavier Worthy,under,48.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Travis Kelce,over,39.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Travis Kelce,under,39.5,-113,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Marquise Brown,over,38.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Marquise Brown,under,38.5,-113,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Rashod Bateman,over,34.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Rashod Bateman,under,34.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Mark Andrews,over,33.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Mark Andrews,under,33.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Tyquan Thornton,over,24.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Tyquan Thornton,under,24.5,-113,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Isaiah Likely,over,21.5,-116,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Isaiah Likely,under,21.5,-109,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,DeAndre Hopkins,over,17.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,DeAndre Hopkins,under,17.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Justice Hill,over,16.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Justice Hill,under,16.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,JuJu Smith-Schuster,over,16.5,-109,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,JuJu Smith-Schuster,under,16.5,-115,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Isiah Pacheco,over,7.5,-118,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Isiah Pacheco,under,7.5,-106,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Derrick Henry,over,4.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_reception_yds,Derrick Henry,under,4.5,-110,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Zay Flowers,over,4.5,-148,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Zay Flowers,under,4.5,116,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Xavier Worthy,over,4.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Xavier Worthy,under,4.5,-114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Travis Kelce,over,4.5,103,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Travis Kelce,under,4.5,-131,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Marquise Brown,over,3.5,-145,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Marquise Brown,under,3.5,114,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Mark Andrews,over,2.5,-167,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Mark Andrews,under,2.5,130,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Rashod Bateman,over,2.5,-142,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Rashod Bateman,under,2.5,111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Justice Hill,over,2.5,125,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Justice Hill,under,2.5,-160,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Isaiah Likely,over,2.5,144,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Isaiah Likely,under,2.5,-186,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,JuJu Smith-Schuster,over,1.5,-187,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,JuJu Smith-Schuster,under,1.5,145,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Tyquan Thornton,over,1.5,-160,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Tyquan Thornton,under,1.5,125,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Isiah Pacheco,over,1.5,-115,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Isiah Pacheco,under,1.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,DeAndre Hopkins,over,1.5,107,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,DeAndre Hopkins,under,1.5,-136,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Derrick Henry,over,0.5,-187,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_receptions,Derrick Henry,under,0.5,145,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Derrick Henry,over,84.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Derrick Henry,under,84.5,-113,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Lamar Jackson,over,45.5,-111,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Lamar Jackson,under,45.5,-113,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Isiah Pacheco,over,35.5,-108,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Isiah Pacheco,under,35.5,-116,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Kareem Hunt,over,28.5,-112,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Kareem Hunt,under,28.5,-112,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Patrick Mahomes,over,26.5,-116,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Patrick Mahomes,under,26.5,-108,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Justice Hill,over,6.5,-119,2025-09-28T11:55:57Z
+4,051233db287b02fd3e7574955879ece2,Kansas City Chiefs,Baltimore Ravens,2025-09-28T20:25:00Z,player_rush_yds,Justice Hill,under,6.5,-105,2025-09-28T11:55:57Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_pass_yds,Geno Smith,over,254.5,-113,2025-09-28T11:55:13Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_pass_yds,Geno Smith,under,254.5,-111,2025-09-28T11:55:13Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_pass_yds,Caleb Williams,over,226.5,-112,2025-09-28T11:55:13Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_pass_yds,Caleb Williams,under,226.5,-112,2025-09-28T11:55:13Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Jakobi Meyers,over,66.5,-113,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Jakobi Meyers,under,66.5,-111,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Rome Odunze,over,64.5,-111,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Rome Odunze,under,64.5,-113,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Brock Bowers,over,58.5,-112,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Brock Bowers,under,58.5,-112,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,DJ Moore,over,45.5,-113,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,DJ Moore,under,45.5,-111,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Tre Tucker,over,44.5,-111,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Tre Tucker,under,44.5,-113,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Dont'e Thornton Jr.,over,29.5,-115,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Dont'e Thornton Jr.,under,29.5,-109,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Olamide Zaccheaus,over,26.5,-109,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Olamide Zaccheaus,under,26.5,-115,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Cole Kmet,over,23.5,-115,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Cole Kmet,under,23.5,-109,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,D'Andre Swift,over,17.5,-117,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,D'Andre Swift,under,17.5,-107,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Luther Burden III,over,14.5,-114,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Luther Burden III,under,14.5,-110,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Ashton Jeanty,over,13.5,-108,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_reception_yds,Ashton Jeanty,under,13.5,-116,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Jakobi Meyers,over,5.5,-127,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Jakobi Meyers,under,5.5,-101,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Brock Bowers,over,5.5,-111,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Brock Bowers,under,5.5,-115,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Rome Odunze,over,5.5,123,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Rome Odunze,under,5.5,-158,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,DJ Moore,over,4.5,-101,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,DJ Moore,under,4.5,-126,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Tre Tucker,over,3.5,-119,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Tre Tucker,under,3.5,-107,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,D'Andre Swift,over,3.5,134,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,D'Andre Swift,under,3.5,-172,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Olamide Zaccheaus,over,2.5,-123,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Olamide Zaccheaus,under,2.5,-104,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Cole Kmet,over,2.5,-101,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Cole Kmet,under,2.5,-126,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Ashton Jeanty,over,2.5,102,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Ashton Jeanty,under,2.5,-131,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Dont'e Thornton Jr.,over,2.5,122,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_receptions,Dont'e Thornton Jr.,under,2.5,-155,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,Ashton Jeanty,over,69.5,-115,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,Ashton Jeanty,under,69.5,-109,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,D'Andre Swift,over,48.5,-111,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,D'Andre Swift,under,48.5,-113,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,Caleb Williams,over,25.5,-112,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,Caleb Williams,under,25.5,-112,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,Geno Smith,over,9.5,-119,2025-09-28T11:55:18Z
+4,af6fbb0a2e996613bc393115276c60e2,Las Vegas Raiders,Chicago Bears,2025-09-28T20:26:00Z,player_rush_yds,Geno Smith,under,9.5,-106,2025-09-28T11:55:18Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_pass_yds,Dak Prescott,over,235.5,-112,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_pass_yds,Dak Prescott,under,235.5,-112,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_pass_yds,Jordan Love,over,235.5,-111,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_pass_yds,Jordan Love,under,235.5,-113,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,George Pickens,over,60.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,George Pickens,under,60.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Jake Ferguson,over,52.5,-115,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Jake Ferguson,under,52.5,-109,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Matthew Golden,over,46.5,-111,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Matthew Golden,under,46.5,-113,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Tucker Kraft,over,44.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Tucker Kraft,under,44.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Romeo Doubs,over,41.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Romeo Doubs,under,41.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Dontayvion Wicks,over,40.5,-111,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Dontayvion Wicks,under,40.5,-113,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,KaVontae Turpin,over,31.5,-115,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,KaVontae Turpin,under,31.5,-109,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Jalen Tolbert,over,29.5,-112,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Jalen Tolbert,under,29.5,-112,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Javonte Williams,over,18.5,-108,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Javonte Williams,under,18.5,-116,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Josh Jacobs,over,16.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_reception_yds,Josh Jacobs,under,16.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Jake Ferguson,over,6.5,107,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Jake Ferguson,under,6.5,-137,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,George Pickens,over,4.5,-145,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,George Pickens,under,4.5,114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Tucker Kraft,over,3.5,-131,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Tucker Kraft,under,3.5,103,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Romeo Doubs,over,3.5,-106,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Romeo Doubs,under,3.5,-120,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Javonte Williams,over,3.5,102,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Javonte Williams,under,3.5,-130,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Dontayvion Wicks,over,3.5,103,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Dontayvion Wicks,under,3.5,-132,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,KaVontae Turpin,over,3.5,122,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,KaVontae Turpin,under,3.5,-155,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Matthew Golden,over,3.5,129,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Matthew Golden,under,3.5,-165,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Jalen Tolbert,over,2.5,-155,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Jalen Tolbert,under,2.5,122,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Josh Jacobs,over,2.5,111,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_receptions,Josh Jacobs,under,2.5,-142,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Josh Jacobs,over,72.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Josh Jacobs,under,72.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Javonte Williams,over,50.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Javonte Williams,under,50.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Jordan Love,over,6.5,-110,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Jordan Love,under,6.5,-114,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Dak Prescott,over,4.5,-119,2025-09-28T11:56:05Z
+4,de432abcc3bd8d42a582ae9f71388dcd,Dallas Cowboys,Green Bay Packers,2025-09-29T00:21:00Z,player_rush_yds,Dak Prescott,under,4.5,-106,2025-09-28T11:56:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_pass_yds,Tua Tagovailoa,over,234.5,-113,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_pass_yds,Tua Tagovailoa,under,234.5,-111,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_pass_yds,Justin Fields,over,184.5,-113,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_pass_yds,Justin Fields,under,184.5,-111,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Tyreek Hill,over,64.5,-113,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Tyreek Hill,under,64.5,-112,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Garrett Wilson,over,61.5,-113,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Garrett Wilson,under,61.5,-111,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Jaylen Waddle,over,51.5,-112,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Jaylen Waddle,under,51.5,-112,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,De'Von Achane,over,37.5,-110,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,De'Von Achane,under,37.5,-114,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Breece Hall,over,22.5,-108,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Breece Hall,under,22.5,-116,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Malik Washington,over,21.5,-109,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Malik Washington,under,21.5,-115,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Josh Reynolds,over,20.5,-110,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Josh Reynolds,under,20.5,-114,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Mason Taylor,over,20.5,-110,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Mason Taylor,under,20.5,-114,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Darren Waller,over,11.5,-109,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_reception_yds,Darren Waller,under,11.5,-115,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,De'Von Achane,over,5.5,-113,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,De'Von Achane,under,5.5,-113,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Garrett Wilson,over,5.5,-111,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Garrett Wilson,under,5.5,-114,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Tyreek Hill,over,5.5,117,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Tyreek Hill,under,5.5,-149,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Jaylen Waddle,over,4.5,104,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Jaylen Waddle,under,4.5,-133,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Breece Hall,over,2.5,-171,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Breece Hall,under,2.5,134,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Malik Washington,over,2.5,-116,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Malik Washington,under,2.5,-109,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Mason Taylor,over,2.5,114,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Mason Taylor,under,2.5,-145,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Josh Reynolds,over,2.5,144,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Josh Reynolds,under,2.5,-185,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Darren Waller,over,1.5,118,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_receptions,Darren Waller,under,1.5,-150,2025-09-28T11:55:12Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Breece Hall,over,58.5,-114,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Breece Hall,under,58.5,-110,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,De'Von Achane,over,55.5,-109,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,De'Von Achane,under,55.5,-115,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Justin Fields,over,45.5,-110,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Justin Fields,under,45.5,-114,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Ollie Gordon II,over,25.5,-114,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Ollie Gordon II,under,25.5,-110,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Braelon Allen,over,17.5,-110,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Braelon Allen,under,17.5,-114,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Malik Washington,over,6.5,-107,2025-09-28T11:54:05Z
+4,bc76fb8d846588ed46297aaab4e83de9,Miami Dolphins,New York Jets,2025-09-29T23:16:00Z,player_rush_yds,Malik Washington,under,6.5,-117,2025-09-28T11:54:05Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_pass_yds,Bo Nix,over,220.5,-112,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_pass_yds,Bo Nix,under,220.5,-112,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_pass_yds,Jake Browning,over,219.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_pass_yds,Jake Browning,under,219.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Courtland Sutton,over,65.5,-110,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Courtland Sutton,under,65.5,-114,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Ja'Marr Chase,over,64.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Ja'Marr Chase,under,64.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Tee Higgins,over,49.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Tee Higgins,under,49.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Troy Franklin,over,43.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Troy Franklin,under,43.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Marvin Mims Jr.,over,28.5,-115,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Marvin Mims Jr.,under,28.5,-109,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Mike Gesicki,over,22.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Mike Gesicki,under,22.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Chase Brown,over,18.5,-109,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Chase Brown,under,18.5,-115,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Evan Engram,over,18.5,-109,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Evan Engram,under,18.5,-115,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Andrei Iosivas,over,11.5,-112,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,Andrei Iosivas,under,11.5,-112,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,J.K. Dobbins,over,10.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_reception_yds,J.K. Dobbins,under,10.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Ja'Marr Chase,over,5.5,-101,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Ja'Marr Chase,under,5.5,-127,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Courtland Sutton,over,5.5,116,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Courtland Sutton,under,5.5,-149,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Tee Higgins,over,3.5,-152,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Tee Higgins,under,3.5,119,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Troy Franklin,over,3.5,-123,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Troy Franklin,under,3.5,-104,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Chase Brown,over,2.5,-163,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Chase Brown,under,2.5,127,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Mike Gesicki,over,2.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Mike Gesicki,under,2.5,-115,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Marvin Mims Jr.,over,2.5,-101,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Marvin Mims Jr.,under,2.5,-127,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Evan Engram,over,2.5,118,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Evan Engram,under,2.5,-150,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Andrei Iosivas,over,1.5,151,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_receptions,Andrei Iosivas,under,1.5,-194,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_rush_yds,J.K. Dobbins,over,65.5,-113,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_rush_yds,J.K. Dobbins,under,65.5,-111,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_rush_yds,Chase Brown,over,54.5,-109,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_rush_yds,Chase Brown,under,54.5,-115,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_rush_yds,Bo Nix,over,19.5,-112,2025-09-28T11:55:24Z
+4,8dcb2a6bf542ccb7e6bc58f83c8fc2ac,Denver Broncos,Cincinnati Bengals,2025-09-30T00:16:00Z,player_rush_yds,Bo Nix,under,19.5,-112,2025-09-28T11:55:24Z

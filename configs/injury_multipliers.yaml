@@ -1,0 +1,82 @@
+# Injury Impact Multipliers Configuration
+# EPA adjustments by position and status
+
+# Quarterbacks (highest impact)
+qb:
+  out: -0.8        # Out for game or season
+  ir: -0.8         # Injured Reserve
+  questionable: -0.3
+  doubtful: -0.5
+  day_to_day: -0.2
+
+# Offensive Line (stackable penalty)
+# Note: max 3 OL starters (~45% of line) capped at -0.45
+ol:
+  out: -0.15
+  ir: -0.15
+  questionable: -0.05
+  doubtful: -0.08
+  day_to_day: -0.03
+
+# Wide Receivers
+wr:
+  out: -0.3
+  ir: -0.3
+  questionable: -0.1
+  doubtful: -0.15
+  day_to_day: -0.05
+
+# Tight Ends
+te:
+  out: -0.25
+  ir: -0.25
+  questionable: -0.08
+  doubtful: -0.12
+  day_to_day: -0.04
+
+# Running Backs (including pass-catching)
+rb:
+  out: -0.2
+  ir: -0.2
+  questionable: -0.07
+  doubtful: -0.1
+  day_to_day: -0.03
+
+# Defensive Line (DE, DT, Edge)
+dl:
+  out: -0.1
+  ir: -0.1
+  questionable: -0.03
+  doubtful: -0.05
+  day_to_day: -0.02
+
+# Linebackers
+lb:
+  out: -0.12
+  ir: -0.12
+  questionable: -0.04
+  doubtful: -0.06
+  day_to_day: -0.02
+
+# Defensive Backs (CB, S, FS, SS)
+db:
+  out: -0.08
+  ir: -0.08
+  questionable: -0.03
+  doubtful: -0.04
+  day_to_day: -0.01
+
+# Legend:
+# out    = Out for game (unavailable)
+# ir     = Injured Reserve (season-ending)
+# questionable = ~50% chance to play
+# doubtful = ~25% chance to play
+# day_to_day = Minor/manageable injury
+#
+# These are EPA adjustments, applied to:
+# - Offensive EPA (for offensive players)
+# - Defensive EPA (for defensive players)
+# - Both are applied to the opposing team's defense/offense
+
+
+

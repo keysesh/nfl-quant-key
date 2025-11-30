@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nfl-quant"
+version = "0.1.0"
+description = "NFL quantitative analytics pipeline: fetch → validate → feature-engineer → simulate → price → size bets"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = {text = "MIT"}
+authors = [{name = "NFL Quant Team"}]
+keywords = ["nfl", "sports-analytics", "quantitative", "betting", "kelly-criterion"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "requests>=2.31.0",
+    "pandas>=1.0,<2.0",
+    "numpy<2.0",
+    "pyarrow>=12,<22",
+    "typer[all]>=0.9.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "pyyaml>=6.0",
+    "scipy>=1.10.0",
+    # REMOVED: nflreadpy - Use R nflreadr instead (faster, no cache bugs)
+    # Data fetched via: Rscript scripts/fetch/fetch_nflverse_data.R
+    "polars>=0.19.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "isort>=5.12.0",
+]
+
+[project.scripts]
+quant = "nfl_quant.cli:app"
+
+[tool.setuptools]
+packages = ["nfl_quant", "nfl_quant.data", "nfl_quant.features", "nfl_quant.simulation", "nfl_quant.utils"]
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311', 'py312']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+
+

@@ -1,0 +1,42 @@
+NFL QUANT BACKTEST REPORT
+================================================================================
+Generated: 2025-11-15T17:17:58.733284
+Total Predictions: 14178
+
+OVERALL METRICS
+----------------------------------------
+Brier Score (Raw): 0.1652
+Brier Score (Calibrated): 0.1652
+Brier Improvement: 0.0000
+Expected Calibration Error: 0.0830
+Overall Win Rate: 24.1%
+
+BY WEEK
+----------------------------------------
+Week 2: Brier=0.2187, Win=25.0%, N=1547
+Week 3: Brier=0.1646, Win=20.6%, N=1701
+Week 4: Brier=0.1481, Win=22.5%, N=1723
+Week 5: Brier=0.1745, Win=29.6%, N=1457
+Week 6: Brier=0.1663, Win=23.5%, N=1562
+Week 7: Brier=0.1567, Win=24.4%, N=1654
+Week 8: Brier=0.1461, Win=21.8%, N=1447
+Week 9: Brier=0.1519, Win=26.2%, N=1540
+Week 10: Brier=0.1617, Win=23.6%, N=1547
+
+BY STAT TYPE
+----------------------------------------
+passing_yards: Brier=0.2239, Win=37.8%, N=1278
+rushing_yards: Brier=0.1689, Win=25.0%, N=2282
+receiving_yards: Brier=0.1648, Win=21.7%, N=4632
+receptions: Brier=0.1516, Win=22.6%, N=5986
+
+CALIBRATION BY BIN
+----------------------------------------
+0.0-0.3: Pred=7.9%, Actual=14.0%, Error=0.061, N=9318
+0.3-0.4: Pred=35.2%, Actual=29.8%, Error=0.054, N=1066
+0.4-0.5: Pred=44.8%, Actual=33.9%, Error=0.109, N=893
+0.5-0.6: Pred=54.7%, Actual=41.3%, Error=0.134, N=943
+0.6-0.7: Pred=64.8%, Actual=50.1%, Error=0.147, N=848
+0.7-0.8: Pred=74.6%, Actual=57.8%, Error=0.167, N=704
+0.8-0.9: Pred=84.1%, Actual=64.3%, Error=0.199, N=375
+0.9-1.0: Pred=91.2%, Actual=71.0%, Error=0.202, N=31

@@ -1,0 +1,164 @@
+{
+  "total_predictions": 14178,
+  "timestamp": "2025-11-15T17:17:58.671206",
+  "brier_score_raw": 0.16521140467221432,
+  "brier_score_calibrated": 0.16521140467221432,
+  "brier_improvement": 0.0,
+  "overall_win_rate": 0.24058400338552688,
+  "avg_predicted_prob_raw": 0.2427596007113834,
+  "avg_predicted_prob_cal": 0.2427596007113834,
+  "calibration_by_bin": [
+    {
+      "bin": "0.0-0.3",
+      "count": 9318,
+      "avg_predicted": 0.0786603258577153,
+      "actual_win_rate": 0.14015883236746082,
+      "calibration_error": 0.06149850650974552
+    },
+    {
+      "bin": "0.3-0.4",
+      "count": 1066,
+      "avg_predicted": 0.35198331958210394,
+      "actual_win_rate": 0.29831144465290804,
+      "calibration_error": 0.053671874929195895
+    },
+    {
+      "bin": "0.4-0.5",
+      "count": 893,
+      "avg_predicted": 0.44795710630400204,
+      "actual_win_rate": 0.3393057110862262,
+      "calibration_error": 0.10865139521777584
+    },
+    {
+      "bin": "0.5-0.6",
+      "count": 943,
+      "avg_predicted": 0.5467636319716818,
+      "actual_win_rate": 0.41251325556733826,
+      "calibration_error": 0.1342503764043435
+    },
+    {
+      "bin": "0.6-0.7",
+      "count": 848,
+      "avg_predicted": 0.6478944401038412,
+      "actual_win_rate": 0.5011792452830188,
+      "calibration_error": 0.1467151948208224
+    },
+    {
+      "bin": "0.7-0.8",
+      "count": 704,
+      "avg_predicted": 0.7455623250549273,
+      "actual_win_rate": 0.578125,
+      "calibration_error": 0.16743732505492726
+    },
+    {
+      "bin": "0.8-0.9",
+      "count": 375,
+      "avg_predicted": 0.8413211012062368,
+      "actual_win_rate": 0.6426666666666667,
+      "calibration_error": 0.1986544345395701
+    },
+    {
+      "bin": "0.9-1.0",
+      "count": 31,
+      "avg_predicted": 0.9117712255304845,
+      "actual_win_rate": 0.7096774193548387,
+      "calibration_error": 0.20209380617564576
+    }
+  ],
+  "expected_calibration_error": 0.08301112894636842,
+  "by_stat_type": {
+    "passing_yards": {
+      "count": 1278,
+      "brier_raw": 0.22391452259657058,
+      "brier_cal": 0.22391452259657058,
+      "win_rate": 0.3779342723004695,
+      "avg_pred_prob": 0.37242378175789836
+    },
+    "rushing_yards": {
+      "count": 2282,
+      "brier_raw": 0.16889380383209465,
+      "brier_cal": 0.16889380383209465,
+      "win_rate": 0.2502191060473269,
+      "avg_pred_prob": 0.24165624574024186
+    },
+    "receiving_yards": {
+      "count": 4632,
+      "brier_raw": 0.16478531398468935,
+      "brier_cal": 0.16478531398468935,
+      "win_rate": 0.21696891191709844,
+      "avg_pred_prob": 0.2149784458039075
+    },
+    "receptions": {
+      "count": 5986,
+      "brier_raw": 0.15160429349186705,
+      "brier_cal": 0.15160429349186705,
+      "win_rate": 0.22586034079518877,
+      "avg_pred_prob": 0.23699437221123756
+    }
+  },
+  "by_week": {
+    "2": {
+      "count": 1547,
+      "brier_raw": 0.21870588787624282,
+      "brier_cal": 0.21870588787624282,
+      "win_rate": 0.24951519069166128,
+      "avg_pred_prob": 0.29137914089708794
+    },
+    "3": {
+      "count": 1701,
+      "brier_raw": 0.16463869845228918,
+      "brier_cal": 0.16463869845228918,
+      "win_rate": 0.20634920634920634,
+      "avg_pred_prob": 0.26105553903001977
+    },
+    "4": {
+      "count": 1723,
+      "brier_raw": 0.14809019114202393,
+      "brier_cal": 0.14809019114202393,
+      "win_rate": 0.22460824143934996,
+      "avg_pred_prob": 0.24131159149786618
+    },
+    "5": {
+      "count": 1457,
+      "brier_raw": 0.17451718068352862,
+      "brier_cal": 0.17451718068352862,
+      "win_rate": 0.2964996568291009,
+      "avg_pred_prob": 0.23089414045336995
+    },
+    "6": {
+      "count": 1562,
+      "brier_raw": 0.16632413547640226,
+      "brier_cal": 0.16632413547640226,
+      "win_rate": 0.234955185659411,
+      "avg_pred_prob": 0.2360466426861384
+    },
+    "7": {
+      "count": 1654,
+      "brier_raw": 0.15672456074390412,
+      "brier_cal": 0.15672456074390412,
+      "win_rate": 0.24365175332527206,
+      "avg_pred_prob": 0.22693000008975814
+    },
+    "8": {
+      "count": 1447,
+      "brier_raw": 0.14614441299305328,
+      "brier_cal": 0.14614441299305328,
+      "win_rate": 0.2183828610919143,
+      "avg_pred_prob": 0.22159094045485972
+    },
+    "9": {
+      "count": 1540,
+      "brier_raw": 0.15191508567420925,
+      "brier_cal": 0.15191508567420925,
+      "win_rate": 0.2623376623376623,
+      "avg_pred_prob": 0.2429118215010273
+    },
+    "10": {
+      "count": 1547,
+      "brier_raw": 0.16167227447535004,
+      "brier_cal": 0.16167227447535004,
+      "win_rate": 0.2359405300581771,
+      "avg_pred_prob": 0.23016199693780173
+    }
+  }
+}

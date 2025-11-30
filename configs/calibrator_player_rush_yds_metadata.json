@@ -1,0 +1,16 @@
+{
+  "market": "player_rush_yds",
+  "stat_type": "rushing_yards",
+  "training_samples": 683,
+  "trained_date": "2025-11-15T22:39:40.194157",
+  "brier_improvement": 0.023768389936767303,
+  "mace_improvement": -0.015066019340330639,
+  "win_rate": 0.48462664714494874,
+  "avg_predicted_prob": 0.5187822563342225,
+  "logic_version": "FIXED_V2_ADDITIVE_CAPPED",
+  "fixes_applied": [
+    "Capped multipliers (0.85-1.15 contextual, 0.90-1.10 player)",
+    "Additive adjustments instead of multiplicative stacking",
+    "Total contextual adjustment capped at \u00b125%"
+  ]
+}

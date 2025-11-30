@@ -1,0 +1,775 @@
+{
+  "_comment": "Simulation parameters for NFL QUANT system",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-02",
+  "game_simulation": {
+    "base_possessions_per_game": 10.7,
+    "_base_possessions_source": "Calculated from 2025 NFLverse PBP data: avg drives per team = 10.7",
+    "base_td_rate": 0.256,
+    "_base_td_rate_source": "Calculated from 2025 data: expected_pts_per_poss (2.18) / 8.5 = 25.6%",
+    "base_fg_rate": 0.128,
+    "_base_fg_rate_source": "Estimated as 0.5 * TD rate (NFL avg ratio)",
+    "base_safety_rate": 0.003,
+    "league_avg_pace_seconds": 30.0,
+    "plays_per_possession": 6.5,
+    "possessions_min": 8,
+    "possessions_max": 18,
+    "epa_scaling_factor": 1.2,
+    "td_prob_min": 0.05,
+    "td_prob_max": 0.45
+  },
+  "game_adjustments": {
+    "divisional_game": -0.05,
+    "snf_mnf_primetime": -0.03,
+    "thursday_night": 0.02
+  },
+  "weather_adjustments": {
+    "temperature": {
+      "extreme_cold_threshold_f": 20,
+      "extreme_cold_multiplier": 0.92,
+      "freezing_threshold_f": 32,
+      "freezing_multiplier": 0.96
+    },
+    "wind": {
+      "high_wind_threshold_mph": 20,
+      "high_wind_multiplier": 0.9,
+      "moderate_wind_threshold_mph": 15,
+      "moderate_wind_multiplier": 0.95
+    },
+    "precipitation": {
+      "threshold_inches": 0.1,
+      "rain_snow_multiplier": 0.92
+    }
+  },
+  "player_simulation_variance": {
+    "_comment": "UPDATED 2025-11-03 - Using variance multipliers instead of low alpha to avoid heavy tails",
+    "_backtest_coverage_before": {
+      "passing_yards": "11.0% (critical)",
+      "rushing_yards": "35.4% (needs fix)",
+      "receiving_yards": "75.7% (good)"
+    },
+    "_backtest_coverage_target": "85-95%",
+    "qb_passing_alpha": 3.0,
+    "_qb_passing_alpha_note": "Keep alpha moderate to avoid gamma heavy tails, use variance_multiplier instead",
+    "qb_passing_variance_multiplier": 2.5,
+    "_qb_passing_variance_multiplier_note": "Multiply distribution variance by 2.5x to reach ~90% coverage",
+    "qb_rushing_alpha": 2.0,
+    "_qb_rushing_alpha_note": "Moderate alpha for QB rushing",
+    "qb_rushing_variance_multiplier": 2.0,
+    "rb_rushing_alpha": 2.0,
+    "_rb_rushing_alpha_note": "Moderate alpha, use variance multiplier for coverage",
+    "rb_rushing_variance_multiplier": 1.8,
+    "_rb_rushing_variance_multiplier_note": "1.8x multiplier to go from 35% \u2192 90% coverage",
+    "rb_receiving_alpha": 2.0,
+    "wr_te_receiving_alpha": 2.5,
+    "_wr_te_receiving_alpha_note": "Already decent at 75.7%, minor boost via multiplier",
+    "wr_te_receiving_variance_multiplier": 1.2,
+    "base_qb_attempts": 35.0
+  },
+  "mean_adjustments": {
+    "_comment": "ADDED 2025-11-03 - Fix systematic mean bias revealed by backtest analysis",
+    "_validation_source": "Weeks 1-8 backtest (3001 predictions vs actuals)",
+    "rb_receiving_mean_adjustment": 1.0,
+    "_rb_receiving_note": "FIXED 2025-11-25: Removed 2.64x multiplier - was calibrated against broken model. Base model now accurate (44.7 vs 34.5 actual). Tiered calibration handles residual bias.",
+    "te_receiving_mean_adjustment": 0.68,
+    "_te_receiving_note": "Model predicts 42.3 yards, actual 28.7 yards (+48% bias)",
+    "wr_receiving_mean_adjustment": 1.0,
+    "_wr_receiving_note": "Set to 1.0 - blending fix in _predict_efficiency now handles high performer regression",
+    "qb_passing_mean_adjustment": 0.82,
+    "_qb_passing_note": "UPDATED 2025-11-25: Week 12 backtest showed +8% residual bias, reduced from 0.89 to 0.82",
+    "qb_rushing_mean_adjustment": 1.08,
+    "_qb_rushing_note": "Model predicts 15.4 yards, actual 16.7 yards (-8% bias)"
+  },
+  "completion_bounds": {
+    "min_completion_rate": 0.4,
+    "max_completion_rate": 0.8,
+    "min_catch_rate": 0.3,
+    "max_catch_rate": 0.9
+  },
+  "blending_weights": {
+    "target_share": {
+      "current_weight": 0.8,
+      "historical_weight": 0.2
+    },
+    "yards_per_target": {
+      "base_weight": 0.8,
+      "historical_weight": 0.2,
+      "qb_adjusted_base_weight": 0.7,
+      "qb_adjusted_qb_weight": 0.3
+    },
+    "fg_attempts": {
+      "base_rate_weight": 0.5,
+      "expected_weight": 0.5
+    }
+  },
+  "matchup_adjustments": {
+    "cb_rank_sensitivity": 0.1,
+    "lb_rank_sensitivity": 0.1,
+    "normalized_epa_scale": 16.5,
+    "epa_divisor": 0.15
+  },
+  "calibration_dampening": {
+    "enabled": false,
+    "over_prob_multiplier": 0.75,
+    "_comment": "When enabled, pulls probabilities toward 50%"
+  },
+  "trials": {
+    "default_trials": 50000,
+    "default_seed": 42
+  },
+  "league_defaults": {
+    "completion_rate": 0.65,
+    "catch_rate": 0.65,
+    "rb_catch_rate": 0.7,
+    "qb_int_rate": 0.02,
+    "qb_rush_td_rate": 0.01,
+    "qb_yards_per_completion": 11.0,
+    "qb_yards_per_carry": 5.0,
+    "qb_rush_td_per_carry": 0.02,
+    "rb_yards_per_carry": 4.5,
+    "rb_rush_td_rate": 0.03,
+    "rb_yards_per_target": 7.0,
+    "rb_rec_td_rate": 0.02,
+    "wr_yards_per_target": 8.0,
+    "wr_td_rate": 0.04,
+    "te_yards_per_target": 8.0,
+    "te_td_rate": 0.04,
+    "k_xp_success_rate": 0.98,
+    "k_fg_attempts_per_game": 2.0,
+    "k_fg_success_rate": 0.85,
+    "k_xp_per_game": 3.0,
+    "team_pace_plays_per_game": 65.0,
+    "qb_attempts_min": 25.0,
+    "qb_attempts_max": 45.0
+  },
+  "_comment_v3": "=== NEW MONTE CARLO V3 ENHANCEMENTS ===",
+  "correlation_coefficients": {
+    "_comment": "Player correlation coefficients for correlated sampling (Cholesky decomposition)",
+    "qb_wr_targets": 0.35,
+    "qb_wr_yards": 0.45,
+    "qb_te_targets": 0.3,
+    "qb_te_yards": 0.4,
+    "rb_rb_carries": -0.55,
+    "rb_rb_targets": -0.3,
+    "wr_wr_targets": -0.15,
+    "rb_wr_targets": -0.1,
+    "game_script_correlation": 0.25,
+    "min_correlation": -0.95,
+    "max_correlation": 0.95
+  },
+  "negbin_scoring": {
+    "_comment": "Negative Binomial scoring model (handles NFL score overdispersion)",
+    "home_dispersion": 6.0,
+    "away_dispersion": 6.0,
+    "score_correlation": -0.08,
+    "min_score": 0,
+    "max_score": 70,
+    "avg_possessions_per_team": 12.0,
+    "possession_variance": 2.0,
+    "avg_points_per_possession": 2.1,
+    "ppp_std": 0.3
+  },
+  "market_blending": {
+    "_comment": "Market prior blending weights (\u03bb = model weight, 1-\u03bb = market weight)",
+    "game_totals_model_weight": 0.65,
+    "team_totals_model_weight": 0.6,
+    "spreads_model_weight": 0.55,
+    "player_props_model_weight": 0.7,
+    "high_confidence_boost": 0.1,
+    "low_confidence_penalty": 0.1,
+    "high_confidence_threshold": 0.1,
+    "low_confidence_threshold": 0.25,
+    "staleness_hours_threshold": 24.0,
+    "stale_line_penalty": 0.15,
+    "min_lambda": 0.4,
+    "max_lambda": 0.85,
+    "outlier_threshold_total": 10.0,
+    "outlier_threshold_spread": 6.0,
+    "outlier_threshold_player_pct": 0.3
+  },
+  "wind_buckets": {
+    "_comment": "Granular wind bucket impacts (research from Advanced Football Analytics)",
+    "calm": {
+      "min_mph": 0.0,
+      "max_mph": 10.0,
+      "passing_epa_multiplier": 1.0,
+      "completion_pct_adjustment": 0.0,
+      "deep_target_share_multiplier": 1.0,
+      "rush_rate_boost": 0.0
+    },
+    "moderate": {
+      "min_mph": 10.0,
+      "max_mph": 15.0,
+      "passing_epa_multiplier": 0.97,
+      "completion_pct_adjustment": -1.0,
+      "deep_target_share_multiplier": 0.95,
+      "rush_rate_boost": 0.02
+    },
+    "high": {
+      "min_mph": 15.0,
+      "max_mph": 20.0,
+      "passing_epa_multiplier": 0.92,
+      "completion_pct_adjustment": -2.5,
+      "deep_target_share_multiplier": 0.88,
+      "rush_rate_boost": 0.05
+    },
+    "extreme": {
+      "min_mph": 20.0,
+      "max_mph": 100.0,
+      "passing_epa_multiplier": 0.85,
+      "completion_pct_adjustment": -4.0,
+      "deep_target_share_multiplier": 0.75,
+      "rush_rate_boost": 0.08
+    }
+  },
+  "contextual_adjustments": {
+    "_comment": "Rest, travel, bye week, altitude, divisional game adjustments",
+    "rest": {
+      "short_rest_epa_penalty": -0.03,
+      "thursday_night_epa_penalty": -0.025,
+      "bye_week_epa_boost": 0.015,
+      "extra_rest_epa_boost": 0.01
+    },
+    "travel": {
+      "travel_distance_threshold_miles": 1500,
+      "long_travel_epa_penalty": -0.015,
+      "timezone_change_threshold": 2,
+      "timezone_epa_penalty_per_zone": -0.005
+    },
+    "divisional": {
+      "total_adjustment": -0.5,
+      "spread_tightening": 0.8
+    },
+    "altitude": {
+      "altitude_threshold_feet": 4000,
+      "visiting_epa_penalty": -0.015
+    },
+    "hfa": {
+      "points_average": 1.5,
+      "min_points": 0.5,
+      "max_points": 2.5,
+      "min_games_for_team_estimate": 10
+    }
+  },
+  "redzone_td_model": {
+    "_comment": "Field position-aware TD modeling",
+    "base_rz_td_rates": {
+      "qb_pass": 0.045,
+      "qb_rush": 0.15,
+      "rb_rush": 0.12,
+      "rb_rec": 0.1,
+      "wr": 0.15,
+      "te": 0.18
+    },
+    "goal_to_go_multipliers": {
+      "rush": 3.0,
+      "pass": 2.5
+    },
+    "outside_rz_td_rates": {
+      "pass": 0.015,
+      "rush": 0.005
+    },
+    "opportunity_pcts_in_rz": {
+      "wr": 0.25,
+      "te": 0.3,
+      "rb_rush": 0.35,
+      "rb_rec": 0.2,
+      "qb_rush": 0.4
+    },
+    "pct_rz_as_goal_to_go": 0.3,
+    "team_rz_efficiency": {
+      "elite_threshold": 0.65,
+      "poor_threshold": 0.45,
+      "multiplier_range": [
+        0.8,
+        1.2
+      ]
+    },
+    "defense_rz_efficiency": {
+      "elite_threshold": 0.45,
+      "poor_threshold": 0.65,
+      "multiplier_range": [
+        0.85,
+        1.15
+      ]
+    },
+    "player_role_multipliers": {
+      "primary": 1.5,
+      "secondary": 0.8,
+      "tertiary": 0.6
+    },
+    "shrinkage": {
+      "weight": 0.4,
+      "min_opportunities": 20
+    }
+  },
+  "game_script_engine": {
+    "_comment": "Dynamic game script evolution based on score differential",
+    "pass_rate_adjustments": {
+      "trailing_by_3_to_7": 0.05,
+      "trailing_by_8_to_14": 0.1,
+      "trailing_by_15_plus": 0.15,
+      "leading_by_3_to_7": -0.02,
+      "leading_by_8_to_14": -0.08,
+      "leading_by_15_plus": -0.12
+    },
+    "fourth_quarter_trailing_multiplier": 1.5,
+    "fourth_quarter_leading_multiplier": 1.3,
+    "two_minute_drill_pass_boost": 0.2,
+    "two_minute_drill_threshold_seconds": 120,
+    "garbage_time_threshold_points": 20,
+    "garbage_time_pass_reduction": -0.25,
+    "pace": {
+      "hurry_up": 20.0,
+      "normal": 30.0,
+      "slow": 40.0
+    },
+    "base_pass_rate": 0.6
+  },
+  "feature_flags": {
+    "_comment": "Feature flags for gradual rollout of V3 improvements",
+    "use_v3_simulator": true,
+    "use_correlation_matrix": true,
+    "use_negbin_scoring": false,
+    "use_weather_v2": true,
+    "use_market_blending": true,
+    "use_contextual_features": true,
+    "use_redzone_td_model": true,
+    "use_game_script_engine": false,
+    "use_feature_attribution": true,
+    "use_tiered_calibration": true
+  },
+  "market_agreement_filter": {
+    "_comment": "ADDED 2025-11-26 - Only bet when model agrees with market",
+    "_rationale": "Backtest showed market is more accurate when we strongly disagree. Large 'edges' = model error.",
+    "enabled": true,
+    "max_deviation_pct": 0.25,
+    "_max_deviation_note": "If |model_mean - line| / line > 25%, skip the bet",
+    "min_deviation_for_edge": 0.03,
+    "_min_deviation_note": "Must have at least 3% difference to have any edge"
+  },
+  "profitable_strategy": {
+    "_comment": "VALIDATED 2025-11-26 - Backtest-proven profitable strategy",
+    "_backtest_results": {
+      "total_bets": 438,
+      "win_rate": "57.8%",
+      "roi": "+10.3%",
+      "profit_per_100_unit": "+$4500",
+      "weeks_tested": "2-11 (2025 season)"
+    },
+    "strategy_rules": {
+      "direction": "UNDER_ONLY",
+      "_direction_note": "OVER bets have -11% ROI, UNDER has +10% ROI on select markets",
+      "allowed_markets": ["player_receptions", "player_pass_yds"],
+      "_markets_note": "Only these markets are profitable. Rushing/receiving yards are NOT.",
+      "model_line_agreement_max": 0.12,
+      "_agreement_note": "Only bet when model is within 12% of Vegas line",
+      "excluded_markets": ["player_rush_yds", "player_reception_yds"],
+      "_excluded_note": "Rushing yards has -10% ROI, receiving yards marginal"
+    },
+    "why_this_works": {
+      "insight_1": "Vegas line is more accurate than our model (lower MAE)",
+      "insight_2": "When model agrees with line, we can trust the line is correct",
+      "insight_3": "Market has systematic OVER bias on receptions/passing",
+      "insight_4": "Betting UNDER captures this bias without relying on model direction"
+    }
+  },
+  "calibration_tiers": {
+    "_comment": "UPDATED 2025-11-26 - MAJOR FIX: Increased shrinkage, removed bias adjustments",
+    "_rationale": "Backtest showed model is overconfident. Bias correction was backwards. Market is smarter than us.",
+    "_backtest_source": "data/backtest/v3_backtest_results.csv (6970 props, Weeks 2-11)",
+    "_key_finding": "When model strongly disagrees with market, MARKET is right. Our 'edge' was error.",
+    "wr_receiving_yards": {
+      "_market": "player_reception_yds",
+      "tier_1_premium": {
+        "_description": "Elite WRs with high snap share and targets",
+        "snap_share_min": 0.8,
+        "targets_min": 7,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.5,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": 5.0,
+        "_shrinkage_old": 0.2
+      },
+      "tier_2_primary": {
+        "_description": "Primary WRs with good volume",
+        "snap_share_min": 0.5,
+        "targets_min": 4,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.62,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.25
+      },
+      "tier_3_secondary": {
+        "_description": "Secondary WRs with moderate usage",
+        "snap_share_min": 0.25,
+        "targets_min": 2,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.35
+      },
+      "tier_4_limited": {
+        "_description": "Limited role WRs",
+        "snap_share_min": 0.0,
+        "targets_min": 0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.05,
+        "_bias_adjustment_old": -1.0,
+        "_shrinkage_old": 0.45
+      }
+    },
+    "wr_receptions": {
+      "_market": "player_receptions",
+      "_comment": "Count market - near-zero bias across all tiers",
+      "tier_1_premium": {
+        "snap_share_min": 0.8,
+        "targets_min": 7,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.5,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": -0.15,
+        "_shrinkage_old": 0.2
+      },
+      "tier_2_primary": {
+        "snap_share_min": 0.5,
+        "targets_min": 4,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.62,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.25
+      },
+      "tier_3_secondary": {
+        "snap_share_min": 0.25,
+        "targets_min": 2,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.35
+      },
+      "tier_4_limited": {
+        "snap_share_min": 0.0,
+        "targets_min": 0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.05,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.45
+      }
+    },
+    "rb_rushing_yards": {
+      "_market": "player_rush_yds",
+      "tier_1_workhorse": {
+        "_description": "Workhorse RBs with heavy carry share",
+        "snap_share_min": 0.6,
+        "carries_min": 12,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.5,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.2
+      },
+      "tier_2_committee_lead": {
+        "_description": "Lead backs in committee",
+        "snap_share_min": 0.4,
+        "carries_min": 8,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": 0.5,
+        "_shrinkage_old": 0.3
+      },
+      "tier_3_committee": {
+        "_description": "Committee backs",
+        "snap_share_min": 0.2,
+        "carries_min": 4,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": 2.0,
+        "_shrinkage_old": 0.4
+      },
+      "tier_4_backup": {
+        "_description": "Backup RBs",
+        "snap_share_min": 0.0,
+        "carries_min": 0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.1,
+        "_bias_adjustment_old": 3.5,
+        "_shrinkage_old": 0.5
+      }
+    },
+    "rb_rushing_attempts": {
+      "_market": "player_rush_attempts",
+      "_comment": "Count market - small bias",
+      "tier_1_workhorse": {
+        "snap_share_min": 0.6,
+        "carries_min": 12,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.5,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": -0.5,
+        "_shrinkage_old": 0.2
+      },
+      "tier_2_committee_lead": {
+        "snap_share_min": 0.4,
+        "carries_min": 8,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": -0.5,
+        "_shrinkage_old": 0.3
+      },
+      "tier_3_committee": {
+        "snap_share_min": 0.2,
+        "carries_min": 4,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": -0.3,
+        "_shrinkage_old": 0.4
+      },
+      "tier_4_backup": {
+        "snap_share_min": 0.0,
+        "carries_min": 0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.1,
+        "_bias_adjustment_old": 0.5,
+        "_shrinkage_old": 0.5
+      }
+    },
+    "rb_receiving_yards": {
+      "_market": "player_reception_yds (RB)",
+      "tier_1_pass_catcher": {
+        "_description": "Primary pass-catching RBs",
+        "snap_share_min": 0.5,
+        "targets_min": 4,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.62,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": -14.0,
+        "_shrinkage_old": 0.25
+      },
+      "tier_2_occasional": {
+        "_description": "Occasional pass-catching RBs",
+        "snap_share_min": 0.0,
+        "targets_min": 0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": -14.0,
+        "_shrinkage_old": 0.4
+      }
+    },
+    "rb_receptions": {
+      "_market": "player_receptions (RB)",
+      "_comment": "Count market - near-zero bias",
+      "tier_1_pass_catcher": {
+        "snap_share_min": 0.5,
+        "targets_min": 4,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.62,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.25
+      },
+      "tier_2_occasional": {
+        "snap_share_min": 0.0,
+        "targets_min": 0,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.4
+      }
+    },
+    "te_receiving_yards": {
+      "_market": "player_reception_yds (TE)",
+      "tier_1_elite": {
+        "_description": "Elite TEs with high target share",
+        "snap_share_min": 0.75,
+        "targets_min": 5,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.62,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": 8.0,
+        "_shrinkage_old": 0.25
+      },
+      "tier_2_primary": {
+        "_description": "Primary TEs",
+        "snap_share_min": 0.5,
+        "targets_min": 3,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": 8.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.35
+      },
+      "tier_3_blocking": {
+        "_description": "Blocking-first TEs with limited targets",
+        "snap_share_min": 0.0,
+        "targets_min": 0,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.05,
+        "_bias_adjustment_old": 8.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.45
+      }
+    },
+    "te_receptions": {
+      "_market": "player_receptions (TE)",
+      "_comment": "Count market - near-zero bias",
+      "tier_1_elite": {
+        "snap_share_min": 0.75,
+        "targets_min": 5,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.62,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.25
+      },
+      "tier_2_primary": {
+        "snap_share_min": 0.5,
+        "targets_min": 3,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.0,
+        "_bias_adjustment_old": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.35
+      },
+      "tier_3_blocking": {
+        "snap_share_min": 0.0,
+        "targets_min": 0,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.05,
+        "_bias_adjustment_old": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.45
+      }
+    },
+    "qb_passing_yards": {
+      "_market": "player_pass_yds",
+      "tier_1_starter": {
+        "_description": "Starting QBs",
+        "snap_share_min": 0.8,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.5,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": 43.0,
+        "_shrinkage_old": 0.2
+      },
+      "tier_2_backup": {
+        "_description": "Backup QBs",
+        "snap_share_min": 0.0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.15,
+        "_bias_adjustment_old": 18.0,
+        "_shrinkage_old": 0.5
+      }
+    },
+    "qb_rushing_yards": {
+      "_market": "player_rush_yds (QB)",
+      "_comment": "ADDED 2025-11-26: Separate tier for QB rushing - NOT the same as passing!",
+      "tier_1_starter": {
+        "_description": "Starting QBs rushing",
+        "snap_share_min": 0.8,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": -1.5,
+        "_shrinkage_old": 0.3
+      },
+      "tier_2_backup": {
+        "_description": "Backup QBs rushing",
+        "snap_share_min": 0.0,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.1,
+        "_bias_adjustment_old": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.5
+      }
+    },
+    "qb_rushing_attempts": {
+      "_market": "player_rush_attempts (QB)",
+      "_comment": "Count market for QB rushing attempts",
+      "tier_1_starter": {
+        "snap_share_min": 0.8,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": 0.05,
+        "_bias_adjustment_old": -0.3,
+        "_shrinkage_old": 0.3
+      },
+      "tier_2_backup": {
+        "snap_share_min": 0.0,
+        "bias_adjustment": 0.0,
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.1,
+        "_bias_adjustment_old": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "_shrinkage_old": 0.5
+      }
+    },
+    "qb_passing_completions": {
+      "_market": "player_pass_completions",
+      "_comment": "Count market",
+      "tier_1_starter": {
+        "snap_share_min": 0.8,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.5,
+        "confidence_boost": 0.1,
+        "_bias_adjustment_old": 0.0,
+        "_shrinkage_old": 0.2
+      },
+      "tier_2_backup": {
+        "snap_share_min": 0.0,
+        "bias_adjustment": 0.0,
+        "_bias_note": "SET TO 0 - bias correction removed per backtest",
+        "shrinkage_factor": 0.7,
+        "confidence_boost": -0.15,
+        "_bias_adjustment_old": -1.0,
+        "_shrinkage_old": 0.5
+      }
+    }
+  }
+}

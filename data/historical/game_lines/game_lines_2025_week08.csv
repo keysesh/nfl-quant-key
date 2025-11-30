@@ -1,0 +1,7 @@
+game_id,away_team,home_team,commence_time,sportsbook,market,side,point,price,week,season,archived_at
+2025_08_WAS_KC,WAS,KC,2025-10-28T00:15:00Z,draftkings,spread,home,-10.5,-115,8,2025,2025-11-17T17:23:50.957618
+2025_08_WAS_KC,WAS,KC,2025-10-28T00:15:00Z,draftkings,spread,away,10.5,-105,8,2025,2025-11-17T17:23:50.957618
+2025_08_WAS_KC,WAS,KC,2025-10-28T00:15:00Z,draftkings,total,over,48.5,-105,8,2025,2025-11-17T17:23:50.957618
+2025_08_WAS_KC,WAS,KC,2025-10-28T00:15:00Z,draftkings,total,under,48.5,-115,8,2025,2025-11-17T17:23:50.957618
+2025_08_WAS_KC,WAS,KC,2025-10-28T00:15:00Z,draftkings,moneyline,home,,-700,8,2025,2025-11-17T17:23:50.957618
+2025_08_WAS_KC,WAS,KC,2025-10-28T00:15:00Z,draftkings,moneyline,away,,500,8,2025,2025-11-17T17:23:50.957618

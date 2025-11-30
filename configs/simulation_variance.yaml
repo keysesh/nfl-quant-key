@@ -1,0 +1,106 @@
+# Simulation Variance Configuration
+# Controls the width of predicted distributions via gamma distribution alpha parameters
+#
+# Gamma Distribution Refresher:
+#   - Lower alpha = Higher variance (wider distributions)
+#   - Higher alpha = Lower variance (narrow distributions)
+#   - Variance = mean^2 / alpha
+#
+# Coverage Relationship:
+#   - If coverage is too low (e.g., 35%), alpha is too HIGH (distributions too narrow)
+#   - If coverage is too high (e.g., 95%), alpha is too LOW (distributions too wide)
+#
+# Based on V3 Backtest Results (Weeks 1-8):
+#   - Rushing yards: 35.4% coverage → need ~6x more variance → reduce alpha by ~6x
+#   - Passing yards: 11.0% coverage → need ~67x more variance → reduce alpha by ~8x
+#   - Receiving yards: 75.7% coverage → good, minor adjustment
+
+player_simulation_variance:
+  # QB Passing (CRITICAL FIX NEEDED)
+  # Current: alpha=5.0 → Coverage 11.0%
+  # Target: alpha=0.6 → Coverage ~90%
+  # Calculation: To increase variance 67x, reduce alpha by ~8x
+  qb_passing_alpha: 0.6  # Was 5.0 (default), reduced by 8.3x
+  qb_passing_min_std_pct: 0.25  # Minimum std = 25% of mean (e.g., 250 yards → std ≥ 62.5)
+
+  # RB Rushing (FIX NEEDED)
+  # Current: alpha=1.5 → Coverage 35.4%
+  # Target: alpha=0.25 → Coverage ~90%
+  # Calculation: To increase variance 6.5x, reduce alpha by ~6x
+  rb_rushing_alpha: 0.25  # Was 1.5 (default), reduced by 6x
+  rb_rushing_min_std_pct: 0.20  # Minimum std = 20% of mean
+
+  # RB Receiving (GOOD - Minor Adjustment)
+  # Current: alpha=1.5 → Coverage ~75%
+  # Target: alpha=1.0 → Coverage ~85%
+  rb_receiving_alpha: 1.0  # Was 1.5, reduced slightly
+
+  # WR/TE Receiving (EXCELLENT - Keep As Is)
+  # Current: alpha=3.0 → Coverage 75.7%
+  # Target: alpha=2.0 → Coverage ~85%
+  wr_receiving_alpha: 2.0  # Was 3.0, reduced slightly
+  te_receiving_alpha: 2.0  # Same as WR
+
+  # QB Rushing (Secondary Fix)
+  # QBs have high rushing variance (Lamar 150 vs backup 5)
+  qb_rushing_alpha: 0.5  # Low alpha for high variance
+  qb_rushing_min_std_pct: 0.30  # High variance floor
+
+# Minimum Variance Floors (as percentage of mean)
+# These ensure distributions never get unrealistically narrow
+minimum_variance_floors:
+  passing_yards: 0.25  # std ≥ 25% of mean
+  rushing_yards: 0.20  # std ≥ 20% of mean
+  receiving_yards: 0.18  # std ≥ 18% of mean
+  receptions: 0.15  # std ≥ 15% of mean
+
+# Position-Specific Adjustments
+position_variance_multipliers:
+  # QBs have higher game-to-game variance (game script dependent)
+  QB:
+    passing_yards: 1.0  # Already accounted for in alpha
+    rushing_yards: 1.2  # Extra variance for QB rushing
+
+  # RBs have moderate variance (usage share dependent)
+  RB:
+    rushing_yards: 1.0
+    receiving_yards: 1.0
+
+  # WRs have high variance (target volatility)
+  WR:
+    receiving_yards: 1.0
+
+  # TEs have moderate-high variance
+  TE:
+    receiving_yards: 1.0
+
+# Environmental Variance Multipliers
+# Applied when weather/defense creates extra uncertainty
+environmental_variance:
+  # Wind impact on passing (applied when wind > 15 MPH)
+  wind_passing_multiplier: 1.5  # 50% more variance in windy conditions
+
+  # Rain/snow impact
+  precipitation_multiplier: 1.3  # 30% more variance in wet conditions
+
+  # Elite defense variance (top 5 defenses may reduce mean but increase variance)
+  elite_defense_multiplier: 1.2  # 20% more variance vs elite defenses
+
+# Backtest Validation Targets
+# These are the coverage % we aim for after fixes
+validation_targets:
+  coverage_90_min: 85.0  # Minimum 85% coverage
+  coverage_90_max: 95.0  # Maximum 95% coverage (don't want overconfident either)
+  coverage_90_ideal: 90.0  # Ideal target
+
+  # CRPS targets (lower is better)
+  crps_passing_yards: 25.0  # Under 25 is good
+  crps_rushing_yards: 15.0  # Under 15 is excellent
+  crps_receiving_yards: 15.0  # Under 15 is excellent
+
+# Notes on Alpha Selection:
+# - These values are empirically derived from weeks 1-8 backtest
+# - They should be validated on week 9 holdout before production use
+# - If future backtests show drift, retune these parameters
+# - Never set alpha < 0.1 (too much variance, unrealistic)
+# - Never set alpha > 10 (too little variance, overconfident)

@@ -1,0 +1,17 @@
+[
+  {
+    "player": "RJ Harvey",
+    "team": "DEN",
+    "position": "RB",
+    "change_type": "BACKUP_TO_STARTER",
+    "injured_player": "JK Dobbins",
+    "stat_type": "rushing_yards",
+    "inherited_volume": 15.3,
+    "volume_absorption_rate": 0.85,
+    "player_ypc": 4.28,
+    "confidence": "HIGH",
+    "reason": "JK Dobbins to IR - RJ Harvey becomes RB1 for Denver",
+    "apply_to_all_stats": true,
+    "created_date": "2025-11-15T00:00:00"
+  }
+]

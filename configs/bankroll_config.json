@@ -1,0 +1,10 @@
+{
+  "_comment": "Actual bankroll configuration",
+  "total_bankroll": 50.0,
+  "kelly_fraction": 0.25,
+  "max_bet_pct": 3.0,
+  "min_bet_amount": 1.0,
+  "game_bets_allocation": 0.7,
+  "prop_bets_allocation": 0.3,
+  "notes": "Bankroll: $50. Kelly fraction 0.25 = quarter-Kelly (conservative). Max bet 3% of bankroll per game = $1.50."
+}

@@ -1,0 +1,102 @@
+{
+    "description": "Market-specific bias correction factors - UPDATED 2025-11-26 based on backtest",
+    "last_updated": "2025-11-26",
+    "methodology": "CORRECTED: Previous factors were BACKWARDS. Model under-predicts, so factors should be >= 1.0",
+    "backtest_findings": {
+        "note": "Backtest on Weeks 2-11 (6970 props) showed model UNDER-predicts, not over-predicts",
+        "raw_model_bias": {
+            "passing_yards": "-20% (model predicts too LOW)",
+            "receiving_yards": "-4% (model predicts too LOW)",
+            "receptions": "+2% (nearly correct)",
+            "rushing_yards": "-5% (model predicts too LOW)"
+        },
+        "recommendation": "Set factors to 1.0 to use raw model predictions, which are more accurate"
+    },
+    "corrections": {
+        "passing_yards": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 299,
+            "_note": "CHANGED from 0.866. Raw predictions are better than 'corrected' ones."
+        },
+        "receiving_yards": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 1355,
+            "_note": "CHANGED from 0.863"
+        },
+        "receptions": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 512,
+            "_note": "CHANGED from 0.858"
+        },
+        "rushing_yards": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 685,
+            "_note": "CHANGED from 0.905"
+        },
+        "rushing_attempts": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 200,
+            "_note": "CHANGED from 0.95"
+        },
+        "passing_tds": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 150,
+            "_note": "CHANGED from 0.90"
+        },
+        "passing_completions": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 100,
+            "_note": "CHANGED from 0.87"
+        },
+        "passing_attempts": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 100,
+            "_note": "CHANGED from 0.92"
+        },
+        "targets": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 500,
+            "_note": "CHANGED from 0.87"
+        },
+        "receiving_tds": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 200,
+            "_note": "CHANGED from 0.85"
+        },
+        "rushing_tds": {
+            "factor": 1.0,
+            "bias_pct": 0,
+            "sample_size": 150,
+            "_note": "CHANGED from 0.88"
+        }
+    },
+    "market_mapping": {
+        "player_pass_yds": "passing_yards",
+        "player_reception_yds": "receiving_yards",
+        "player_receptions": "receptions",
+        "player_rush_yds": "rushing_yards",
+        "player_rush_attempts": "rushing_attempts",
+        "player_pass_tds": "passing_tds",
+        "player_pass_completions": "passing_completions",
+        "player_pass_attempts": "passing_attempts",
+        "player_rush_reception_yds": "combined_yards",
+        "player_anytime_td": "anytime_td",
+        "player_1st_td": "first_td",
+        "player_targets": "targets"
+    },
+    "combined_yards": {
+        "description": "For rush+rec yards, apply weighted average of rush and rec corrections",
+        "rush_weight": 0.5,
+        "rec_weight": 0.5
+    }
+}

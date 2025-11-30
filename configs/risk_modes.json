@@ -1,0 +1,45 @@
+{
+  "modes": {
+    "conservative": {
+      "name": "Conservative",
+      "description": "Highest confidence, strictest filters - for risk-averse bettors",
+      "min_confidence": 0.90,
+      "min_edge": 0.08,
+      "max_bet_size_pct": 0.005,
+      "kelly_fraction": 0.125,
+      "max_parlay_legs": 2,
+      "max_exposure_per_pick_pct": 0.01,
+      "max_exposure_per_parlay_pct": 0.015,
+      "correlation_threshold": 0.50,
+      "require_calibration_quality": true
+    },
+    "balanced": {
+      "name": "Balanced",
+      "description": "Moderate risk with good edge requirements - recommended default",
+      "min_confidence": 0.75,
+      "min_edge": 0.05,
+      "max_bet_size_pct": 0.01,
+      "kelly_fraction": 0.25,
+      "max_parlay_legs": 3,
+      "max_exposure_per_pick_pct": 0.02,
+      "max_exposure_per_parlay_pct": 0.03,
+      "correlation_threshold": 0.65,
+      "require_calibration_quality": false
+    },
+    "aggressive": {
+      "name": "Aggressive",
+      "description": "Maximum opportunities - shows all valid picks ranked by EV",
+      "min_confidence": 0.51,
+      "min_edge": 0.0,
+      "max_bet_size_pct": 0.02,
+      "kelly_fraction": 0.5,
+      "max_parlay_legs": 4,
+      "max_exposure_per_pick_pct": 0.03,
+      "max_exposure_per_parlay_pct": 0.05,
+      "correlation_threshold": 0.75,
+      "require_calibration_quality": false
+    }
+  },
+  "default_mode": "balanced",
+  "description": "Risk mode configurations for NFL Quant betting recommendations. Conservative mode shows only the highest confidence picks with strict edge requirements. Balanced mode provides moderate risk with good edge opportunities. Aggressive mode shows all statistically valid picks ranked by expected value, allowing users to choose their own risk tolerance."
+}

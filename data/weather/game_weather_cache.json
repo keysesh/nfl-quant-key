@@ -1,0 +1,134 @@
+{
+  "2025_11_BUF_KC": {
+    "temperature": 47.1,
+    "wind_speed": 12.0,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_13_GB_MIN": {
+    "temperature": 27.8,
+    "wind_speed": 13.9,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Cold",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_DEN_KC": {
+    "temperature": 43.7,
+    "wind_speed": 10.8,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_12_GB_MIN": {
+    "temperature": 40.5,
+    "wind_speed": 13.4,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_MIA_WAS": {
+    "temperature": 62.4,
+    "wind_speed": 13.0,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_BUF_TB": {
+    "temperature": 47.6,
+    "wind_speed": 13.3,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_PIT_CIN": {
+    "temperature": 35.8,
+    "wind_speed": 7.1,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_NYG_GB": {
+    "temperature": 54.0,
+    "wind_speed": 7.6,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_TEN_HOU": {
+    "temperature": 65.5,
+    "wind_speed": 9.3,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_JAX_LAC": {
+    "temperature": 68.4,
+    "wind_speed": 9.4,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_CLE_BAL": {
+    "temperature": 48.6,
+    "wind_speed": 12.7,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  },
+  "2025_11_PHI_DET": {
+    "temperature": 51.2,
+    "wind_speed": 9.6,
+    "wind_direction": 0,
+    "humidity": 50.0,
+    "precipitation": 0.0,
+    "is_dome": false,
+    "roof_type": "outdoor",
+    "conditions": "Clear",
+    "source": "seasonal_forecast"
+  }
+}

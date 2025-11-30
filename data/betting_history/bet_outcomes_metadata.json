@@ -1,0 +1,8 @@
+{
+  "created_date": "2025-11-02T15:58:43.105898",
+  "total_records": 13773,
+  "sources": [
+    "       week        player position  ... prediction_correct profit   result\n0         4      B.Thomas       WR  ...               True  0.909  unknown\n1         5  X.Hutchinson       WR  ...               True  0.909  unknown\n2         5   E.Demercado       RB  ...               True  0.909  unknown\n3         5        J.Hill       TE  ...               True  0.909  unknown\n4         5        J.Hill       TE  ...               True  0.909  unknown\n...     ...           ...      ...  ...                ...    ...      ...\n13910     7       R.Doubs       WR  ...               True  0.909  unknown\n13911     6    C.Skattebo       RB  ...              False -1.000  unknown\n13912     6  P.Washington       WR  ...               True  0.909  unknown\n13913     7       T.Kraft       TE  ...               True  0.909  unknown\n13914     6    B.Mayfield       QB  ...               True  0.909  unknown\n\n[13915 rows x 17 columns]"
+  ],
+  "weeks_covered": [
+    

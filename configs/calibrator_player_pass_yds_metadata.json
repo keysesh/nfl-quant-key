@@ -1,0 +1,16 @@
+{
+  "market": "player_pass_yds",
+  "stat_type": "passing_yards",
+  "training_samples": 298,
+  "trained_date": "2025-11-15T22:39:40.177791",
+  "brier_improvement": 0.03992979101119637,
+  "mace_improvement": 0.019734104038380662,
+  "win_rate": 0.3926174496644295,
+  "avg_predicted_prob": 0.4992060802852388,
+  "logic_version": "FIXED_V2_ADDITIVE_CAPPED",
+  "fixes_applied": [
+    "Capped multipliers (0.85-1.15 contextual, 0.90-1.10 player)",
+    "Additive adjustments instead of multiplicative stacking",
+    "Total contextual adjustment capped at \u00b125%"
+  ]
+}

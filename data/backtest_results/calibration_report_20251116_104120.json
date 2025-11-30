@@ -1,0 +1,1149 @@
+{
+  "timestamp": "20251116_104120",
+  "backtest_config": {
+    "start_week": 4,
+    "end_week": 18,
+    "min_edge": 0.0,
+    "total_predictions": 55226
+  },
+  "overall_calibration": {
+    "n_predictions": 55226,
+    "brier_score": 0.19215162591243257,
+    "expected_calibration_error": 0.09381142215623076,
+    "mean_absolute_error": 15.018187689340914,
+    "hit_rate": 0.3096186578785355,
+    "avg_predicted_prob": 0.37622546626588926,
+    "avg_edge": -0.12377453373411076,
+    "roi_percentage": 36.03128302547749,
+    "calibration_bins": {
+      "0.00-0.10": {
+        "predicted_prob": 0.034459658520254434,
+        "actual_hit_rate": 0.09499497823903583,
+        "count": 11948,
+        "bias": -0.06053531971878139
+      },
+      "0.10-0.20": {
+        "predicted_prob": 0.1481030534351145,
+        "actual_hit_rate": 0.1552671755725191,
+        "count": 6550,
+        "bias": -0.007164122137404583
+      },
+      "0.20-0.30": {
+        "predicted_prob": 0.25013848167539265,
+        "actual_hit_rate": 0.20844240837696335,
+        "count": 6112,
+        "bias": 0.04169607329842931
+      },
+      "0.30-0.40": {
+        "predicted_prob": 0.34877010554988086,
+        "actual_hit_rate": 0.27357848144365,
+        "count": 5874,
+        "bias": 0.07519162410623087
+      },
+      "0.40-0.50": {
+        "predicted_prob": 0.4495202414772727,
+        "actual_hit_rate": 0.3377130681818182,
+        "count": 5632,
+        "bias": 0.11180717329545453
+      },
+      "0.50-0.60": {
+        "predicted_prob": 0.5508251585623678,
+        "actual_hit_rate": 0.41261451726568005,
+        "count": 5676,
+        "bias": 0.13821064129668775
+      },
+      "0.60-0.70": {
+        "predicted_prob": 0.6480793644716693,
+        "actual_hit_rate": 0.5137825421133231,
+        "count": 5224,
+        "bias": 0.13429682235834617
+      },
+      "0.70-0.80": {
+        "predicted_prob": 0.7467562686973076,
+        "actual_hit_rate": 0.5953222735926027,
+        "count": 3677,
+        "bias": 0.1514339951047049
+      },
+      "0.80-0.90": {
+        "predicted_prob": 0.8459172283226051,
+        "actual_hit_rate": 0.6308216584627035,
+        "count": 2641,
+        "bias": 0.21509556985990153
+      },
+      "0.90-1.00": {
+        "predicted_prob": 0.9462930616740088,
+        "actual_hit_rate": 0.6855726872246696,
+        "count": 1816,
+        "bias": 0.26072037444933926
+      }
+    }
+  },
+  "by_position": {
+    "QB": {
+      "n_predictions": 2852,
+      "brier_score": 0.2933340433660589,
+      "expected_calibration_error": 0.1996263674614306,
+      "mean_absolute_error": 70.0212851019651,
+      "hit_rate": 0.37868162692847124,
+      "avg_predicted_prob": 0.46692847124824677,
+      "avg_edge": -0.03307152875175316,
+      "roi_percentage": 11.519826596965475,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.033579203539823015,
+          "actual_hit_rate": 0.23893805309734514,
+          "count": 452,
+          "bias": -0.20535884955752212
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14967407407407407,
+          "actual_hit_rate": 0.2895622895622896,
+          "count": 297,
+          "bias": -0.1398882154882155
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.2502989547038328,
+          "actual_hit_rate": 0.3554006968641115,
+          "count": 287,
+          "bias": -0.10510174216027873
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.34895,
+          "actual_hit_rate": 0.3964285714285714,
+          "count": 280,
+          "bias": -0.047478571428571426
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4514955631399318,
+          "actual_hit_rate": 0.35494880546075086,
+          "count": 293,
+          "bias": 0.09654675767918092
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.548456768558952,
+          "actual_hit_rate": 0.4366812227074236,
+          "count": 229,
+          "bias": 0.11177554585152838
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6452425339366518,
+          "actual_hit_rate": 0.46153846153846156,
+          "count": 221,
+          "bias": 0.1837040723981902
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7491295918367348,
+          "actual_hit_rate": 0.413265306122449,
+          "count": 196,
+          "bias": 0.3358642857142858
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8521497584541062,
+          "actual_hit_rate": 0.41545893719806765,
+          "count": 207,
+          "bias": 0.4366908212560386
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9643292993630573,
+          "actual_hit_rate": 0.5159235668789809,
+          "count": 314,
+          "bias": 0.44840573248407645
+        }
+      }
+    },
+    "RB": {
+      "n_predictions": 17578,
+      "brier_score": 0.16356721577881445,
+      "expected_calibration_error": 0.09601831835248607,
+      "mean_absolute_error": 13.181768417511948,
+      "hit_rate": 0.2397883718284219,
+      "avg_predicted_prob": 0.318115303219934,
+      "avg_edge": -0.181884696780066,
+      "roi_percentage": 45.174753565921904,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.0355929035049762,
+          "actual_hit_rate": 0.06923409779316313,
+          "count": 4622,
+          "bias": -0.033641194288186925
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.1476965964343598,
+          "actual_hit_rate": 0.1094003241491086,
+          "count": 2468,
+          "bias": 0.03829627228525122
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.24921175381767702,
+          "actual_hit_rate": 0.15409532623785285,
+          "count": 2161,
+          "bias": 0.09511642757982416
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.34789166666666665,
+          "actual_hit_rate": 0.22916666666666666,
+          "count": 1920,
+          "bias": 0.118725
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.44835571913929784,
+          "actual_hit_rate": 0.2995469988674972,
+          "count": 1766,
+          "bias": 0.14880872027180064
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5504431151241534,
+          "actual_hit_rate": 0.3893905191873589,
+          "count": 1772,
+          "bias": 0.16105259593679455
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6457931612002792,
+          "actual_hit_rate": 0.5484996510816469,
+          "count": 1433,
+          "bias": 0.0972935101186323
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7456449502133713,
+          "actual_hit_rate": 0.5675675675675675,
+          "count": 703,
+          "bias": 0.17807738264580375
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8450267716535432,
+          "actual_hit_rate": 0.5846456692913385,
+          "count": 508,
+          "bias": 0.2603811023622047
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9344071111111112,
+          "actual_hit_rate": 0.6711111111111111,
+          "count": 225,
+          "bias": 0.2632960000000001
+        }
+      }
+    },
+    "WR": {
+      "n_predictions": 24179,
+      "brier_score": 0.20450944957359696,
+      "expected_calibration_error": 0.09057892385954754,
+      "mean_absolute_error": 12.382140944606956,
+      "hit_rate": 0.36548244344265685,
+      "avg_predicted_prob": 0.422227445303776,
+      "avg_edge": -0.077772554696224,
+      "roi_percentage": 30.949471554954773,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.03455142520612485,
+          "actual_hit_rate": 0.10765606595995289,
+          "count": 4245,
+          "bias": -0.07310464075382804
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14827049521431543,
+          "actual_hit_rate": 0.18934665002080733,
+          "count": 2403,
+          "bias": -0.041076154806491905
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.250555347702318,
+          "actual_hit_rate": 0.24562830418869458,
+          "count": 2459,
+          "bias": 0.004927043513623441
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.34966538307260325,
+          "actual_hit_rate": 0.30244685118331327,
+          "count": 2493,
+          "bias": 0.04721853188928998
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4501457816873251,
+          "actual_hit_rate": 0.3634546181527389,
+          "count": 2501,
+          "bias": 0.08669116353458622
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5513267563527653,
+          "actual_hit_rate": 0.4263826606875934,
+          "count": 2676,
+          "bias": 0.1249440956651719
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6492873385012919,
+          "actual_hit_rate": 0.5042451088962717,
+          "count": 2709,
+          "bias": 0.14504222960502022
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7473130957889866,
+          "actual_hit_rate": 0.6251735307727904,
+          "count": 2161,
+          "bias": 0.12213956501619627
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.845088219544846,
+          "actual_hit_rate": 0.6860776439089692,
+          "count": 1494,
+          "bias": 0.15901057563587684
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.944750867052023,
+          "actual_hit_rate": 0.7466281310211946,
+          "count": 1038,
+          "bias": 0.19812273603082842
+        }
+      }
+    },
+    "TE": {
+      "n_predictions": 10617,
+      "brier_score": 0.18415357452764436,
+      "expected_calibration_error": 0.09508563624376001,
+      "mean_absolute_error": 9.286692764251695,
+      "hit_rate": 0.27945747386267306,
+      "avg_predicted_prob": 0.34330596213619663,
+      "avg_edge": -0.15669403786380334,
+      "roi_percentage": 39.05057925968375,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.032470521110688474,
+          "actual_hit_rate": 0.09509319132750095,
+          "count": 2629,
+          "bias": -0.06262267021681248
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14820014471780027,
+          "actual_hit_rate": 0.14905933429811866,
+          "count": 1382,
+          "bias": -0.0008591895803183869
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.25091153526970955,
+          "actual_hit_rate": 0.1950207468879668,
+          "count": 1205,
+          "bias": 0.055890788381742745
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.3482657070279424,
+          "actual_hit_rate": 0.2557154953429297,
+          "count": 1181,
+          "bias": 0.0925502116850127
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4494393656716418,
+          "actual_hit_rate": 0.3358208955223881,
+          "count": 1072,
+          "bias": 0.11361847014925369
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.550702102102102,
+          "actual_hit_rate": 0.4114114114114114,
+          "count": 999,
+          "bias": 0.1392906906906906
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6488118466898954,
+          "actual_hit_rate": 0.4994192799070848,
+          "count": 861,
+          "bias": 0.14939256678281065
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7453183144246354,
+          "actual_hit_rate": 0.580226904376013,
+          "count": 617,
+          "bias": 0.16509141004862238
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8468449074074074,
+          "actual_hit_rate": 0.5972222222222222,
+          "count": 432,
+          "bias": 0.24962268518518516
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.940484518828452,
+          "actual_hit_rate": 0.6569037656903766,
+          "count": 239,
+          "bias": 0.2835807531380754
+        }
+      }
+    }
+  },
+  "by_market": {
+    "receptions": {
+      "n_predictions": 13344,
+      "brier_score": 0.17724092467026378,
+      "expected_calibration_error": 0.09463117505995203,
+      "mean_absolute_error": 1.9663129500520327,
+      "hit_rate": 0.27697841726618705,
+      "avg_predicted_prob": 0.3469573441247002,
+      "avg_edge": -0.15304265587529975,
+      "roi_percentage": 40.94996729889586,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.033482816091954026,
+          "actual_hit_rate": 0.08074712643678161,
+          "count": 3480,
+          "bias": -0.04726431034482759
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14643423423423424,
+          "actual_hit_rate": 0.134009009009009,
+          "count": 1776,
+          "bias": 0.01242522522522524
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.24863935309973045,
+          "actual_hit_rate": 0.18598382749326145,
+          "count": 1484,
+          "bias": 0.062655525606469
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.34789403453689166,
+          "actual_hit_rate": 0.2692307692307692,
+          "count": 1274,
+          "bias": 0.07866326530612244
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.44901661290322575,
+          "actual_hit_rate": 0.33225806451612905,
+          "count": 1240,
+          "bias": 0.1167585483870967
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5507663732394367,
+          "actual_hit_rate": 0.397887323943662,
+          "count": 1136,
+          "bias": 0.15287904929577467
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6502787644787644,
+          "actual_hit_rate": 0.4826254826254826,
+          "count": 1036,
+          "bias": 0.16765328185328182
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7470360144057623,
+          "actual_hit_rate": 0.5918367346938775,
+          "count": 833,
+          "bias": 0.15519927971188474
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8465823717948717,
+          "actual_hit_rate": 0.6137820512820513,
+          "count": 624,
+          "bias": 0.2328003205128204
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9421370932754881,
+          "actual_hit_rate": 0.6898047722342733,
+          "count": 461,
+          "bias": 0.25233232104121484
+        }
+      }
+    },
+    "receiving_yards": {
+      "n_predictions": 14152,
+      "brier_score": 0.19380690523459584,
+      "expected_calibration_error": 0.09495048049745618,
+      "mean_absolute_error": 27.990052829771162,
+      "hit_rate": 0.3063171283210854,
+      "avg_predicted_prob": 0.3825855002826456,
+      "avg_edge": -0.11741449971735445,
+      "roi_percentage": 34.18405365127433,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.043596524761077324,
+          "actual_hit_rate": 0.0947002606429192,
+          "count": 2302,
+          "bias": -0.051103735881841875
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14926102620087334,
+          "actual_hit_rate": 0.1572052401746725,
+          "count": 1832,
+          "bias": -0.007944213973799158
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.2500006968641115,
+          "actual_hit_rate": 0.194541231126597,
+          "count": 1722,
+          "bias": 0.055459465737514535
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.3497636469900643,
+          "actual_hit_rate": 0.2472238457042665,
+          "count": 1711,
+          "bias": 0.10253980128579779
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.45024924924924925,
+          "actual_hit_rate": 0.32852852852852854,
+          "count": 1665,
+          "bias": 0.12172072072072071
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5508220216606498,
+          "actual_hit_rate": 0.4043321299638989,
+          "count": 1662,
+          "bias": 0.14648989169675086
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6491197994987468,
+          "actual_hit_rate": 0.5037593984962406,
+          "count": 1596,
+          "bias": 0.14536040100250613
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7419785571142284,
+          "actual_hit_rate": 0.6092184368737475,
+          "count": 998,
+          "bias": 0.1327601202404809
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8438768946395563,
+          "actual_hit_rate": 0.6635859519408502,
+          "count": 541,
+          "bias": 0.18029094269870605
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9222715447154473,
+          "actual_hit_rate": 0.6585365853658537,
+          "count": 123,
+          "bias": 0.26373495934959357
+        }
+      }
+    },
+    "rushing_yards": {
+      "n_predictions": 4646,
+      "brier_score": 0.1931477008523461,
+      "expected_calibration_error": 0.08056297890658631,
+      "mean_absolute_error": 33.02182098489297,
+      "hit_rate": 0.32931554024967713,
+      "avg_predicted_prob": 0.3877035729659922,
+      "avg_edge": -0.11229642703400775,
+      "roi_percentage": 33.71032755449319,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.03846923076923077,
+          "actual_hit_rate": 0.09557109557109557,
+          "count": 858,
+          "bias": -0.0571018648018648
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14892030360531308,
+          "actual_hit_rate": 0.15370018975332067,
+          "count": 527,
+          "bias": -0.004779886148007589
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.24971472275334605,
+          "actual_hit_rate": 0.21223709369024857,
+          "count": 523,
+          "bias": 0.037477629063097484
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.35075925155925153,
+          "actual_hit_rate": 0.2661122661122661,
+          "count": 481,
+          "bias": 0.0846469854469854
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.45018511066398387,
+          "actual_hit_rate": 0.36016096579476864,
+          "count": 497,
+          "bias": 0.09002414486921523
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.551219589257504,
+          "actual_hit_rate": 0.39968404423380727,
+          "count": 633,
+          "bias": 0.15153554502369676
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6455898132427843,
+          "actual_hit_rate": 0.5942275042444821,
+          "count": 589,
+          "bias": 0.051362308998302186
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7484370967741936,
+          "actual_hit_rate": 0.6209677419354839,
+          "count": 248,
+          "bias": 0.1274693548387097
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8452285714285713,
+          "actual_hit_rate": 0.6523809523809524,
+          "count": 210,
+          "bias": 0.19284761904761893
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9305050000000001,
+          "actual_hit_rate": 0.6875,
+          "count": 80,
+          "bias": 0.24300500000000014
+        }
+      }
+    },
+    "targets": {
+      "n_predictions": 14724,
+      "brier_score": 0.18803156465906,
+      "expected_calibration_error": 0.08913163542515623,
+      "mean_absolute_error": 2.517132409223779,
+      "hit_rate": 0.3249796251018745,
+      "avg_predicted_prob": 0.3753997690844879,
+      "avg_edge": -0.12460023091551208,
+      "roi_percentage": 37.969548788626675,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.029600817577925393,
+          "actual_hit_rate": 0.09683188553909045,
+          "count": 3914,
+          "bias": -0.06723106796116506
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14790836277974087,
+          "actual_hit_rate": 0.1607773851590106,
+          "count": 1698,
+          "bias": -0.012869022379269734
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.24922952243125907,
+          "actual_hit_rate": 0.22937771345875543,
+          "count": 1382,
+          "bias": 0.019851808972503632
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.34964916732751783,
+          "actual_hit_rate": 0.31245043616177637,
+          "count": 1261,
+          "bias": 0.03719873116574146
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.44907020746887966,
+          "actual_hit_rate": 0.3659751037344398,
+          "count": 1205,
+          "bias": 0.08309510373443985
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.550589683860233,
+          "actual_hit_rate": 0.4259567387687188,
+          "count": 1202,
+          "bias": 0.12463294509151418
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6506354561101549,
+          "actual_hit_rate": 0.5,
+          "count": 1162,
+          "bias": 0.15063545611015494
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7498689941812137,
+          "actual_hit_rate": 0.5935162094763092,
+          "count": 1203,
+          "bias": 0.15635278470490444
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8453457297297298,
+          "actual_hit_rate": 0.652972972972973,
+          "count": 925,
+          "bias": 0.1923727567567568
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9482168393782384,
+          "actual_hit_rate": 0.7383419689119171,
+          "count": 772,
+          "bias": 0.20987487046632136
+        }
+      }
+    },
+    "carries": {
+      "n_predictions": 3528,
+      "brier_score": 0.1605555935714286,
+      "expected_calibration_error": 0.04573679138321993,
+      "mean_absolute_error": 4.4469059038477585,
+      "hit_rate": 0.3268140589569161,
+      "avg_predicted_prob": 0.3456996031746032,
+      "avg_edge": -0.15430039682539684,
+      "roi_percentage": 46.7532467532452,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.032699150743099786,
+          "actual_hit_rate": 0.07112526539278131,
+          "count": 942,
+          "bias": -0.03842611464968153
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.1487595238095238,
+          "actual_hit_rate": 0.12142857142857143,
+          "count": 420,
+          "bias": 0.027330952380952386
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.2476189349112426,
+          "actual_hit_rate": 0.1834319526627219,
+          "count": 338,
+          "bias": 0.06418698224852071
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.3470128834355828,
+          "actual_hit_rate": 0.2883435582822086,
+          "count": 326,
+          "bias": 0.0586693251533742
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4502,
+          "actual_hit_rate": 0.3861111111111111,
+          "count": 360,
+          "bias": 0.06408888888888886
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5522498740554156,
+          "actual_hit_rate": 0.5264483627204031,
+          "count": 397,
+          "bias": 0.025801511335012517
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6498028901734104,
+          "actual_hit_rate": 0.6820809248554913,
+          "count": 346,
+          "bias": -0.0322780346820809
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7462964824120601,
+          "actual_hit_rate": 0.6984924623115578,
+          "count": 199,
+          "bias": 0.04780402010050233
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8464537313432836,
+          "actual_hit_rate": 0.7238805970149254,
+          "count": 134,
+          "bias": 0.12257313432835826
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9309151515151515,
+          "actual_hit_rate": 0.8939393939393939,
+          "count": 66,
+          "bias": 0.03697575757575755
+        }
+      }
+    },
+    "passing_yards": {
+      "n_predictions": 2122,
+      "brier_score": 0.3132158750801131,
+      "expected_calibration_error": 0.23317973609802076,
+      "mean_absolute_error": 93.73131987041091,
+      "hit_rate": 0.3887841658812441,
+      "avg_predicted_prob": 0.48333072573044294,
+      "avg_edge": -0.01666927426955702,
+      "roi_percentage": 7.420101105303598,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.03317319587628866,
+          "actual_hit_rate": 0.24742268041237114,
+          "count": 388,
+          "bias": -0.21424948453608247
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.14924190476190477,
+          "actual_hit_rate": 0.3380952380952381,
+          "count": 210,
+          "bias": -0.18885333333333335
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.24915744680851062,
+          "actual_hit_rate": 0.39893617021276595,
+          "count": 188,
+          "bias": -0.14977872340425533
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.34888208092485545,
+          "actual_hit_rate": 0.4277456647398844,
+          "count": 173,
+          "bias": -0.07886358381502895
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4502840236686391,
+          "actual_hit_rate": 0.3727810650887574,
+          "count": 169,
+          "bias": 0.07750295857988171
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5462953020134228,
+          "actual_hit_rate": 0.42953020134228187,
+          "count": 149,
+          "bias": 0.11676510067114093
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6455271523178808,
+          "actual_hit_rate": 0.41721854304635764,
+          "count": 151,
+          "bias": 0.2283086092715232
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7514993710691825,
+          "actual_hit_rate": 0.4088050314465409,
+          "count": 159,
+          "bias": 0.3426943396226416
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8542279069767442,
+          "actual_hit_rate": 0.4011627906976744,
+          "count": 172,
+          "bias": 0.4530651162790698
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9651760273972604,
+          "actual_hit_rate": 0.5102739726027398,
+          "count": 292,
+          "bias": 0.4549020547945206
+        }
+      }
+    },
+    "passing_tds": {
+      "n_predictions": 730,
+      "brier_score": 0.23554055446575342,
+      "expected_calibration_error": 0.1030490410958904,
+      "mean_absolute_error": 1.0997867750582422,
+      "hit_rate": 0.3493150684931507,
+      "avg_predicted_prob": 0.4192495890410958,
+      "avg_edge": -0.08075041095890412,
+      "roi_percentage": 23.437110834370973,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.036040625,
+          "actual_hit_rate": 0.1875,
+          "count": 64,
+          "bias": -0.151459375
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.15071724137931036,
+          "actual_hit_rate": 0.1724137931034483,
+          "count": 87,
+          "bias": -0.021696551724137925
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.2524666666666667,
+          "actual_hit_rate": 0.2727272727272727,
+          "count": 99,
+          "bias": -0.020260606060606035
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.3490598130841121,
+          "actual_hit_rate": 0.34579439252336447,
+          "count": 107,
+          "bias": 0.003265420560747634
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4531467741935484,
+          "actual_hit_rate": 0.33064516129032256,
+          "count": 124,
+          "bias": 0.12250161290322581
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5524825,
+          "actual_hit_rate": 0.45,
+          "count": 80,
+          "bias": 0.10248249999999998
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6446285714285714,
+          "actual_hit_rate": 0.5571428571428572,
+          "count": 70,
+          "bias": 0.08748571428571428
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.738945945945946,
+          "actual_hit_rate": 0.43243243243243246,
+          "count": 37,
+          "bias": 0.3065135135135135
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8419371428571428,
+          "actual_hit_rate": 0.4857142857142857,
+          "count": 35,
+          "bias": 0.3562228571428571
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9530909090909091,
+          "actual_hit_rate": 0.5909090909090909,
+          "count": 22,
+          "bias": 0.36218181818181816
+        }
+      }
+    },
+    "rushing_tds": {
+      "n_predictions": 542,
+      "brier_score": 0.2233836512915129,
+      "expected_calibration_error": 0.1410033210332103,
+      "mean_absolute_error": 0.6623643036174199,
+      "hit_rate": 0.3191881918819188,
+      "avg_predicted_prob": 0.46019151291512916,
+      "avg_edge": -0.03980848708487085,
+      "roi_percentage": 21.51962428715187,
+      "calibration_bins": {
+        "0.20-0.30": {
+          "predicted_prob": 0.2642444444444444,
+          "actual_hit_rate": 0.1111111111111111,
+          "count": 72,
+          "bias": 0.1531333333333333
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.3487586206896552,
+          "actual_hit_rate": 0.2672413793103448,
+          "count": 116,
+          "bias": 0.08151724137931038
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.4447315789473684,
+          "actual_hit_rate": 0.22807017543859648,
+          "count": 114,
+          "bias": 0.21666140350877194
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.548469014084507,
+          "actual_hit_rate": 0.4154929577464789,
+          "count": 142,
+          "bias": 0.13297605633802811
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6261244897959184,
+          "actual_hit_rate": 0.5,
+          "count": 98,
+          "bias": 0.1261244897959184
+        }
+      }
+    },
+    "receiving_tds": {
+      "n_predictions": 1438,
+      "brier_score": 0.2182640681223922,
+      "expected_calibration_error": 0.17864381084840056,
+      "mean_absolute_error": 0.5637671750778198,
+      "hit_rate": 0.24130737134909597,
+      "avg_predicted_prob": 0.41995118219749655,
+      "avg_edge": -0.08004881780250347,
+      "roi_percentage": 23.997976988241305,
+      "calibration_bins": {
+        "0.20-0.30": {
+          "predicted_prob": 0.26240723684210526,
+          "actual_hit_rate": 0.20723684210526316,
+          "count": 304,
+          "bias": 0.0551703947368421
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.3437694117647059,
+          "actual_hit_rate": 0.1952941176470588,
+          "count": 425,
+          "bias": 0.14847529411764707
+        },
+        "0.40-0.50": {
+          "predicted_prob": 0.44698139534883724,
+          "actual_hit_rate": 0.20930232558139536,
+          "count": 258,
+          "bias": 0.23767906976744188
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5523403636363636,
+          "actual_hit_rate": 0.3090909090909091,
+          "count": 275,
+          "bias": 0.24324945454545455
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6295522727272728,
+          "actual_hit_rate": 0.3522727272727273,
+          "count": 176,
+          "bias": 0.2772795454545455
+        }
+      }
+    }
+  },
+  "by_edge_tier": {
+    "low_edge (0-5%)": {
+      "n_predictions": 5578,
+      "brier_score": 0.24958211825743992,
+      "expected_calibration_error": 0.13413069200430253,
+      "mean_absolute_error": 15.727252277408551,
+      "hit_rate": 0.36590175690211546,
+      "avg_predicted_prob": 0.5000324489064181,
+      "avg_edge": 3.2448906418070726e-05,
+      "roi_percentage": -2.0812282017015713,
+      "calibration_bins": {
+        "0.40-0.50": {
+          "predicted_prob": 0.47450071736011473,
+          "actual_hit_rate": 0.35401721664275465,
+          "count": 2788,
+          "bias": 0.12048350071736008
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5255458781362006,
+          "actual_hit_rate": 0.37777777777777777,
+          "count": 2790,
+          "bias": 0.1477681003584228
+        }
+      }
+    },
+    "medium_edge (5-10%)": {
+      "n_predictions": 5730,
+      "brier_score": 0.24640567696335078,
+      "expected_calibration_error": 0.1162304712041885,
+      "mean_absolute_error": 15.909645687543273,
+      "hit_rate": 0.3844677137870855,
+      "avg_predicted_prob": 0.500698184991274,
+      "avg_edge": 0.0006981849912739961,
+      "roi_percentage": 7.182294145644639,
+      "calibration_bins": {
+        "0.40-0.50": {
+          "predicted_prob": 0.42503164556962025,
+          "actual_hit_rate": 0.3217299578059072,
+          "count": 2844,
+          "bias": 0.10330168776371307
+        },
+        "0.50-0.60": {
+          "predicted_prob": 0.5752635481635482,
+          "actual_hit_rate": 0.4462924462924463,
+          "count": 2886,
+          "bias": 0.1289711018711019
+        }
+      }
+    },
+    "high_edge (10-15%)": {
+      "n_predictions": 5555,
+      "brier_score": 0.2384960157119712,
+      "expected_calibration_error": 0.11329814581458147,
+      "mean_absolute_error": 17.22078779602436,
+      "hit_rate": 0.3854185418541854,
+      "avg_predicted_prob": 0.49871668766876687,
+      "avg_edge": -0.0012833123312331234,
+      "roi_percentage": 15.817036249078587,
+      "calibration_bins": {
+        "0.30-0.40": {
+          "predicted_prob": 0.37509432750624333,
+          "actual_hit_rate": 0.28077060292543704,
+          "count": 2803,
+          "bias": 0.09432372458080629
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.6246300145348838,
+          "actual_hit_rate": 0.49200581395348836,
+          "count": 2752,
+          "bias": 0.1326242005813954
+        }
+      }
+    },
+    "very_high_edge (15%+)": {
+      "n_predictions": 38363,
+      "brier_score": 0.1689869598498553,
+      "expected_calibration_error": 0.08177871386492193,
+      "mean_absolute_error": 14.463000133764776,
+      "hit_rate": 0.27927951411516305,
+      "avg_predicted_prob": 0.3218954409196361,
+      "avg_edge": -0.17810455908036388,
+      "roi_percentage": 48.80886649781057,
+      "calibration_bins": {
+        "0.00-0.10": {
+          "predicted_prob": 0.034459658520254434,
+          "actual_hit_rate": 0.09499497823903583,
+          "count": 11948,
+          "bias": -0.06053531971878139
+        },
+        "0.10-0.20": {
+          "predicted_prob": 0.1481030534351145,
+          "actual_hit_rate": 0.1552671755725191,
+          "count": 6550,
+          "bias": -0.007164122137404583
+        },
+        "0.20-0.30": {
+          "predicted_prob": 0.25013848167539265,
+          "actual_hit_rate": 0.20844240837696335,
+          "count": 6112,
+          "bias": 0.04169607329842931
+        },
+        "0.30-0.40": {
+          "predicted_prob": 0.32474314555519374,
+          "actual_hit_rate": 0.267014001953761,
+          "count": 3071,
+          "bias": 0.05772914360143272
+        },
+        "0.60-0.70": {
+          "predicted_prob": 0.674184789644013,
+          "actual_hit_rate": 0.5380258899676376,
+          "count": 2472,
+          "bias": 0.1361588996763754
+        },
+        "0.70-0.80": {
+          "predicted_prob": 0.7467562686973076,
+          "actual_hit_rate": 0.5953222735926027,
+          "count": 3677,
+          "bias": 0.1514339951047049
+        },
+        "0.80-0.90": {
+          "predicted_prob": 0.8459172283226051,
+          "actual_hit_rate": 0.6308216584627035,
+          "count": 2641,
+          "bias": 0.21509556985990153
+        },
+        "0.90-1.00": {
+          "predicted_prob": 0.9462930616740088,
+          "actual_hit_rate": 0.6855726872246696,
+          "count": 1816,
+          "bias": 0.26072037444933926
+        }
+      }
+    }
+  },
+  "bias_corrections": {
+    "position_QB": {
+      "probability_adjustment": 0.08824684431977553,
+      "variance_scale": 1.0
+    },
+    "position_RB": {
+      "probability_adjustment": 0.07832693139151209,
+      "variance_scale": 1.0
+    },
+    "position_WR": {
+      "probability_adjustment": 0.05674500186111914,
+      "variance_scale": 1.0
+    },
+    "position_TE": {
+      "probability_adjustment": 0.06384848827352357,
+      "variance_scale": 1.0
+    },
+    "market_receptions": {
+      "probability_adjustment": 0.06997892685851315,
+      "mae": 1.9663129500520327
+    },
+    "market_receiving_yards": {
+      "probability_adjustment": 0.07626837196156022,
+      "mae": 27.990052829771162
+    },
+    "market_rushing_yards": {
+      "probability_adjustment": 0.0583880327163151,
+      "mae": 33.02182098489297
+    },
+    "market_targets": {
+      "probability_adjustment": 0.05042014398261341,
+      "mae": 2.517132409223779
+    },
+    "market_carries": {
+      "probability_adjustment": 0.018885544217687067,
+      "mae": 4.4469059038477585
+    },
+    "market_passing_yards": {
+      "probability_adjustment": 0.09454655984919885,
+      "mae": 93.73131987041091
+    },
+    "market_passing_tds": {
+      "probability_adjustment": 0.06993452054794513,
+      "mae": 1.0997867750582422
+    },
+    "market_rushing_tds": {
+      "probability_adjustment": 0.14100332103321034,
+      "mae": 0.6623643036174199
+    },
+    "market_receiving_tds": {
+      "probability_adjustment": 0.17864381084840059,
+      "mae": 0.5637671750778198
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "_comment": "Data validation bounds and thresholds for quality checks",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-02",
+
+  "min_thresholds": {
+    "targets": 3,
+    "carries": 3,
+    "attempts": 3,
+    "snaps": 5,
+    "_note": "Minimum activity to be considered meaningful"
+  },
+
+  "validation_bounds": {
+    "yards_per_carry": [-5, 15],
+    "yards_per_target": [0, 25],
+    "yards_per_completion": [0, 30],
+    "completion_rate": [0, 1],
+    "catch_rate": [0, 1],
+    "target_share": [0, 1],
+    "carry_share": [0, 1],
+    "snap_share": [0, 1],
+    "td_rate_max": 0.15,
+    "_note": "Reasonable ranges for metrics; flag outliers"
+  },
+
+  "activity_thresholds": {
+    "high_snap_share": 0.3,
+    "starter_snap_share": 0.50,
+    "full_time_starter": 0.80,
+    "backup_max_snap_share": 0.40
+  },
+
+  "team_level_validation": {
+    "estimated_targets_per_game": 40,
+    "estimated_carries_per_game": 30,
+    "target_share_sum_max": 1.3,
+    "carry_share_sum_max": 1.2,
+    "_note": "Team-level sanity checks; allow some overflow for rotation"
+  },
+
+  "error_tolerance": {
+    "relative_error_max": 2.0,
+    "actual_value_threshold_for_error_check": 20,
+    "prediction_variance_min": 0.01,
+    "_note": "Model prediction quality checks"
+  },
+
+  "data_quality_flags": {
+    "flag_if_missing_features_pct": 0.20,
+    "flag_if_zero_variance_feature": true,
+    "flag_if_target_constant": true,
+    "flag_if_correlation_below": 0.05,
+    "_note": "Training data quality gates"
+  }
+}

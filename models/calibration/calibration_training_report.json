@@ -1,0 +1,160 @@
+{
+  "overall": {
+    "brier_raw": 0.17593505756319436,
+    "brier_calibrated": 0.16553815948122835,
+    "brier_improvement": 0.010396898081966005,
+    "ece_raw": 0.08917697496811469,
+    "ece_calibrated": 0.004311517740522765,
+    "ece_improvement": 0.08486545722759192,
+    "roi_raw": 42.88039203908098,
+    "roi_calibrated": 44.50559966026259,
+    "roi_improvement": 1.6252076211816089
+  },
+  "by_position": {
+    "QB": {
+      "brier_raw": 0.22322241297604037,
+      "brier_calibrated": 0.20956057373213444,
+      "brier_improvement": 0.013661839243905932,
+      "ece_raw": 0.07961380832282469,
+      "ece_calibrated": 0.008095277961727496,
+      "ece_improvement": 0.07151853036109719,
+      "roi_raw": 19.769574687607474,
+      "roi_calibrated": 26.329817723260344,
+      "roi_improvement": 6.560243035652871
+    },
+    "RB": {
+      "brier_raw": 0.1540087305323323,
+      "brier_calibrated": 0.13768805225877342,
+      "brier_improvement": 0.016320678273558875,
+      "ece_raw": 0.10387152337127632,
+      "ece_calibrated": 0.00046895256782331096,
+      "ece_improvement": 0.10340257080345301,
+      "roi_raw": 53.300601070036755,
+      "roi_calibrated": 53.605759704088584,
+      "roi_improvement": 0.3051586340518284
+    },
+    "WR": {
+      "brier_raw": 0.19092151401684213,
+      "brier_calibrated": 0.18338239684997956,
+      "brier_improvement": 0.007539117166862563,
+      "ece_raw": 0.0830344350877193,
+      "ece_calibrated": 0.009299752280701757,
+      "ece_improvement": 0.07373468280701753,
+      "roi_raw": 36.014354066985646,
+      "roi_calibrated": 39.075598086124394,
+      "roi_improvement": 3.0612440191387478
+    },
+    "TE": {
+      "brier_raw": 0.16618266894670847,
+      "brier_calibrated": 0.1537673008404113,
+      "brier_improvement": 0.012415368106297175,
+      "ece_raw": 0.09359940438871474,
+      "ece_calibrated": 0.0018994493677574002,
+      "ece_improvement": 0.09169995502095733,
+      "roi_raw": 47.10173838700484,
+      "roi_calibrated": 48.70262182958107,
+      "roi_improvement": 1.600883442576226
+    }
+  },
+  "by_market": {
+    "passing_yards": {
+      "brier_raw": 0.23336595149375808,
+      "brier_calibrated": 0.21644854448610135,
+      "brier_improvement": 0.016917407007656732,
+      "ece_raw": 0.09089014205768403,
+      "ece_calibrated": 0.009949831285503696,
+      "ece_improvement": 0.08094031077218033,
+      "roi_raw": 15.3015301530153,
+      "roi_calibrated": 23.766289672445506,
+      "roi_improvement": 8.464759519430206
+    },
+    "passing_tds": {
+      "brier_raw": 0.1954680667137809,
+      "brier_calibrated": 0.18620521504930232,
+      "brier_improvement": 0.009262851664478572,
+      "ece_raw": 0.056355241460541765,
+      "ece_calibrated": 0.0030848111965634884,
+      "ece_improvement": 0.05327043026397828,
+      "roi_raw": 31.9948602634115,
+      "roi_calibrated": 35.367812399614515,
+      "roi_improvement": 3.372952136203015
+    },
+    "targets": {
+      "brier_raw": 0.17059201608834298,
+      "brier_calibrated": 0.1663936267982948,
+      "brier_improvement": 0.004198389290048177,
+      "ece_raw": 0.06477561119640957,
+      "ece_calibrated": 0.011164497081747493,
+      "ece_improvement": 0.05361111411466207,
+      "roi_raw": 42.42084241493713,
+      "roi_calibrated": 44.94615458947571,
+      "roi_improvement": 2.525312174538584
+    },
+    "receptions": {
+      "brier_raw": 0.1563321345984282,
+      "brier_calibrated": 0.14996325945019898,
+      "brier_improvement": 0.0063688751482292305,
+      "ece_raw": 0.07031324516005365,
+      "ece_calibrated": 0.005612224025946497,
+      "ece_improvement": 0.06470102113410715,
+      "roi_raw": 47.618798682628466,
+      "roi_calibrated": 50.04617770575217,
+      "roi_improvement": 2.427379023123706
+    },
+    "receiving_yards": {
+      "brier_raw": 0.19038285619266057,
+      "brier_calibrated": 0.16927896146481267,
+      "brier_improvement": 0.021103894727847905,
+      "ece_raw": 0.1265411033317238,
+      "ece_calibrated": 0.0013149431176098258,
+      "ece_improvement": 0.12522616021411398,
+      "roi_raw": 40.87726614283832,
+      "roi_calibrated": 43.15877266142837,
+      "roi_improvement": 2.2815065185900494
+    },
+    "receiving_tds": {
+      "brier_raw": 0.20412176030157647,
+      "brier_calibrated": 0.17305080017475316,
+      "brier_improvement": 0.03107096012682331,
+      "ece_raw": 0.16920671692940367,
+      "ece_calibrated": 0.00367676490747088,
+      "ece_improvement": 0.1655299520219328,
+      "roi_raw": 33.33541030593807,
+      "roi_calibrated": 46.42033771574553,
+      "roi_improvement": 13.084927409807463
+    },
+    "carries": {
+      "brier_raw": 0.15217564655046267,
+      "brier_calibrated": 0.12831970075404198,
+      "brier_improvement": 0.023855945796420697,
+      "ece_raw": 0.12327764148913278,
+      "ece_calibrated": 9.21540778997247e-05,
+      "ece_improvement": 0.12318548741123306,
+      "roi_raw": 54.715652327014496,
+      "roi_calibrated": 56.56435236809671,
+      "roi_improvement": 1.8487000410822176
+    },
+    "rushing_yards": {
+      "brier_raw": 0.1846839090909091,
+      "brier_calibrated": 0.16152216701063993,
+      "brier_improvement": 0.023161742080269165,
+      "ece_raw": 0.1279066756122107,
+      "ece_calibrated": 0.0014031907128988744,
+      "ece_improvement": 0.12650348489931182,
+      "roi_raw": 43.55005946753682,
+      "roi_calibrated": 46.20780092098441,
+      "roi_improvement": 2.657741453447592
+    },
+    "rushing_tds": {
+      "brier_raw": 0.21254722637426904,
+      "brier_calibrated": 0.1881295036066246,
+      "brier_improvement": 0.02441772276764445,
+      "ece_raw": 0.13122543859649125,
+      "ece_calibrated": 0.0002008771929824749,
+      "ece_improvement": 0.13102456140350877,
+      "roi_raw": 35.645933014354064,
+      "roi_calibrated": 37.59968102073364,
+      "roi_improvement": 1.953748006379577
+    }
+  }
+}

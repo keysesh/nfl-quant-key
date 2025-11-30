@@ -1,0 +1,63 @@
+{
+  "generated_at": "20251124_221424",
+  "source": "walk_forward_backtest",
+  "corrections": {
+    "position_QB": {
+      "probability_adjustment": 0.08224116899618805,
+      "variance_scale": 1.0
+    },
+    "position_RB": {
+      "probability_adjustment": 0.11314851518983013,
+      "variance_scale": 1.0
+    },
+    "position_WR": {
+      "probability_adjustment": 0.0986297104585735,
+      "variance_scale": 1.0
+    },
+    "position_TE": {
+      "probability_adjustment": 0.12192643010094828,
+      "variance_scale": 1.0
+    },
+    "market_receptions": {
+      "probability_adjustment": 0.11516748928877465,
+      "mae": 2.0585540184681603
+    },
+    "market_receiving_yards": {
+      "probability_adjustment": 0.1258044498186215,
+      "mae": 32.47970224738926
+    },
+    "market_rushing_yards": {
+      "probability_adjustment": 0.11063774008761096,
+      "mae": 36.61665068805643
+    },
+    "market_targets": {
+      "probability_adjustment": 0.09674974237624517,
+      "mae": 2.6959638371357
+    },
+    "market_carries": {
+      "probability_adjustment": 0.0371631482049708,
+      "mae": 4.623567598674282
+    },
+    "market_passing_yards": {
+      "probability_adjustment": 0.08433650145772598,
+      "mae": 86.45047514748244
+    },
+    "market_passing_tds": {
+      "probability_adjustment": 0.06927393364928913,
+      "mae": 1.0003294774332676
+    },
+    "market_rushing_tds": {
+      "probability_adjustment": 0.13547041357370093,
+      "mae": 0.6182374242453592
+    },
+    "market_receiving_tds": {
+      "probability_adjustment": 0.1651332374100719,
+      "mae": 0.5626339380223412
+    }
+  },
+  "overall_metrics": {
+    "brier_score": 0.17874236199474847,
+    "ece": 0.10921156149995898,
+    "mae": 16.207712144658526
+  }
+}

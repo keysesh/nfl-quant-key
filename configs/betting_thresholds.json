@@ -1,0 +1,102 @@
+{
+  "_comment": "Betting recommendation thresholds and decision parameters",
+  "_version": "1.0.0",
+  "_last_updated": "2025-11-02",
+
+  "confidence_levels": {
+    "high": 0.85,
+    "medium": 0.70,
+    "low": 0.55,
+    "_note": "Minimum model confidence for recommendation tiers"
+  },
+
+  "edge_requirements": {
+    "high_edge": 0.10,
+    "medium_edge": 0.05,
+    "low_edge": 0.02,
+    "minimum_edge": 0.01,
+    "_note": "Expected value edge over market line"
+  },
+
+  "parlay_optimization": {
+    "correlation_threshold": 0.70,
+    "max_legs": 4,
+    "min_confidence_per_leg": 0.52,
+    "min_edge_per_leg": 0.02,
+    "max_correlation_between_legs": 0.50,
+    "_note": "Parlay construction rules"
+  },
+
+  "performance_adjustment": {
+    "large_discrepancy_threshold": 0.50,
+    "large_discrepancy_confidence_multiplier": 0.70,
+    "moderate_discrepancy_threshold": 0.30,
+    "moderate_discrepancy_confidence_multiplier": 0.85,
+    "confidence_floor": 0.50,
+    "confidence_ceiling": 0.90,
+    "_note": "Adjust confidence based on model-market disagreement"
+  },
+
+  "risk_shift_adjustments": {
+    "conservative": {
+      "confidence_shift": 1,
+      "edge_shift": 1,
+      "_note": "Shift up one tier (more conservative)"
+    },
+    "balanced": {
+      "confidence_shift": 0,
+      "edge_shift": 0,
+      "_note": "No adjustment"
+    },
+    "aggressive": {
+      "confidence_shift": -1,
+      "edge_shift": -1,
+      "_note": "Shift down one tier (more aggressive)"
+    }
+  },
+
+  "bet_sizing": {
+    "default_bankroll": 50.0,
+    "kelly_fractions": {
+      "conservative": 0.125,
+      "balanced": 0.25,
+      "aggressive": 0.50
+    },
+    "max_bet_size_pct_of_bankroll": {
+      "conservative": 0.005,
+      "balanced": 0.01,
+      "aggressive": 0.02
+    },
+    "max_exposure_per_pick": {
+      "conservative": 0.01,
+      "balanced": 0.02,
+      "aggressive": 0.03
+    },
+    "max_exposure_per_parlay": {
+      "conservative": 0.015,
+      "balanced": 0.03,
+      "aggressive": 0.05
+    }
+  },
+
+  "recommendation_filters": {
+    "min_sample_size_for_calibration": 30,
+    "require_calibration_quality": {
+      "conservative": true,
+      "balanced": false,
+      "aggressive": false
+    },
+    "max_picks_per_slate": {
+      "conservative": 5,
+      "balanced": 10,
+      "aggressive": 20
+    }
+  },
+
+  "clv_tracking": {
+    "track_closing_line_value": true,
+    "clv_significance_threshold": 0.02,
+    "positive_clv_boost": 1.05,
+    "negative_clv_penalty": 0.95
+  }
+}

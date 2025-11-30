@@ -1,0 +1,14 @@
+{
+  "position": "TE",
+  "trained_date": "2025-11-10T23:45:09.817891",
+  "training_samples": 1369,
+  "training_win_rate": 0.1775018261504748,
+  "brier_score_raw": 0.1556878620251763,
+  "brier_score_calibrated": 0.14236124488910684,
+  "brier_improvement": 0.013326617136069446,
+  "mace_raw": 0.05600139152498665,
+  "mace_calibrated": 0.0010650193011654263,
+  "mace_improvement": 0.05493637222382122,
+  "high_prob_threshold": 0.7,
+  "high_prob_shrinkage": 0.25
+}

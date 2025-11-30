@@ -1,0 +1,72 @@
+{
+  "_comment": "Optimal Edge & Confidence Thresholds - Generated from comprehensive backtest (13,915 bets)",
+  "_date": "2025-11-10",
+  "_source": "Comprehensive backtest analysis (Weeks 1-8, 2025 season)",
+  "CURRENT_STRATEGY": "aggressive",
+  "OPTIMAL_EDGE_THRESHOLD": 0.0,
+  "OPTIMAL_CONFIDENCE_THRESHOLD": 0.5,
+  "MARKET_SPECIFIC_THRESHOLDS": {
+    "player_receptions": {
+      "edge": 0.0,
+      "confidence": 0.5,
+      "expected_win_rate": 0.774,
+      "expected_roi": 0.478,
+      "sample_size": 4593
+    },
+    "player_reception_yds": {
+      "edge": 0.0,
+      "confidence": 0.5,
+      "expected_win_rate": 0.739,
+      "expected_roi": 0.411,
+      "sample_size": 3986
+    },
+    "player_rush_yds": {
+      "edge": 0.0,
+      "confidence": 0.5
+    },
+    "player_pass_yds": {
+      "edge": 0.0,
+      "confidence": 0.5,
+      "expected_win_rate": 0.71,
+      "expected_roi": 0.355,
+      "sample_size": 706
+    },
+    "default": {
+      "edge": 0.0,
+      "confidence": 0.5,
+      "description": "Show all bets for user decision (0% edge)"
+    }
+  },
+  "STRATEGY_THRESHOLDS": {
+    "conservative": {
+      "edge": 30.0,
+      "confidence": 0.5,
+      "description": "Highest win rate (75.1%), highest ROI (43.4%)",
+      "sample_size": 10716,
+      "expected_win_rate": 0.751,
+      "expected_roi": 0.434
+    },
+    "balanced": {
+      "edge": 10.0,
+      "confidence": 0.5,
+      "description": "Good balance (71.9% win rate, 37.2% ROI)",
+      "sample_size": 13258,
+      "expected_win_rate": 0.719,
+      "expected_roi": 0.372
+    },
+    "aggressive": {
+      "edge": 0.0,
+      "confidence": 0.5,
+      "description": "Maximum volume (71.1% win rate, 35.8% ROI)",
+      "sample_size": 13915,
+      "expected_win_rate": 0.711,
+      "expected_roi": 0.358
+    }
+  },
+  "_notes": [
+    "These thresholds were optimized using 13,915 bets from Weeks 1-8 of 2025 season",
+    "Conservative strategy recommended for highest win rate and ROI",
+    "Market-specific thresholds available for: receptions, reception_yds, rush_yds, pass_yds",
+    "To change strategy, update CURRENT_STRATEGY to: 'conservative', 'balanced', or 'aggressive'"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "market": "player_receptions",
+  "stat_type": "receptions",
+  "training_samples": 508,
+  "trained_date": "2025-11-15T22:39:40.236484",
+  "brier_improvement": 0.03548467370684255,
+  "mace_improvement": -7.058262558040651e-05,
+  "win_rate": 0.39960629921259844,
+  "avg_predicted_prob": 0.49879328004351187,
+  "logic_version": "FIXED_V2_ADDITIVE_CAPPED",
+  "fixes_applied": [
+    "Capped multipliers (0.85-1.15 contextual, 0.90-1.10 player)",
+    "Additive adjustments instead of multiplicative stacking",
+    "Total contextual adjustment capped at \u00b125%"
+  ]
+}
