@@ -38,16 +38,19 @@ _COVERAGE_BY_TEAM_CACHE: Optional[pd.DataFrame] = None
 _ADOT_CATCH_RATE_CACHE: Optional[pd.DataFrame] = None
 _WR1_ALLOWED_CACHE: Optional[pd.DataFrame] = None
 _SLOT_SNAP_CACHE: Optional[pd.DataFrame] = None
+_REST_DAYS_CACHE: Optional[pd.DataFrame] = None
 
 
 def clear_broken_feature_caches():
     """Clear all caches for broken feature calculations."""
     global _TEAM_PACE_CACHE, _PARTICIPATION_CACHE, _PRESSURE_BY_TEAM_CACHE
     global _COVERAGE_BY_TEAM_CACHE, _ADOT_CATCH_RATE_CACHE, _WR1_ALLOWED_CACHE, _SLOT_SNAP_CACHE
+    global _REST_DAYS_CACHE
     _TEAM_PACE_CACHE = None
     _PARTICIPATION_CACHE = None
     _PRESSURE_BY_TEAM_CACHE = None
     _COVERAGE_BY_TEAM_CACHE = None
+    _REST_DAYS_CACHE = None
     _ADOT_CATCH_RATE_CACHE = None
     _WR1_ALLOWED_CACHE = None
     _SLOT_SNAP_CACHE = None
@@ -96,6 +99,49 @@ def _load_weekly_stats() -> pd.DataFrame:
         return df
     logger.warning(f"weekly_stats.parquet not found at {path}")
     return pd.DataFrame()
+
+
+def _load_rest_days_cache() -> pd.DataFrame:
+    """
+    Load rest days from schedules.parquet.
+
+    Creates a lookup table: (season, week, team) -> rest_days
+    Each team gets their rest days for each week (home_rest or away_rest).
+    """
+    global _REST_DAYS_CACHE
+
+    if _REST_DAYS_CACHE is not None:
+        return _REST_DAYS_CACHE
+
+    path = PROJECT_ROOT / 'data' / 'nflverse' / 'schedules.parquet'
+    if not path.exists():
+        logger.warning(f"schedules.parquet not found at {path}")
+        _REST_DAYS_CACHE = pd.DataFrame()
+        return _REST_DAYS_CACHE
+
+    schedules = pd.read_parquet(path)
+
+    # Check for required columns
+    if 'away_rest' not in schedules.columns or 'home_rest' not in schedules.columns:
+        logger.warning("schedules.parquet missing rest columns")
+        _REST_DAYS_CACHE = pd.DataFrame()
+        return _REST_DAYS_CACHE
+
+    # Create lookup for away teams
+    away_rest = schedules[['season', 'week', 'away_team', 'away_rest']].copy()
+    away_rest.columns = ['season', 'week', 'team', 'rest_days']
+
+    # Create lookup for home teams
+    home_rest = schedules[['season', 'week', 'home_team', 'home_rest']].copy()
+    home_rest.columns = ['season', 'week', 'team', 'rest_days']
+
+    # Combine and deduplicate
+    rest_lookup = pd.concat([away_rest, home_rest], ignore_index=True)
+    rest_lookup = rest_lookup.drop_duplicates(subset=['season', 'week', 'team'])
+
+    _REST_DAYS_CACHE = rest_lookup
+    logger.info(f"Loaded rest_days for {len(rest_lookup)} team-week combinations")
+    return _REST_DAYS_CACHE
 
 
 # =============================================================================
@@ -688,7 +734,25 @@ def add_broken_features_to_dataframe(
             logger.debug(f"opp_wr1_receptions_allowed coverage: {df['opp_wr1_receptions_allowed'].notna().mean():.1%}" if 'opp_wr1_receptions_allowed' in df.columns else "opp_wr1 not added")
 
     # =========================================================================
-    # 7. INTERACTION TERMS (lvt_x_defense, lvt_x_rest)
+    # 7. REST DAYS (from schedules.parquet)
+    # =========================================================================
+    # Merge rest_days from schedules before calculating interaction terms
+    if 'rest_days' not in df.columns and 'team' in df.columns:
+        rest_cache = _load_rest_days_cache()
+        if len(rest_cache) > 0:
+            df = df.merge(
+                rest_cache[['season', 'week', 'team', 'rest_days']],
+                on=['season', 'week', 'team'],
+                how='left',
+                suffixes=('', '_sched')
+            )
+            if 'rest_days_sched' in df.columns:
+                df['rest_days'] = df['rest_days'].fillna(df['rest_days_sched']) if 'rest_days' in df.columns else df['rest_days_sched']
+                df = df.drop(columns=['rest_days_sched'], errors='ignore')
+            logger.debug(f"rest_days coverage: {df['rest_days'].notna().mean():.1%}" if 'rest_days' in df.columns else "rest_days not added")
+
+    # =========================================================================
+    # 8. INTERACTION TERMS (lvt_x_defense, lvt_x_rest)
     # =========================================================================
     # These depend on other features being calculated first
 
@@ -707,13 +771,13 @@ def add_broken_features_to_dataframe(
         # lvt_x_rest: line_vs_trailing * normalized rest days
         rest_col = None
         for col in ['rest_days', 'days_rest']:
-            if col in df.columns:
+            if col in df.columns and df[col].notna().any():
                 rest_col = col
                 break
 
-        if rest_col is not None and df[rest_col].notna().any():
+        if rest_col is not None:
             rest_normalized = (df[rest_col] - 7) / 7.0  # Normalize around 7 days
             df['lvt_x_rest'] = df['line_vs_trailing'] * rest_normalized
-            logger.debug(f"lvt_x_rest calculated from {rest_col}")
+            logger.debug(f"lvt_x_rest calculated from {rest_col}: coverage {df['lvt_x_rest'].notna().mean():.1%}")
 
     return df
