@@ -2654,6 +2654,31 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
             active = 'active' if market_key == 'all' else ''
             filter_pills_html += f'<button class="filter-pill {active}" data-filter="{market_key}" onclick="filterCheatSheet(\'{market_key}\', this)">{market_label}</button>\n'
 
+    # NFL team name to abbreviation mapping
+    TEAM_ABBREVS = {
+        'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL',
+        'Buffalo Bills': 'BUF', 'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI',
+        'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE', 'Dallas Cowboys': 'DAL',
+        'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',
+        'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX',
+        'Kansas City Chiefs': 'KC', 'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC',
+        'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA', 'Minnesota Vikings': 'MIN',
+        'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',
+        'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT',
+        'San Francisco 49ers': 'SF', 'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB',
+        'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS'
+    }
+
+    def get_team_abbrev(team_name):
+        """Get NFL abbreviation for a team name."""
+        if team_name in TEAM_ABBREVS:
+            return TEAM_ABBREVS[team_name]
+        # Fallback: try partial match
+        for full_name, abbrev in TEAM_ABBREVS.items():
+            if team_name in full_name or full_name in team_name:
+                return abbrev
+        return team_name[:3].upper()
+
     # Get unique games for filter dropdown
     games = sorted_df['game'].dropna().unique() if 'game' in sorted_df.columns else []
     game_options_html = ""
@@ -2664,8 +2689,8 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
             try:
                 parts = game.split(' @ ')
                 if len(parts) == 2:
-                    away = parts[0].split()[-1][:3].upper() if parts[0] else ''
-                    home = parts[1].split()[-1][:3].upper() if parts[1] else ''
+                    away = get_team_abbrev(parts[0].strip())
+                    home = get_team_abbrev(parts[1].strip())
                     game_short = f"{away} @ {home}"
             except:
                 pass
