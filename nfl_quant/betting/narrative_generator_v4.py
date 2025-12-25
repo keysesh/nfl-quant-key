@@ -14,7 +14,7 @@ import numpy as np
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 
-from nfl_quant.schemas.v4_output import V4StatDistribution, PlayerPropOutputV4
+from nfl_quant.v4_output import V4StatDistribution, PlayerPropOutputV4
 
 
 @dataclass

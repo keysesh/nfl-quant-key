@@ -366,29 +366,124 @@ def estimate_target_ypt_correlation(
     return estimate_correlation_from_data(targets_valid, ypt_valid, method='spearman')
 
 
-def get_default_target_ypt_correlation(position: str) -> float:
+def get_default_target_ypt_correlation(
+    position: str,
+    adot: float = None,
+    ypt_variance: float = None,
+    slot_snap_pct: float = None,
+) -> float:
     """
-    Get typical target-Y/T correlation by position.
+    Get dynamic target-Y/T correlation by position and player archetype.
 
-    Based on empirical NFL analysis (to be updated with actual data).
+    The correlation between targets and yards-per-target varies by player role:
+    - Deep threats (high aDOT): STRONGER negative correlation
+      * Selective deep shots → high variance, big plays
+      * More targets = shorter routes = lower Y/T
+    - Slot/possession receivers (low aDOT): WEAKER negative correlation
+      * High-volume short routes = consistent Y/T regardless of volume
+    - High Y/T variance players: STRONGER negative correlation
+      * Big-play receivers have more variation
+
+    Mathematical basis:
+    - Base correlation by position (empirical defaults)
+    - Adjust by aDOT: high aDOT → more negative correlation
+    - Adjust by Y/T variance: high variance → more negative correlation
 
     Args:
         position: Player position (WR, TE, RB)
+        adot: Average depth of target (yards). Typical: 6-14 for WR
+        ypt_variance: Y/T variance from player history
+        slot_snap_pct: Percentage of snaps in slot (0-1). Slot = lower correlation
 
     Returns:
-        Typical Spearman correlation
+        Spearman correlation (negative value)
 
     Example:
+        >>> # Deep threat WR (high aDOT)
+        >>> get_default_target_ypt_correlation('WR', adot=14.0)
+        -0.35  # Stronger negative correlation
+
+        >>> # Slot receiver (low aDOT)
+        >>> get_default_target_ypt_correlation('WR', adot=7.0, slot_snap_pct=0.85)
+        -0.15  # Weaker negative correlation
+
+        >>> # Default (no player data)
         >>> get_default_target_ypt_correlation('WR')
-        -0.25  # WR: more targets → slightly lower Y/T
+        -0.25  # Position default
     """
-    defaults = {
+    # Base correlation by position
+    base_correlations = {
         'WR': -0.25,  # Moderate negative correlation
         'TE': -0.20,  # Weaker negative correlation
         'RB': -0.15,  # Weakest (targets often dump-offs regardless)
+        'QB': -0.10,  # Very weak (scrambles, designed runs)
     }
 
-    return defaults.get(position, -0.20)
+    base = base_correlations.get(position, -0.20)
+
+    # If no player-specific data, return base
+    if adot is None and ypt_variance is None and slot_snap_pct is None:
+        return base
+
+    adjustment = 0.0
+
+    # ADOT adjustment: higher aDOT = stronger negative correlation
+    # Typical aDOT ranges: 6-14 for WR, 5-10 for TE, 0-5 for RB
+    # Center point: 10.0 (neutral)
+    if adot is not None and not np.isnan(adot):
+        adot_center = 10.0
+        adot_deviation = adot - adot_center
+
+        # Each 2 yards of aDOT above 10 = -0.05 more negative
+        # Each 2 yards below 10 = +0.05 less negative
+        adot_adjustment = -0.025 * adot_deviation
+        adot_adjustment = np.clip(adot_adjustment, -0.15, 0.10)
+        adjustment += adot_adjustment
+
+    # Slot snap percentage: higher slot % = weaker correlation
+    # Slot receivers have more consistent Y/T (short routes)
+    if slot_snap_pct is not None and not np.isnan(slot_snap_pct):
+        # High slot (>70%) → +0.05 to +0.10 (less negative)
+        # Low slot (<30%) → -0.05 (more negative)
+        slot_center = 0.50
+        slot_deviation = slot_snap_pct - slot_center
+
+        # Each 20% above 50% = +0.05 less negative
+        slot_adjustment = 0.10 * slot_deviation
+        slot_adjustment = np.clip(slot_adjustment, -0.05, 0.10)
+        adjustment += slot_adjustment
+
+    # Y/T variance adjustment: higher variance = stronger negative correlation
+    # Players with high variance are more boom/bust
+    if ypt_variance is not None and not np.isnan(ypt_variance):
+        # Typical Y/T variance: 10-40 for WR, 5-20 for TE
+        variance_center = 25.0  # Neutral point
+
+        if ypt_variance > variance_center:
+            # High variance = more negative
+            variance_adjustment = -0.003 * (ypt_variance - variance_center)
+            variance_adjustment = np.clip(variance_adjustment, -0.10, 0.0)
+            adjustment += variance_adjustment
+        else:
+            # Low variance = less negative (more consistent player)
+            variance_adjustment = 0.002 * (variance_center - ypt_variance)
+            variance_adjustment = np.clip(variance_adjustment, 0.0, 0.05)
+            adjustment += variance_adjustment
+
+    # Apply adjustment with bounds
+    final_correlation = base + adjustment
+
+    # Correlation must stay in valid range: -0.50 to -0.05
+    # Too negative = unrealistic, too close to 0 = ignores real effect
+    final_correlation = np.clip(final_correlation, -0.50, -0.05)
+
+    logger.debug(
+        f"Dynamic correlation for {position}: base={base:.3f}, "
+        f"adjustment={adjustment:.3f}, final={final_correlation:.3f} "
+        f"(adot={adot}, slot={slot_snap_pct}, ypt_var={ypt_variance})"
+    )
+
+    return float(final_correlation)
 
 
 def sample_correlated_targets_ypt(

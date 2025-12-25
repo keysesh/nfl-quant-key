@@ -12,10 +12,23 @@ Usage:
 
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from typing import Dict, Optional
 import logging
 
 from nfl_quant.features.core import get_feature_engine
+
+# V17: Import centralized model config for smooth sweet spot
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+try:
+    from configs.model_config import (
+        FEATURE_FLAGS,
+        smooth_sweet_spot,
+    )
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -200,14 +213,21 @@ def calculate_v12_prediction_features(
     """
     engine = get_feature_engine()
 
-    # Calculate LVT
-    lvt = engine.calculate_line_vs_trailing(line, trailing_stat, method='difference')
+    # Calculate LVT - use percentage for normalized sensitivity across all markets
+    lvt = engine.calculate_line_vs_trailing(line, trailing_stat, method='percentage')
+
+    # V17: Gaussian decay sweet spot (replaces binary 0/1)
+    use_smooth = CONFIG_AVAILABLE and FEATURE_FLAGS.use_smooth_sweet_spot
+    if use_smooth:
+        line_in_sweet_spot = smooth_sweet_spot(line, market=market)
+    else:
+        line_in_sweet_spot = 1.0 if 3.5 <= line <= 7.5 else 0.0
 
     # Basic features always available
     features = {
         'line_vs_trailing': lvt,
         'line_level': line,
-        'line_in_sweet_spot': 1.0 if 3.5 <= line <= 7.5 else 0.0,
+        'line_in_sweet_spot': line_in_sweet_spot,
     }
 
     # If we have historical odds, calculate betting features

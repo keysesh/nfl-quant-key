@@ -67,24 +67,356 @@ except ImportError as e:
     V24_AVAILABLE = False
     logger.warning(f"V24 position matchup features not available: {e}")
 
+# Import V25 team synergy features
+try:
+    from nfl_quant.features.team_synergy_extractor import (
+        extract_team_synergy_features,
+        clear_synergy_cache,
+        V25_SYNERGY_FEATURES,
+    )
+    V25_SYNERGY_AVAILABLE = True
+except ImportError as e:
+    V25_SYNERGY_AVAILABLE = False
+    logger.warning(f"V25 synergy features not available: {e}")
+
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Import config for sweet spot calculation
 try:
-    from configs.model_config import smooth_sweet_spot, FEATURE_FLAGS
+    from configs.model_config import (
+        smooth_sweet_spot,
+        FEATURE_FLAGS,
+        TRAILING_DEFLATION_FACTORS,
+        DEFAULT_TRAILING_DEFLATION,
+        EWMA_SPAN,
+    )
     CONFIG_AVAILABLE = True
 except ImportError:
     CONFIG_AVAILABLE = False
     logger.warning("Config not available, using legacy calculations")
 
 
+# =========================================================================
+# POSITION-SPECIFIC DEFAULTS (computed from data, not hardcoded)
+# =========================================================================
+_POSITION_TARGET_SHARE_CACHE = None
+_POSITION_CATCH_RATE_CACHE = None
+_POSITION_SNAP_SHARE_CACHE = None
+
+
+def _compute_position_target_share_averages() -> dict:
+    """
+    Compute position-specific target_share averages from weekly_stats.
+
+    Returns dict like {'WR': 0.131, 'TE': 0.099, 'RB': 0.061, ...}
+    Cached after first computation.
+    """
+    global _POSITION_TARGET_SHARE_CACHE
+
+    if _POSITION_TARGET_SHARE_CACHE is not None:
+        return _POSITION_TARGET_SHARE_CACHE
+
+    try:
+        ws_path = PROJECT_ROOT / 'data' / 'nflverse' / 'weekly_stats.parquet'
+        if not ws_path.exists():
+            logger.warning("weekly_stats not found for position averages")
+            # Fallback to empirically computed averages (from actual data analysis)
+            _POSITION_TARGET_SHARE_CACHE = {
+                'WR': 0.131, 'TE': 0.099, 'RB': 0.061, 'FB': 0.026, 'QB': 0.0
+            }
+            return _POSITION_TARGET_SHARE_CACHE
+
+        ws = pd.read_parquet(ws_path)
+        if 'target_share' not in ws.columns or 'position' not in ws.columns:
+            logger.warning("Missing columns for position averages")
+            _POSITION_TARGET_SHARE_CACHE = {
+                'WR': 0.131, 'TE': 0.099, 'RB': 0.061, 'FB': 0.026, 'QB': 0.0
+            }
+            return _POSITION_TARGET_SHARE_CACHE
+
+        # Compute actual averages from data
+        pos_avg = ws.groupby('position')['target_share'].mean().to_dict()
+
+        # Ensure we have all key positions
+        defaults = {'WR': 0.131, 'TE': 0.099, 'RB': 0.061, 'FB': 0.026, 'QB': 0.0}
+        for pos, val in defaults.items():
+            if pos not in pos_avg:
+                pos_avg[pos] = val
+
+        _POSITION_TARGET_SHARE_CACHE = pos_avg
+        logger.info(f"Computed position target_share averages: WR={pos_avg.get('WR', 0):.3f}, "
+                   f"TE={pos_avg.get('TE', 0):.3f}, RB={pos_avg.get('RB', 0):.3f}")
+        return _POSITION_TARGET_SHARE_CACHE
+
+    except Exception as e:
+        logger.warning(f"Failed to compute position averages: {e}")
+        _POSITION_TARGET_SHARE_CACHE = {
+            'WR': 0.131, 'TE': 0.099, 'RB': 0.061, 'FB': 0.026, 'QB': 0.0
+        }
+        return _POSITION_TARGET_SHARE_CACHE
+
+
+def _get_position_target_share_default(position: str) -> float:
+    """Get position-specific target_share default (for prediction only)."""
+    pos_avg = _compute_position_target_share_averages()
+    return pos_avg.get(position, 0.10)  # 0.10 as absolute fallback (lower than old 0.15)
+
+
+def _fill_target_share_by_position(df: pd.DataFrame, for_training: bool = True) -> pd.DataFrame:
+    """
+    Fill missing target_share values.
+
+    For training: Leave as NaN (XGBoost handles missing values natively)
+    For prediction: Use position-specific averages computed from data
+    """
+    if 'target_share' not in df.columns:
+        if for_training:
+            df['target_share'] = np.nan
+        else:
+            pos_avg = _compute_position_target_share_averages()
+            if 'position' in df.columns:
+                df['target_share'] = df['position'].map(lambda p: pos_avg.get(p, 0.10))
+            else:
+                df['target_share'] = 0.10
+        return df
+
+    if for_training:
+        # For training, leave NaN as-is - XGBoost handles it
+        return df
+
+    # For prediction, fill missing with position-specific averages
+    if 'position' in df.columns:
+        pos_avg = _compute_position_target_share_averages()
+        mask = df['target_share'].isna()
+        df.loc[mask, 'target_share'] = df.loc[mask, 'position'].map(
+            lambda p: pos_avg.get(p, 0.10)
+        )
+    else:
+        # No position column - use overall average (lower than old 0.15)
+        df['target_share'] = df['target_share'].fillna(0.10)
+
+    return df
+
+
+# =========================================================================
+# POSITION-SPECIFIC CATCH RATE (computed from data, not hardcoded 0.65-0.68)
+# =========================================================================
+
+def _compute_position_catch_rate_averages() -> dict:
+    """
+    Compute position-specific catch rates from weekly_stats.
+
+    Actual rates from 2023-2024 data:
+    - WR: 63.1% (close to old 65% default)
+    - TE: 72.5% (old default underestimated by 11%)
+    - RB: 78.9% (old default underestimated by 21%)
+    - FB: 77.5%
+
+    Returns dict like {'WR': 0.631, 'TE': 0.725, 'RB': 0.789, ...}
+    Cached after first computation.
+    """
+    global _POSITION_CATCH_RATE_CACHE
+
+    if _POSITION_CATCH_RATE_CACHE is not None:
+        return _POSITION_CATCH_RATE_CACHE
+
+    try:
+        ws_path = PROJECT_ROOT / 'data' / 'nflverse' / 'weekly_stats.parquet'
+        if not ws_path.exists():
+            logger.warning("weekly_stats not found for catch rate averages")
+            # Fallback to empirically computed averages (from actual data analysis)
+            _POSITION_CATCH_RATE_CACHE = {
+                'WR': 0.631, 'TE': 0.725, 'RB': 0.789, 'FB': 0.775, 'QB': 0.0
+            }
+            return _POSITION_CATCH_RATE_CACHE
+
+        ws = pd.read_parquet(ws_path)
+        if 'receptions' not in ws.columns or 'targets' not in ws.columns:
+            logger.warning("Missing receptions/targets for catch rate averages")
+            _POSITION_CATCH_RATE_CACHE = {
+                'WR': 0.631, 'TE': 0.725, 'RB': 0.789, 'FB': 0.775, 'QB': 0.0
+            }
+            return _POSITION_CATCH_RATE_CACHE
+
+        # Compute actual catch rates from data (receptions / targets)
+        rec_positions = ['WR', 'TE', 'RB', 'FB']
+        rec_data = ws[(ws['position'].isin(rec_positions)) & (ws['targets'] > 0)]
+
+        pos_rates = {}
+        for pos in rec_positions:
+            pos_data = rec_data[rec_data['position'] == pos]
+            total_rec = pos_data['receptions'].sum()
+            total_targets = pos_data['targets'].sum()
+            if total_targets > 0:
+                pos_rates[pos] = total_rec / total_targets
+            else:
+                # Fallback to precomputed averages
+                defaults = {'WR': 0.631, 'TE': 0.725, 'RB': 0.789, 'FB': 0.775}
+                pos_rates[pos] = defaults.get(pos, 0.68)
+
+        pos_rates['QB'] = 0.0  # QBs don't have catch rates
+
+        _POSITION_CATCH_RATE_CACHE = pos_rates
+        logger.info(f"Computed position catch_rate averages: WR={pos_rates.get('WR', 0):.3f}, "
+                   f"TE={pos_rates.get('TE', 0):.3f}, RB={pos_rates.get('RB', 0):.3f}")
+        return _POSITION_CATCH_RATE_CACHE
+
+    except Exception as e:
+        logger.warning(f"Failed to compute catch rate averages: {e}")
+        _POSITION_CATCH_RATE_CACHE = {
+            'WR': 0.631, 'TE': 0.725, 'RB': 0.789, 'FB': 0.775, 'QB': 0.0
+        }
+        return _POSITION_CATCH_RATE_CACHE
+
+
+def _fill_catch_rate_by_position(df: pd.DataFrame, for_training: bool = True) -> pd.DataFrame:
+    """
+    Fill missing trailing_catch_rate values.
+
+    For training: Leave as NaN (XGBoost handles missing values natively)
+    For prediction: Use position-specific averages computed from data
+    """
+    if 'trailing_catch_rate' not in df.columns:
+        if for_training:
+            df['trailing_catch_rate'] = np.nan
+        else:
+            pos_rates = _compute_position_catch_rate_averages()
+            if 'position' in df.columns:
+                df['trailing_catch_rate'] = df['position'].map(lambda p: pos_rates.get(p, 0.68))
+            else:
+                df['trailing_catch_rate'] = 0.68  # Overall league average
+        return df
+
+    if for_training:
+        # For training, leave NaN as-is - XGBoost handles it
+        return df
+
+    # For prediction, fill missing with position-specific averages
+    if 'position' in df.columns:
+        pos_rates = _compute_position_catch_rate_averages()
+        mask = df['trailing_catch_rate'].isna()
+        df.loc[mask, 'trailing_catch_rate'] = df.loc[mask, 'position'].map(
+            lambda p: pos_rates.get(p, 0.68)
+        )
+    else:
+        # No position column - use overall average
+        df['trailing_catch_rate'] = df['trailing_catch_rate'].fillna(0.68)
+
+    return df
+
+
+# =========================================================================
+# POSITION-SPECIFIC SNAP SHARE (computed from data, not hardcoded 0.70)
+# =========================================================================
+
+def _compute_position_snap_share_averages() -> dict:
+    """
+    Compute position-specific snap shares from snap_counts.
+
+    Actual rates from data:
+    - QB: 79.8% (higher than 70% default)
+    - WR: 51.6% (70% default overestimates by 26%)
+    - TE: 44.2% (70% default overestimates by 37%)
+    - RB: 37.7% (70% default overestimates by 46%)
+    - FB: 26.3%
+
+    Returns dict like {'QB': 0.798, 'WR': 0.516, 'TE': 0.442, 'RB': 0.377, ...}
+    Cached after first computation.
+    """
+    global _POSITION_SNAP_SHARE_CACHE
+
+    if _POSITION_SNAP_SHARE_CACHE is not None:
+        return _POSITION_SNAP_SHARE_CACHE
+
+    try:
+        snap_path = PROJECT_ROOT / 'data' / 'nflverse' / 'snap_counts.parquet'
+        if not snap_path.exists():
+            logger.warning("snap_counts not found for snap share averages")
+            # Fallback to empirically computed averages
+            _POSITION_SNAP_SHARE_CACHE = {
+                'QB': 0.798, 'WR': 0.516, 'TE': 0.442, 'RB': 0.377, 'FB': 0.263
+            }
+            return _POSITION_SNAP_SHARE_CACHE
+
+        snaps = pd.read_parquet(snap_path)
+        if 'offense_pct' not in snaps.columns or 'position' not in snaps.columns:
+            logger.warning("Missing columns for snap share averages")
+            _POSITION_SNAP_SHARE_CACHE = {
+                'QB': 0.798, 'WR': 0.516, 'TE': 0.442, 'RB': 0.377, 'FB': 0.263
+            }
+            return _POSITION_SNAP_SHARE_CACHE
+
+        # Compute actual snap shares from data
+        skill_positions = ['QB', 'WR', 'TE', 'RB', 'FB']
+        skill_data = snaps[(snaps['position'].isin(skill_positions)) & (snaps['offense_snaps'] > 0)]
+
+        pos_shares = {}
+        for pos in skill_positions:
+            pos_data = skill_data[skill_data['position'] == pos]
+            if len(pos_data) > 0:
+                pos_shares[pos] = pos_data['offense_pct'].mean()
+            else:
+                # Fallback to precomputed averages
+                defaults = {'QB': 0.798, 'WR': 0.516, 'TE': 0.442, 'RB': 0.377, 'FB': 0.263}
+                pos_shares[pos] = defaults.get(pos, 0.50)
+
+        _POSITION_SNAP_SHARE_CACHE = pos_shares
+        logger.info(f"Computed position snap_share averages: QB={pos_shares.get('QB', 0):.3f}, "
+                   f"WR={pos_shares.get('WR', 0):.3f}, RB={pos_shares.get('RB', 0):.3f}")
+        return _POSITION_SNAP_SHARE_CACHE
+
+    except Exception as e:
+        logger.warning(f"Failed to compute snap share averages: {e}")
+        _POSITION_SNAP_SHARE_CACHE = {
+            'QB': 0.798, 'WR': 0.516, 'TE': 0.442, 'RB': 0.377, 'FB': 0.263
+        }
+        return _POSITION_SNAP_SHARE_CACHE
+
+
+def _fill_snap_share_by_position(df: pd.DataFrame, for_training: bool = True) -> pd.DataFrame:
+    """
+    Fill missing snap_share values.
+
+    For training: Leave as NaN (XGBoost handles missing values natively)
+    For prediction: Use position-specific averages computed from data
+    """
+    if 'snap_share' not in df.columns:
+        if for_training:
+            df['snap_share'] = np.nan
+        else:
+            pos_shares = _compute_position_snap_share_averages()
+            if 'position' in df.columns:
+                df['snap_share'] = df['position'].map(lambda p: pos_shares.get(p, 0.50))
+            else:
+                df['snap_share'] = 0.50  # Overall fallback
+        return df
+
+    if for_training:
+        # For training, leave NaN as-is - XGBoost handles it
+        return df
+
+    # For prediction, fill missing with position-specific averages
+    if 'position' in df.columns:
+        pos_shares = _compute_position_snap_share_averages()
+        mask = df['snap_share'].isna()
+        df.loc[mask, 'snap_share'] = df.loc[mask, 'position'].map(
+            lambda p: pos_shares.get(p, 0.50)
+        )
+    else:
+        # No position column - use overall average
+        df['snap_share'] = df['snap_share'].fillna(0.50)
+
+    return df
+
+
 def extract_features_batch(
     odds_with_trailing: pd.DataFrame,
     all_historical_odds: pd.DataFrame,
     market: str,
-    target_global_week: int = None
+    target_global_week: int = None,
+    for_training: bool = True,
 ) -> pd.DataFrame:
     """
     Vectorized feature extraction for training.
@@ -110,6 +442,8 @@ def extract_features_batch(
         all_historical_odds: Historical odds for player/market rates (MUST be temporally filtered!)
         market: Market name (player_receptions, player_rush_yds, etc.)
         target_global_week: If specified, only extract for this week
+        for_training: If True (default), leave missing values as NaN for XGBoost.
+                      If False, fill missing values with position-specific averages.
 
     Returns:
         DataFrame with all feature columns added
@@ -164,8 +498,19 @@ def extract_features_batch(
 
     # =========================================================================
     # STEP 1: Pre-compute player betting history (vectorized)
+    # FIX: Load from ENRICHED.csv as fallback if historical odds are empty
     # =========================================================================
-    hist_odds = all_historical_odds[all_historical_odds['market'] == market].copy()
+    # Handle empty or missing historical odds
+    if len(all_historical_odds) == 0 or 'market' not in all_historical_odds.columns:
+        hist_odds = pd.DataFrame()
+    else:
+        hist_odds = all_historical_odds[all_historical_odds['market'] == market].copy()
+
+    # If historical odds are empty or very small, load from enriched training data
+    if len(hist_odds) < 100:
+        hist_odds = _load_enriched_historical_odds_fallback(market)
+        if len(hist_odds) > 0:
+            logger.info(f"    Using enriched historical odds fallback: {len(hist_odds)} rows")
 
     # Calculate player under rates (vectorized)
     player_rates = _compute_player_under_rates_vectorized(hist_odds)
@@ -205,18 +550,18 @@ def extract_features_batch(
     # STEP 3.5: Merge skill features from lookup tables (vectorized)
     # Now runs AFTER V25 fix so it only fills truly missing values
     # =========================================================================
-    df = _merge_skill_features_vectorized(df, market)
+    df = _merge_skill_features_vectorized(df, market, for_training=for_training)
 
     # =========================================================================
     # STEP 4: Add game context features (defaults for training)
     # Only fills truly missing values since Step 3 calculated real values
     # =========================================================================
-    df = _add_game_context_defaults(df)
+    df = _add_game_context_defaults(df, for_training=for_training)
 
     # =========================================================================
     # STEP 5: Add rush/receiving features
     # =========================================================================
-    df = _add_rush_receiving_features(df, market)
+    df = _add_rush_receiving_features(df, market, for_training=for_training)
 
     # =========================================================================
     # STEP 6: Add opponent context features (V23 - ACTUAL data, not hardcoded!)
@@ -236,7 +581,44 @@ def extract_features_batch(
     df = _calculate_interaction_terms(df)
 
     # =========================================================================
-    # STEP 8: Add row identifiers
+    # STEP 8: Add V25 team synergy features
+    # Models compound effects of multiple players returning simultaneously
+    # Features: team_synergy_multiplier, oline_health_score_v25, wr_corps_health,
+    #           has_synergy_bonus, cascade_efficiency_boost, wr_coverage_reduction,
+    #           returning_player_count, has_synergy_context
+    # =========================================================================
+    if V25_SYNERGY_AVAILABLE:
+        try:
+            # Determine week and season from data
+            current_week = int(df['week'].max()) if 'week' in df.columns else None
+            current_season = int(df['season'].max()) if 'season' in df.columns else 2025
+
+            df = extract_team_synergy_features(
+                df,
+                week=current_week,
+                season=current_season,
+                team_col='recent_team'
+            )
+            logger.info(f"    V25 synergy features added for {market}")
+        except Exception as e:
+            logger.warning(f"    V25 synergy feature extraction failed: {e}")
+            # Set defaults for synergy features
+            from nfl_quant.features.feature_defaults import FEATURE_DEFAULTS
+            for feature in V25_SYNERGY_FEATURES:
+                df[feature] = FEATURE_DEFAULTS.get(feature, 0.0)
+
+    # =========================================================================
+    # STEP 9: V28 Elo and Situational Features
+    # =========================================================================
+    df = _add_v28_elo_situational_features(df)
+
+    # =========================================================================
+    # STEP 9.5: V28.1 Player Injury Features (for backtesting)
+    # =========================================================================
+    df = _add_player_injury_features(df)
+
+    # =========================================================================
+    # STEP 10: Add row identifiers
     # =========================================================================
     if 'actual_stat' not in df.columns and stat_col in df.columns:
         df['actual_stat'] = df[stat_col]
@@ -327,10 +709,20 @@ def _calculate_core_features_vectorized(
     """
     df = df.copy()
 
+    # Apply trailing stat deflation (regression to mean adjustment)
+    # This corrects for the systematic overshoot of trailing stats vs actuals
+    if CONFIG_AVAILABLE:
+        deflation_factor = TRAILING_DEFLATION_FACTORS.get(market, DEFAULT_TRAILING_DEFLATION)
+    else:
+        deflation_factor = 0.90  # Fallback: overall median deflation
+
+    # Deflate trailing stat to more realistic expectation
+    deflated_trailing = df[trailing_col] * deflation_factor
+
     # Line vs Trailing (LVT) - percentage method
     # Avoid division by zero
-    trailing_safe = df[trailing_col].replace(0, np.nan).fillna(0.001)
-    df['line_vs_trailing'] = ((df['line'] - df[trailing_col]) / trailing_safe) * 100
+    trailing_safe = deflated_trailing.replace(0, np.nan).fillna(0.001)
+    df['line_vs_trailing'] = ((df['line'] - deflated_trailing) / trailing_safe) * 100
 
     # Clip extreme values
     df['line_vs_trailing'] = df['line_vs_trailing'].clip(-100, 100)
@@ -355,6 +747,15 @@ def _calculate_core_features_vectorized(
     df['market_bias_strength'] = (df['market_under_rate'] - 0.5).abs() * 2
     df['player_market_aligned'] = (df['player_under_rate'] - 0.5) * (df['market_under_rate'] - 0.5)
 
+    # V29 Features: Vegas Agreement Signal
+    # Week 16 analysis showed: WITH Vegas = 67% win rate, AGAINST = 27%
+    # lvt_direction: +1 if line > trailing (Vegas expects UNDER), -1 if opposite
+    df['lvt_direction'] = np.sign(df['line_vs_trailing'])
+    # vegas_agreement: 1 if betting UNDER and Vegas expects UNDER (LVT > 0)
+    # This is for UNDER bets - the model predicts P(UNDER), so when LVT > 0,
+    # the bet agrees with Vegas direction
+    df['vegas_agreement'] = (df['line_vs_trailing'] > 0).astype(float)
+
     # LVT interaction features
     if CONFIG_AVAILABLE and FEATURE_FLAGS.use_lvt_x_defense:
         if 'opp_position_def_epa' in df.columns:
@@ -372,10 +773,13 @@ def _calculate_core_features_vectorized(
     return df
 
 
-def _merge_skill_features_vectorized(df: pd.DataFrame, market: str) -> pd.DataFrame:
+def _merge_skill_features_vectorized(df: pd.DataFrame, market: str, for_training: bool = True) -> pd.DataFrame:
     """
     Merge skill features from pre-loaded lookup tables.
     Uses merge operations instead of per-row function calls.
+
+    Args:
+        for_training: If True, leave missing values as NaN. If False, use position-specific defaults.
     """
     df = df.copy()
 
@@ -402,10 +806,12 @@ def _merge_skill_features_vectorized(df: pd.DataFrame, market: str) -> pd.DataFr
             right_on=['player_lower', 'season', 'lookup_week'],
             how='left'
         )
-        df['snap_share'] = df['snap_share'].fillna(0.0)
+        # Fill missing snap_share with position-specific averages (not 0.0!)
+        df = _fill_snap_share_by_position(df, for_training=for_training)
         df = df.drop(columns=['lookup_week', 'player_lower'], errors='ignore')
     else:
-        df['snap_share'] = 0.0
+        # No snap data - use position-specific defaults
+        df = _fill_snap_share_by_position(df, for_training=for_training)
 
     # =========================================================================
     # NGS receiving features - merge by player_id, season, week
@@ -426,81 +832,116 @@ def _merge_skill_features_vectorized(df: pd.DataFrame, market: str) -> pd.DataFr
                 how='left',
                 suffixes=('', '_ngs')
             )
-            df['avg_separation'] = df['avg_separation'].fillna(2.8)  # League avg
-            df['avg_cushion'] = df['avg_cushion'].fillna(6.2)
+            # Actual values from NGS data: separation=3.07, cushion=6.09
+            if for_training:
+                pass  # Leave NaN for XGBoost
+            else:
+                df['avg_separation'] = df['avg_separation'].fillna(3.07)  # Actual from NGS
+                df['avg_cushion'] = df['avg_cushion'].fillna(6.09)  # Actual from NGS
             df = df.drop(columns=['lookup_week', 'week_ngs'], errors='ignore')
         else:
-            df['avg_separation'] = 2.8
-            df['avg_cushion'] = 6.2
+            if for_training:
+                df['avg_separation'] = np.nan
+                df['avg_cushion'] = np.nan
+            else:
+                df['avg_separation'] = 3.07  # Actual from NGS (was 2.8)
+                df['avg_cushion'] = 6.09  # Actual from NGS (was 6.2)
     else:
-        df['avg_separation'] = 2.8
-        df['avg_cushion'] = 6.2
+        if for_training:
+            df['avg_separation'] = np.nan
+            df['avg_cushion'] = np.nan
+        else:
+            df['avg_separation'] = 3.07  # Actual from NGS (was 2.8)
+            df['avg_cushion'] = 6.09  # Actual from NGS (was 6.2)
 
-    # Fill remaining skill features with defaults - only fill missing values
-    if 'trailing_catch_rate' not in df.columns:
-        df['trailing_catch_rate'] = 0.68  # League avg
-    else:
-        df['trailing_catch_rate'] = df['trailing_catch_rate'].fillna(0.68)
+    # Fill remaining skill features with defaults
+    # For training: leave NaN (XGBoost handles it natively)
+    # For prediction: use position-specific averages computed from data
+    df = _fill_catch_rate_by_position(df, for_training=for_training)
 
-    if 'target_share' not in df.columns:
-        df['target_share'] = 0.0
-    elif 'target_share_stats' in df.columns:
+    # =========================================================================
+    # FIX: Compute target_share from weekly_stats when not in enriched data
+    # This fixes the issue where live odds don't have target_share_stats
+    # For training: leave NaN (XGBoost handles it natively)
+    # For prediction: use position-specific averages
+    # =========================================================================
+    if 'target_share_stats' in df.columns:
         # Use enriched target_share if available
-        df['target_share'] = df['target_share_stats'].fillna(df['target_share']).fillna(0.0)
+        if for_training:
+            df['target_share'] = df['target_share_stats']  # Keep NaN for training
+        else:
+            df['target_share'] = df['target_share_stats'].fillna(0.0)
+    elif 'target_share' not in df.columns or (df['target_share'] == 0).all():
+        # Compute from weekly_stats when not available
+        df = _compute_target_share_from_weekly_stats(df, for_training=for_training)
     else:
-        df['target_share'] = df['target_share'].fillna(0.0)
+        # Fill missing values appropriately
+        df = _fill_target_share_by_position(df, for_training=for_training)
 
+    # Actual WR1 receptions allowed: 5.2 (was 5.5)
     if 'opp_wr1_receptions_allowed' not in df.columns:
-        df['opp_wr1_receptions_allowed'] = 5.5  # League avg
-    else:
-        df['opp_wr1_receptions_allowed'] = df['opp_wr1_receptions_allowed'].fillna(5.5)
+        if for_training:
+            df['opp_wr1_receptions_allowed'] = np.nan
+        else:
+            df['opp_wr1_receptions_allowed'] = 5.2  # Actual from data (was 5.5)
+    elif not for_training:
+        df['opp_wr1_receptions_allowed'] = df['opp_wr1_receptions_allowed'].fillna(5.2)
 
     return df
 
 
-def _add_game_context_defaults(df: pd.DataFrame) -> pd.DataFrame:
+def _add_game_context_defaults(df: pd.DataFrame, for_training: bool = True) -> pd.DataFrame:
     """
     Add game context feature columns with default values.
     Only fills missing values - preserves existing data from enriched sources.
+
+    Args:
+        for_training: If True, leave missing as NaN. If False, use computed averages.
     """
     df = df.copy()
 
     # Game Context features - only fill if missing or NaN
+    # For training: use NaN for XGBoost. For prediction: use league averages.
+    # Actual game_pace from PBP: ~65 offensive plays per team per game
     if 'game_pace' not in df.columns:
-        df['game_pace'] = 64.0  # League avg plays per game
-    else:
-        df['game_pace'] = df['game_pace'].fillna(64.0)
+        df['game_pace'] = np.nan if for_training else 65.0  # Actual from PBP
+    elif not for_training:
+        df['game_pace'] = df['game_pace'].fillna(65.0)
 
     if 'vegas_total' not in df.columns:
-        df['vegas_total'] = 44.0  # League avg O/U
-    else:
+        df['vegas_total'] = np.nan if for_training else 44.0  # League avg O/U
+    elif not for_training:
         df['vegas_total'] = df['vegas_total'].fillna(44.0)
 
     if 'vegas_spread' not in df.columns:
-        df['vegas_spread'] = 0.0  # Neutral
-    else:
+        df['vegas_spread'] = np.nan if for_training else 0.0  # Neutral
+    elif not for_training:
         df['vegas_spread'] = df['vegas_spread'].fillna(0.0)
 
     if 'implied_team_total' not in df.columns:
-        df['implied_team_total'] = 22.0  # League avg
-    else:
+        df['implied_team_total'] = np.nan if for_training else 22.0  # League avg
+    elif not for_training:
         df['implied_team_total'] = df['implied_team_total'].fillna(22.0)
 
     # Skill features - only fill if missing or NaN
+    # Actual ADOT from PBP: 7.75 (was 8.5)
     if 'adot' not in df.columns:
-        df['adot'] = 8.5  # League avg depth of target
-    else:
-        df['adot'] = df['adot'].fillna(8.5)
+        df['adot'] = np.nan if for_training else 7.75  # Actual from PBP (was 8.5)
+    elif not for_training:
+        df['adot'] = df['adot'].fillna(7.75)
 
+    # Pressure rate - actual league avg is 15.4% (not 25%!)
+    # Computed from 2024 participation data: 45,905 plays, 15.4% pressure rate
+    ACTUAL_PRESSURE_RATE = 0.154  # Computed from data, was incorrectly 0.25
     if 'pressure_rate' not in df.columns:
-        df['pressure_rate'] = 0.25  # League avg
-    else:
-        df['pressure_rate'] = df['pressure_rate'].fillna(0.25)
+        df['pressure_rate'] = np.nan if for_training else ACTUAL_PRESSURE_RATE
+    elif not for_training:
+        df['pressure_rate'] = df['pressure_rate'].fillna(ACTUAL_PRESSURE_RATE)
 
     if 'opp_pressure_rate' not in df.columns:
-        df['opp_pressure_rate'] = 0.25
-    else:
-        df['opp_pressure_rate'] = df['opp_pressure_rate'].fillna(0.25)
+        df['opp_pressure_rate'] = np.nan if for_training else ACTUAL_PRESSURE_RATE
+    elif not for_training:
+        df['opp_pressure_rate'] = df['opp_pressure_rate'].fillna(ACTUAL_PRESSURE_RATE)
 
     return df
 
@@ -560,7 +1001,7 @@ def _calculate_interaction_terms(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _add_rush_receiving_features(df: pd.DataFrame, market: str) -> pd.DataFrame:
+def _add_rush_receiving_features(df: pd.DataFrame, market: str, for_training: bool = True) -> pd.DataFrame:
     """
     Add rush/receiving specific features.
 
@@ -569,6 +1010,9 @@ def _add_rush_receiving_features(df: pd.DataFrame, market: str) -> pd.DataFrame:
     - box_count_expected: Expected box count from spread
     - slot_snap_pct: Proxy from aDOT (lower aDOT = more slot)
     - target_share_trailing: 4-week rolling target share
+
+    Args:
+        for_training: If True, leave missing as NaN. If False, use position-specific defaults.
     """
     df = df.copy()
 
@@ -614,9 +1058,18 @@ def _add_rush_receiving_features(df: pd.DataFrame, market: str) -> pd.DataFrame:
     # =========================================================================
     # Use existing target_share if available, otherwise compute from stats
     if market in ['player_receptions', 'player_reception_yds']:
-        df = _compute_target_share_trailing_vectorized(df)
+        df = _compute_target_share_trailing_vectorized(df, for_training=for_training)
     else:
-        df['target_share_trailing'] = 0.15  # Default
+        # For non-receiving markets, target_share_trailing not as relevant
+        # For training: leave as NaN. For prediction: use position-specific default
+        if for_training:
+            df['target_share_trailing'] = np.nan
+        else:
+            df = _fill_target_share_by_position(df, for_training=False)
+            if 'target_share' in df.columns:
+                df['target_share_trailing'] = df['target_share']
+            else:
+                df['target_share_trailing'] = 0.10
 
     return df
 
@@ -699,9 +1152,90 @@ def _compute_oline_health_vectorized(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _compute_target_share_trailing_vectorized(df: pd.DataFrame) -> pd.DataFrame:
+def _compute_target_share_from_weekly_stats(df: pd.DataFrame, for_training: bool = True) -> pd.DataFrame:
+    """
+    Compute target_share from weekly_stats when not present in input data.
+
+    This fixes the issue where target_share_stats is only available in enriched
+    training data but not in live odds data. We compute it from weekly_stats.parquet.
+
+    Uses the PRIOR week's target_share to avoid data leakage.
+
+    Args:
+        for_training: If True, leave missing as NaN. If False, use position-specific defaults.
+    """
+    df = df.copy()
+
+    # Skip if target_share already populated with real values
+    if 'target_share' in df.columns and (df['target_share'] > 0).any():
+        logger.debug(f"target_share already populated: {(df['target_share'] > 0).mean():.1%} non-zero")
+        return df
+
+    # Load weekly stats
+    weekly_stats = _load_weekly_stats_lookup()
+
+    if len(weekly_stats) == 0:
+        logger.warning("weekly_stats not available for target_share computation")
+        # For training: leave as NaN. For prediction: use position-specific defaults
+        return _fill_target_share_by_position(df, for_training=for_training)
+
+    if 'target_share' not in weekly_stats.columns:
+        logger.warning("target_share column not in weekly_stats")
+        return _fill_target_share_by_position(df, for_training=for_training)
+
+    # Normalize player names for matching
+    weekly_stats = weekly_stats.copy()
+    weekly_stats['player_norm'] = weekly_stats['player_display_name'].str.lower().str.strip()
+
+    # Use prior week's target_share (week - 1) to avoid leakage
+    # First, compute 4-week trailing average for smoothing
+    weekly_stats = weekly_stats.sort_values(['player_norm', 'season', 'week'])
+    weekly_stats['target_share_smooth'] = weekly_stats.groupby('player_norm')['target_share'].transform(
+        lambda x: x.shift(1).ewm(span=EWMA_SPAN if CONFIG_AVAILABLE else 4, min_periods=1).mean()
+    )
+
+    # Create lookup with week+1 for no leakage (prior week's value for current week)
+    ts_lookup = weekly_stats[['player_norm', 'season', 'week', 'target_share_smooth']].copy()
+    ts_lookup['lookup_week'] = ts_lookup['week'] + 1
+    ts_lookup = ts_lookup.rename(columns={'target_share_smooth': 'target_share_computed'})
+
+    # Merge
+    if 'player_norm' in df.columns:
+        df = df.merge(
+            ts_lookup[['player_norm', 'season', 'lookup_week', 'target_share_computed']],
+            left_on=['player_norm', 'season', 'week'],
+            right_on=['player_norm', 'season', 'lookup_week'],
+            how='left',
+            suffixes=('', '_ws')
+        )
+
+        # Fill target_share with computed values where missing
+        if 'target_share' not in df.columns:
+            df['target_share'] = df['target_share_computed']
+        else:
+            df['target_share'] = df['target_share'].fillna(df['target_share_computed'])
+
+        df = df.drop(columns=['lookup_week', 'target_share_computed', 'player_norm_ws'], errors='ignore')
+
+        # For prediction only: fill remaining NaN with position-specific defaults
+        if not for_training:
+            df = _fill_target_share_by_position(df, for_training=False)
+
+        coverage = (df['target_share'].notna() & (df['target_share'] > 0)).mean()
+        logger.info(f"    target_share computed from weekly_stats: {coverage:.1%} coverage")
+    else:
+        # No player_norm column - use position-specific fallbacks
+        df = _fill_target_share_by_position(df, for_training=for_training)
+
+    return df
+
+
+def _compute_target_share_trailing_vectorized(df: pd.DataFrame, for_training: bool = True) -> pd.DataFrame:
     """
     Compute 4-week trailing target share from weekly stats.
+
+    Args:
+        for_training: If True, leave missing as NaN. If False, use position-specific defaults.
     """
     df = df.copy()
 
@@ -709,12 +1243,21 @@ def _compute_target_share_trailing_vectorized(df: pd.DataFrame) -> pd.DataFrame:
     weekly_stats = _load_weekly_stats_lookup()
 
     if len(weekly_stats) == 0:
-        df['target_share_trailing'] = 0.15
+        # For training: leave as NaN. For prediction: use position-specific defaults
+        if for_training:
+            df['target_share_trailing'] = np.nan
+        else:
+            df = _fill_target_share_by_position(df, for_training=False)
+            df['target_share_trailing'] = df.get('target_share', 0.10)
         return df
 
     # Check if target_share column exists
     if 'target_share' not in weekly_stats.columns:
-        df['target_share_trailing'] = 0.15
+        if for_training:
+            df['target_share_trailing'] = np.nan
+        else:
+            df = _fill_target_share_by_position(df, for_training=False)
+            df['target_share_trailing'] = df.get('target_share', 0.10)
         return df
 
     # Normalize player names for matching
@@ -724,7 +1267,7 @@ def _compute_target_share_trailing_vectorized(df: pd.DataFrame) -> pd.DataFrame:
     # Calculate trailing target share (4-week EWMA)
     weekly_stats = weekly_stats.sort_values(['player_norm', 'season', 'week'])
     weekly_stats['target_share_trailing'] = weekly_stats.groupby('player_norm')['target_share'].transform(
-        lambda x: x.shift(1).ewm(span=4, min_periods=1).mean()
+        lambda x: x.shift(1).ewm(span=EWMA_SPAN if CONFIG_AVAILABLE else 4, min_periods=1).mean()
     )
 
     # Create lookup with week+1 for no leakage
@@ -740,10 +1283,19 @@ def _compute_target_share_trailing_vectorized(df: pd.DataFrame) -> pd.DataFrame:
             how='left',
             suffixes=('', '_ts')
         )
-        df['target_share_trailing'] = df['target_share_trailing'].fillna(0.15)
+        # For prediction only: fill missing with position-specific defaults
+        if not for_training:
+            df = _fill_target_share_by_position(df, for_training=False)
+            mask = df['target_share_trailing'].isna()
+            if 'target_share' in df.columns:
+                df.loc[mask, 'target_share_trailing'] = df.loc[mask, 'target_share']
         df = df.drop(columns=['lookup_week', 'player_norm_ts'], errors='ignore')
     else:
-        df['target_share_trailing'] = 0.15
+        if for_training:
+            df['target_share_trailing'] = np.nan
+        else:
+            df = _fill_target_share_by_position(df, for_training=False)
+            df['target_share_trailing'] = df.get('target_share', 0.10)
 
     return df
 
@@ -756,12 +1308,50 @@ _SNAP_COUNTS_CACHE = None
 _NGS_RECEIVING_CACHE = None
 _INJURIES_CACHE = None
 _WEEKLY_STATS_CACHE = None
+_ENRICHED_ODDS_CACHE = None
 
 # V24 Position Matchup Caches
 _V24_POSITION_ROLES_CACHE = None
 _V24_DEFENSE_VS_POSITION_CACHE = None
 _V24_COVERAGE_TENDENCIES_CACHE = None
 _V24_SLOT_FUNNEL_CACHE = None
+
+
+def _load_enriched_historical_odds_fallback(market: str) -> pd.DataFrame:
+    """
+    Load historical odds from ENRICHED.csv as fallback.
+
+    This is used when the all_historical_odds parameter is empty or too small,
+    which happens during live predictions. We load from the enriched training
+    data to compute player_under_rate, player_bias, and market_under_rate.
+    """
+    global _ENRICHED_ODDS_CACHE
+
+    if _ENRICHED_ODDS_CACHE is None:
+        path = PROJECT_ROOT / 'data' / 'backtest' / 'combined_odds_actuals_ENRICHED.csv'
+        if path.exists():
+            try:
+                df = pd.read_csv(path, low_memory=False)
+                # Normalize player names
+                if 'player' in df.columns:
+                    df['player_norm'] = df['player'].str.lower().str.strip()
+                # Add global_week if not present
+                if 'global_week' not in df.columns and 'season' in df.columns and 'week' in df.columns:
+                    df['global_week'] = (df['season'] - 2023) * 18 + df['week']
+                _ENRICHED_ODDS_CACHE = df
+                logger.debug(f"Loaded enriched odds fallback: {len(df)} rows")
+            except Exception as e:
+                logger.warning(f"Failed to load enriched odds: {e}")
+                _ENRICHED_ODDS_CACHE = pd.DataFrame()
+        else:
+            logger.warning(f"Enriched odds not found at {path}")
+            _ENRICHED_ODDS_CACHE = pd.DataFrame()
+
+    if len(_ENRICHED_ODDS_CACHE) == 0:
+        return pd.DataFrame()
+
+    # Filter to the requested market
+    return _ENRICHED_ODDS_CACHE[_ENRICHED_ODDS_CACHE['market'] == market].copy()
 
 
 def _load_snap_counts_lookup() -> pd.DataFrame:
@@ -816,11 +1406,13 @@ def clear_caches():
     """Clear all cached lookup tables."""
     global _SNAP_COUNTS_CACHE, _NGS_RECEIVING_CACHE, _INJURIES_CACHE, _WEEKLY_STATS_CACHE, _OPP_DEFENSE_CACHE
     global _V24_POSITION_ROLES_CACHE, _V24_DEFENSE_VS_POSITION_CACHE, _V24_COVERAGE_TENDENCIES_CACHE, _V24_SLOT_FUNNEL_CACHE
+    global _ENRICHED_ODDS_CACHE
     _SNAP_COUNTS_CACHE = None
     _NGS_RECEIVING_CACHE = None
     _INJURIES_CACHE = None
     _WEEKLY_STATS_CACHE = None
     _OPP_DEFENSE_CACHE = None
+    _ENRICHED_ODDS_CACHE = None
     # V24 caches
     _V24_POSITION_ROLES_CACHE = None
     _V24_DEFENSE_VS_POSITION_CACHE = None
@@ -832,6 +1424,22 @@ def clear_caches():
             clear_broken_feature_caches()
         except Exception:
             pass
+    # V25 synergy caches
+    if V25_SYNERGY_AVAILABLE:
+        try:
+            clear_synergy_cache()
+        except Exception:
+            pass
+    # V28 Elo/situational caches
+    try:
+        clear_v28_caches()
+    except Exception:
+        pass
+    # V28.1 unified injury cache
+    try:
+        clear_injury_cache()
+    except Exception:
+        pass
 
 
 # =========================================================================
@@ -1258,7 +1866,13 @@ def _add_position_matchup_features_vectorized(df: pd.DataFrame, market: str) -> 
 
     # Merge coverage tendencies
     if coverage_tendencies is not None and len(coverage_tendencies) > 0:
-        coverage_merge = coverage_tendencies.rename(columns={'defense_team': opponent_col})
+        coverage_merge = coverage_tendencies.rename(columns={'defense_team': opponent_col}).copy()
+        # FIX: Ensure consistent types for merge keys (coverage cache has float weeks)
+        if 'week' in coverage_merge.columns:
+            coverage_merge['week'] = coverage_merge['week'].astype(int)
+        if 'season' in coverage_merge.columns:
+            coverage_merge['season'] = coverage_merge['season'].astype(int)
+
         merge_on = [c for c in [opponent_col, 'week', 'season'] if c in coverage_merge.columns and c in df.columns]
 
         if len(merge_on) >= 1:
@@ -1271,10 +1885,17 @@ def _add_position_matchup_features_vectorized(df: pd.DataFrame, market: str) -> 
                 how='left',
                 suffixes=('', '_cov')
             )
+            logger.debug(f"Coverage merge result: {df['opp_man_coverage_rate_trailing'].notna().mean():.1%} coverage")
 
     # Merge slot funnel
     if slot_funnel is not None and len(slot_funnel) > 0:
-        funnel_merge = slot_funnel.rename(columns={'defense_team': opponent_col})
+        funnel_merge = slot_funnel.rename(columns={'defense_team': opponent_col}).copy()
+        # FIX: Ensure consistent types for merge keys
+        if 'week' in funnel_merge.columns:
+            funnel_merge['week'] = funnel_merge['week'].astype(int)
+        if 'season' in funnel_merge.columns:
+            funnel_merge['season'] = funnel_merge['season'].astype(int)
+
         merge_on = [c for c in [opponent_col, 'week', 'season'] if c in funnel_merge.columns and c in df.columns]
 
         if len(merge_on) >= 1:
@@ -1287,6 +1908,7 @@ def _add_position_matchup_features_vectorized(df: pd.DataFrame, market: str) -> 
                 how='left',
                 suffixes=('', '_funnel')
             )
+            logger.debug(f"Slot funnel merge result: {df['slot_funnel_score'].notna().mean():.1%} coverage")
 
     # Calculate man coverage adjustment
     if 'opp_man_coverage_rate_trailing' in df.columns:
@@ -1319,3 +1941,381 @@ def _add_position_matchup_features_vectorized(df: pd.DataFrame, market: str) -> 
     logger.info(f"V24 position matchup coverage: {coverage:.1%} of rows have context")
 
     return df
+
+
+# =========================================================================
+# V28 ELO AND SITUATIONAL FEATURES
+# =========================================================================
+
+_V28_ELO_CACHE = None
+_V28_SCHEDULE_CACHE = None
+
+
+def _load_v28_elo_ratings():
+    """Load V28 Elo ratings from saved file or initialize from schedule."""
+    global _V28_ELO_CACHE
+
+    if _V28_ELO_CACHE is not None:
+        return _V28_ELO_CACHE
+
+    try:
+        from nfl_quant.models.elo_ratings import load_elo_ratings, initialize_elo_from_nflverse
+
+        elo_path = PROJECT_ROOT / 'data' / 'models' / 'elo_ratings.json'
+        if elo_path.exists():
+            _V28_ELO_CACHE = load_elo_ratings(str(elo_path))
+            logger.info(f"Loaded V28 Elo ratings: {len(_V28_ELO_CACHE.ratings)} teams")
+        else:
+            # Initialize from nflverse schedule
+            logger.info("Initializing V28 Elo ratings from schedule...")
+            _V28_ELO_CACHE = initialize_elo_from_nflverse(seasons=[2023, 2024, 2025])
+
+    except Exception as e:
+        logger.warning(f"V28 Elo ratings not available: {e}")
+        _V28_ELO_CACHE = None
+
+    return _V28_ELO_CACHE
+
+
+def _load_v28_schedule():
+    """Load schedule for rest days and HFA."""
+    global _V28_SCHEDULE_CACHE
+
+    if _V28_SCHEDULE_CACHE is not None:
+        return _V28_SCHEDULE_CACHE
+
+    schedule_path = PROJECT_ROOT / 'data' / 'nflverse' / 'schedules.parquet'
+    if not schedule_path.exists():
+        schedule_path = PROJECT_ROOT / 'data' / 'nflverse' / 'schedules.csv'
+
+    if not schedule_path.exists():
+        _V28_SCHEDULE_CACHE = pd.DataFrame()
+        return _V28_SCHEDULE_CACHE
+
+    try:
+        if schedule_path.suffix == '.parquet':
+            _V28_SCHEDULE_CACHE = pd.read_parquet(schedule_path)
+        else:
+            _V28_SCHEDULE_CACHE = pd.read_csv(schedule_path)
+        logger.debug(f"Loaded V28 schedule: {len(_V28_SCHEDULE_CACHE)} games")
+    except Exception as e:
+        logger.warning(f"Failed to load schedule: {e}")
+        _V28_SCHEDULE_CACHE = pd.DataFrame()
+
+    return _V28_SCHEDULE_CACHE
+
+
+def _add_v28_elo_situational_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add V28 Elo and situational features.
+
+    Features:
+    - elo_rating_home: Home team Elo rating
+    - elo_rating_away: Away team Elo rating
+    - elo_diff: Home - Away Elo (with HFA)
+    - ybc_proxy: Yards Before Contact proxy (filled elsewhere)
+    - rest_days: Days since last game
+    - hfa_adjustment: Team-specific HFA factor
+    """
+    df = df.copy()
+
+    # Initialize V28 feature columns with defaults
+    V28_FEATURES = [
+        'elo_rating_home',
+        'elo_rating_away',
+        'elo_diff',
+        'ybc_proxy',
+        'rest_days',
+        'hfa_adjustment',
+    ]
+
+    for feat in V28_FEATURES:
+        if feat not in df.columns:
+            df[feat] = np.nan
+
+    # Determine team/opponent columns
+    team_col = None
+    for col in ['team', 'recent_team', 'player_team']:
+        if col in df.columns:
+            team_col = col
+            break
+
+    opponent_col = None
+    for col in ['opponent', 'opponent_team', 'opp']:
+        if col in df.columns:
+            opponent_col = col
+            break
+
+    if team_col is None:
+        logger.debug("V28: No team column found, using defaults")
+        df['elo_rating_home'] = 1500.0
+        df['elo_rating_away'] = 1500.0
+        df['elo_diff'] = 0.0
+        df['rest_days'] = 7.0
+        df['hfa_adjustment'] = 1.0
+        df['ybc_proxy'] = 5.0
+        return df
+
+    # Load Elo ratings
+    elo = _load_v28_elo_ratings()
+    schedule = _load_v28_schedule()
+
+    if elo is not None:
+        # Add Elo ratings for each team
+        df['elo_rating_home'] = df[team_col].map(lambda t: elo.get_rating(t))
+        if opponent_col:
+            df['elo_rating_away'] = df[opponent_col].map(lambda t: elo.get_rating(t))
+            # Elo diff includes HFA
+            df['elo_diff'] = df.apply(
+                lambda row: elo.get_elo_diff(row[team_col], row[opponent_col])
+                if pd.notna(row[team_col]) and pd.notna(row[opponent_col]) else 0.0,
+                axis=1
+            )
+        else:
+            df['elo_rating_away'] = 1500.0
+            df['elo_diff'] = df['elo_rating_home'] - 1500.0
+    else:
+        df['elo_rating_home'] = 1500.0
+        df['elo_rating_away'] = 1500.0
+        df['elo_diff'] = 0.0
+
+    # Add rest days from schedule
+    if len(schedule) > 0 and 'home_rest' in schedule.columns:
+        # Create rest lookup
+        away_rest = schedule[['season', 'week', 'away_team', 'away_rest']].copy()
+        away_rest.columns = ['season', 'week', 'team', 'rest_days']
+        home_rest = schedule[['season', 'week', 'home_team', 'home_rest']].copy()
+        home_rest.columns = ['season', 'week', 'team', 'rest_days']
+        rest_lookup = pd.concat([away_rest, home_rest]).drop_duplicates(['season', 'week', 'team'])
+
+        # Merge rest days
+        if 'season' in df.columns and 'week' in df.columns:
+            df = df.merge(
+                rest_lookup.rename(columns={'team': team_col}),
+                on=['season', 'week', team_col],
+                how='left',
+                suffixes=('', '_lookup')
+            )
+            if 'rest_days_lookup' in df.columns:
+                df['rest_days'] = df['rest_days_lookup'].fillna(7.0)
+                df = df.drop(columns=['rest_days_lookup'])
+            else:
+                df['rest_days'] = df['rest_days'].fillna(7.0)
+    else:
+        df['rest_days'] = 7.0
+
+    # Add HFA adjustment
+    try:
+        from nfl_quant.features.situational_features import get_hfa_adjustment
+        df['hfa_adjustment'] = df[team_col].apply(lambda t: get_hfa_adjustment(t, is_home=True))
+    except Exception:
+        df['hfa_adjustment'] = 1.0
+
+    # YBC proxy defaults (actual calculation happens in core.py per-player)
+    if 'position' in df.columns:
+        position_ybc = {'WR': 8.0, 'TE': 6.5, 'RB': 1.5, 'QB': 2.0}
+        df['ybc_proxy'] = df['position'].map(lambda p: position_ybc.get(p, 5.0))
+    else:
+        df['ybc_proxy'] = 5.0
+
+    # Fill any remaining NaN
+    df['elo_rating_home'] = df['elo_rating_home'].fillna(1500.0)
+    df['elo_rating_away'] = df['elo_rating_away'].fillna(1500.0)
+    df['elo_diff'] = df['elo_diff'].fillna(0.0)
+    df['rest_days'] = df['rest_days'].fillna(7.0)
+    df['hfa_adjustment'] = df['hfa_adjustment'].fillna(1.0)
+    df['ybc_proxy'] = df['ybc_proxy'].fillna(5.0)
+
+    logger.info(f"V28 Elo/situational features added: elo_home={df['elo_rating_home'].mean():.0f}, elo_diff={df['elo_diff'].mean():.1f}")
+
+    return df
+
+
+def clear_v28_caches():
+    """Clear V28 Elo and situational feature caches."""
+    global _V28_ELO_CACHE, _V28_SCHEDULE_CACHE
+    _V28_ELO_CACHE = None
+    _V28_SCHEDULE_CACHE = None
+
+
+# =============================================================================
+# V28.1 PLAYER INJURY FEATURES (for backtesting)
+# =============================================================================
+
+# Cache for unified injury data
+_UNIFIED_INJURY_CACHE = None
+
+
+def _load_unified_injury_data() -> pd.DataFrame:
+    """
+    Load unified injury data (NFLverse + Sleeper combined).
+
+    Priority:
+    1. Unified injury history (data/processed/unified_injury_history.parquet)
+    2. Fall back to NFLverse only (data/nflverse/injuries.parquet)
+    """
+    global _UNIFIED_INJURY_CACHE
+
+    if _UNIFIED_INJURY_CACHE is not None:
+        return _UNIFIED_INJURY_CACHE
+
+    # Try unified first
+    unified_path = PROJECT_ROOT / 'data' / 'processed' / 'unified_injury_history.parquet'
+    if unified_path.exists():
+        try:
+            _UNIFIED_INJURY_CACHE = pd.read_parquet(unified_path)
+            logger.info(f"Loaded unified injury data: {len(_UNIFIED_INJURY_CACHE)} records (NFLverse + Sleeper)")
+            return _UNIFIED_INJURY_CACHE
+        except Exception as e:
+            logger.warning(f"Failed to load unified injuries: {e}")
+
+    # Fall back to NFLverse only
+    nflverse_path = PROJECT_ROOT / 'data' / 'nflverse' / 'injuries.parquet'
+    if nflverse_path.exists():
+        try:
+            _UNIFIED_INJURY_CACHE = pd.read_parquet(nflverse_path)
+            # Add required columns for compatibility
+            _UNIFIED_INJURY_CACHE['injury_status_encoded'] = _UNIFIED_INJURY_CACHE['report_status'].map({
+                'Out': 3, 'Doubtful': 2, 'Questionable': 1, 'Probable': 0
+            }).fillna(0).astype(int)
+            _UNIFIED_INJURY_CACHE['practice_status_encoded'] = _UNIFIED_INJURY_CACHE['practice_status'].map({
+                'Did Not Participate In Practice': 2, 'DNP': 2,
+                'Limited Participation in Practice': 1, 'Limited': 1,
+                'Full Participation in Practice': 0, 'Full': 0
+            }).fillna(0).astype(int)
+            _UNIFIED_INJURY_CACHE['player_name'] = _UNIFIED_INJURY_CACHE['full_name']
+            _UNIFIED_INJURY_CACHE['player_id'] = _UNIFIED_INJURY_CACHE['gsis_id']
+            logger.info(f"Loaded NFLverse injuries: {len(_UNIFIED_INJURY_CACHE)} records")
+            return _UNIFIED_INJURY_CACHE
+        except Exception as e:
+            logger.warning(f"Failed to load NFLverse injuries: {e}")
+
+    _UNIFIED_INJURY_CACHE = pd.DataFrame()
+    return _UNIFIED_INJURY_CACHE
+
+
+def _add_player_injury_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add player-level injury features from unified injury data (NFLverse + Sleeper).
+
+    Features:
+    - injury_status_encoded: 0=None/Probable, 1=Questionable, 2=Doubtful, 3=Out
+    - practice_status_encoded: 0=Full, 1=Limited, 2=DNP
+    - has_injury_designation: Binary flag if player has any injury status
+
+    Uses unified injury history for full backtesting coverage:
+    - NFLverse: 2024 season (week-by-week official reports)
+    - Sleeper: 2025 season (consolidated snapshots)
+    """
+    df = df.copy()
+
+    # Initialize defaults
+    df['injury_status_encoded'] = 0
+    df['practice_status_encoded'] = 0
+    df['has_injury_designation'] = 0
+
+    # Load unified injuries data
+    injuries = _load_unified_injury_data()
+
+    if len(injuries) == 0:
+        logger.debug("No injury data available - using defaults")
+        return df
+
+    if 'season' not in df.columns or 'week' not in df.columns:
+        logger.debug("Missing season/week columns for injury merge")
+        return df
+
+    # Prepare injury lookup
+    required_cols = ['season', 'week', 'injury_status_encoded', 'practice_status_encoded']
+    available_cols = [c for c in required_cols if c in injuries.columns]
+
+    if len(available_cols) < len(required_cols):
+        logger.warning(f"Missing injury columns: {set(required_cols) - set(available_cols)}")
+        return df
+
+    # Try multiple merge strategies
+    n_matched = 0
+
+    # Strategy 1: Merge by player_id (gsis_id)
+    player_id_col = None
+    for col in ['gsis_id', 'player_id', 'id']:
+        if col in df.columns:
+            player_id_col = col
+            break
+
+    if player_id_col and 'player_id' in injuries.columns:
+        inj_by_id = injuries[['player_id', 'season', 'week', 'injury_status_encoded', 'practice_status_encoded']].copy()
+        inj_by_id = inj_by_id.rename(columns={'player_id': player_id_col})
+        inj_by_id = inj_by_id.drop_duplicates([player_id_col, 'season', 'week'])
+
+        df = df.merge(
+            inj_by_id,
+            on=[player_id_col, 'season', 'week'],
+            how='left',
+            suffixes=('', '_inj_id')
+        )
+
+        # Apply merged values
+        for col in ['injury_status_encoded', 'practice_status_encoded']:
+            merge_col = f'{col}_inj_id'
+            if merge_col in df.columns:
+                df[col] = df[merge_col].fillna(df[col]).astype(int)
+                df = df.drop(columns=[merge_col])
+
+        n_matched = (df['injury_status_encoded'] > 0).sum()
+
+    # Strategy 2: Merge by player_name + team (for rows not matched by ID)
+    if 'player_name' in injuries.columns:
+        player_name_col = None
+        for col in ['player', 'player_name', 'player_norm']:
+            if col in df.columns:
+                player_name_col = col
+                break
+
+        team_col = None
+        for col in ['team', 'recent_team', 'player_team']:
+            if col in df.columns:
+                team_col = col
+                break
+
+        if player_name_col and team_col:
+            # Normalize names for matching
+            df['_player_norm'] = df[player_name_col].str.lower().str.strip()
+            injuries['_player_norm'] = injuries['player_name'].str.lower().str.strip()
+
+            inj_by_name = injuries[['_player_norm', 'team', 'season', 'week', 'injury_status_encoded', 'practice_status_encoded']].copy()
+            inj_by_name = inj_by_name.rename(columns={'team': team_col})
+            inj_by_name = inj_by_name.drop_duplicates(['_player_norm', team_col, 'season', 'week'])
+
+            df = df.merge(
+                inj_by_name,
+                on=['_player_norm', team_col, 'season', 'week'],
+                how='left',
+                suffixes=('', '_inj_name')
+            )
+
+            # Apply merged values (only if not already matched)
+            for col in ['injury_status_encoded', 'practice_status_encoded']:
+                merge_col = f'{col}_inj_name'
+                if merge_col in df.columns:
+                    # Only update if current value is 0 (not already matched)
+                    mask = df[col] == 0
+                    df.loc[mask, col] = df.loc[mask, merge_col].fillna(0).astype(int)
+                    df = df.drop(columns=[merge_col])
+
+            df = df.drop(columns=['_player_norm'], errors='ignore')
+
+    # Set has_injury_designation flag
+    df['has_injury_designation'] = (df['injury_status_encoded'] > 0).astype(int)
+
+    # Log results
+    n_injured = df['has_injury_designation'].sum()
+    logger.info(f"Player injury features added: {n_injured}/{len(df)} players have injury designations")
+
+    return df
+
+
+def clear_injury_cache():
+    """Clear unified injury data cache."""
+    global _UNIFIED_INJURY_CACHE
+    _UNIFIED_INJURY_CACHE = None

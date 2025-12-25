@@ -56,10 +56,12 @@ Usage:
 import logging
 import pandas as pd
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Any
+from typing import Dict, Optional, Tuple, Any, Union
 import sys
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Use centralized path configuration
+from nfl_quant.config_paths import PROJECT_ROOT
+sys.path.insert(0, str(PROJECT_ROOT))
 
 from nfl_quant.utils.defensive_stats_integration import (
     get_defensive_epa_for_player,
@@ -75,35 +77,210 @@ from nfl_quant.features.team_strength import EnhancedEloCalculator
 logger = logging.getLogger(__name__)
 
 
-def load_weather_for_week(week: int) -> pd.DataFrame:
+def load_weather_for_week(week: int, season: int = 2025) -> pd.DataFrame:
     """
-    Load weather data for a week - FAIL EXPLICITLY if unavailable.
+    Load weather data for a week from nflweather.com cache OR NFLverse schedules.
+
+    Priority:
+    1. Load from nflweather.com cached JSON (research-backed adjustments via WeatherAdjusterV2)
+    2. Fall back to NFLverse schedules (basic temp/wind data)
 
     Args:
         week: Week number
+        season: Season year
 
     Returns:
-        DataFrame with weather data by team
-
-    Raises:
-        FileNotFoundError: If weather data not available
+        DataFrame with weather data by team (home and away teams for each game)
     """
-    weather_dir = Path('data/weather')
-    if not weather_dir.exists():
-        raise FileNotFoundError(
-            f"Weather data directory not found: {weather_dir}. "
-            f"Run: python scripts/fetch/fetch_weather.py --week {week}"
+    # Priority 1: Try nflweather.com cached data (has precipitation and more accurate forecasts)
+    try:
+        from nfl_quant.config_paths import DATA_DIR
+        import json
+
+        weather_cache = DATA_DIR / 'weather' / f'weather_week{week}_{season}.json'
+
+        if weather_cache.exists():
+            with open(weather_cache) as f:
+                cached_games = json.load(f)
+
+            if cached_games:
+                weather_records = []
+                for game in cached_games:
+                    home_team = game.get('home_team')
+                    away_team = game.get('away_team')
+
+                    # Use pre-calculated adjustments from WeatherAdjusterV2
+                    total_adj = game.get('total_adjustment', 0.0)
+                    passing_adj = game.get('passing_adjustment', 0.0)
+                    severity = game.get('severity', 'None')
+
+                    # Add records for both teams
+                    for team in [home_team, away_team]:
+                        if team:
+                            weather_records.append({
+                                'team': team,
+                                'temperature': game.get('temperature'),
+                                'wind_speed': game.get('wind_speed'),
+                                'is_dome': game.get('is_dome', False),
+                                'conditions': game.get('conditions', ''),
+                                'precip_chance': game.get('precip_chance', 0),
+                                'precip_type': game.get('precip_type'),
+                                'total_adjustment': total_adj,
+                                'passing_adjustment': passing_adj,
+                                'severity': severity,
+                                'wind_bucket': game.get('wind_bucket', 'calm'),
+                                'temp_bucket': game.get('temp_bucket', 'comfortable'),
+                            })
+
+                weather_df = pd.DataFrame(weather_records)
+
+                # Log summary
+                non_neutral = weather_df[weather_df['severity'] != 'None']
+                if len(non_neutral) > 0:
+                    logger.info(f"   ✅ Loaded nflweather.com cache: {len(non_neutral)//2} games with weather impact")
+                    for _, row in weather_df[weather_df['severity'] != 'None'].drop_duplicates('team').iterrows():
+                        logger.info(f"      - {row['team']}: {row['conditions']} ({row['severity']}, {row['passing_adjustment']:+.1%} passing)")
+                else:
+                    logger.info(f"   ✅ Loaded nflweather.com cache: No significant weather impacts")
+
+                return weather_df
+
+    except Exception as e:
+        logger.warning(f"   Could not load nflweather.com cache: {e}")
+
+    # Priority 2: Fall back to NFLverse schedules
+    from nfl_quant.utils.nflverse_loader import load_schedules
+
+    # Load schedules
+    schedules = load_schedules(seasons=season)
+
+    # Filter to the week
+    week_games = schedules[schedules['week'] == week].copy()
+
+    if len(week_games) == 0:
+        logger.warning(f"No games found in NFLverse schedule for week {week}, season {season}")
+        return pd.DataFrame(columns=['team', 'total_adjustment', 'passing_adjustment', 'severity'])
+
+    # Calculate weather adjustments for each game
+    weather_records = []
+
+    for _, game in week_games.iterrows():
+        home_team = game.get('home_team')
+        away_team = game.get('away_team')
+
+        # Get weather data from schedule
+        temp = game.get('temp')
+        wind = game.get('wind')
+        roof = str(game.get('roof', '')).lower() if pd.notna(game.get('roof')) else ''
+
+        # Determine if dome/indoor
+        is_dome = roof in ['dome', 'closed']
+        is_retractable = roof == 'retractable'
+
+        # Calculate adjustments
+        total_adj, passing_adj, severity = _calculate_weather_adjustments(
+            temp, wind, is_dome, is_retractable
         )
 
-    weather_files = list(weather_dir.glob(f'weather_week{week}_*.csv'))
-    if len(weather_files) == 0:
-        raise FileNotFoundError(
-            f"Weather data not found for week {week}. "
-            f"Run: python scripts/fetch/fetch_weather.py --week {week}"
-        )
+        # Add records for both teams
+        for team in [home_team, away_team]:
+            if pd.notna(team):
+                weather_records.append({
+                    'team': team,
+                    'temperature': temp if pd.notna(temp) else None,
+                    'wind_speed': wind if pd.notna(wind) else None,
+                    'is_dome': is_dome,
+                    'total_adjustment': total_adj,
+                    'passing_adjustment': passing_adj,
+                    'severity': severity
+                })
 
-    weather_df = pd.read_csv(sorted(weather_files)[-1])
+    weather_df = pd.DataFrame(weather_records)
+
+    # Log summary
+    non_neutral = weather_df[weather_df['severity'] != 'None']
+    if len(non_neutral) > 0:
+        logger.info(f"   Weather impacts (NFLverse fallback) for week {week}: {len(non_neutral)//2} games with adjustments")
+
     return weather_df
+
+
+def _calculate_weather_adjustments(
+    temp: Optional[float],
+    wind: Optional[float],
+    is_dome: bool,
+    is_retractable: bool
+) -> Tuple[float, float, str]:
+    """
+    Calculate weather adjustments based on temperature and wind.
+
+    Returns:
+        Tuple of (total_adjustment, passing_adjustment, severity)
+    """
+    # Domes have no weather impact
+    if is_dome:
+        return 0.0, 0.0, "None (Dome)"
+
+    # If retractable and no weather data, assume neutral
+    if is_retractable and (pd.isna(temp) or pd.isna(wind)):
+        return 0.0, 0.0, "None (Retractable - unknown)"
+
+    # Missing data - return neutral
+    if pd.isna(temp) and pd.isna(wind):
+        return 0.0, 0.0, "None (No data)"
+
+    total_adj = 0.0
+    passing_adj = 0.0
+    severity_parts = []
+
+    # Temperature adjustments
+    if pd.notna(temp):
+        if temp < 25:
+            # Extreme cold
+            passing_adj -= 0.06
+            total_adj -= 0.04
+            severity_parts.append("Extreme Cold")
+        elif temp < 32:
+            # Cold
+            passing_adj -= 0.04
+            total_adj -= 0.02
+            severity_parts.append("Cold")
+        elif temp < 40:
+            # Chilly
+            passing_adj -= 0.02
+            total_adj -= 0.01
+            severity_parts.append("Chilly")
+        elif temp > 90:
+            # Extreme heat
+            passing_adj -= 0.02
+            total_adj -= 0.01
+            severity_parts.append("Hot")
+
+    # Wind adjustments
+    if pd.notna(wind):
+        if wind >= 20:
+            # Extreme wind
+            passing_adj -= 0.15
+            total_adj -= 0.08
+            severity_parts.append("Extreme Wind")
+        elif wind >= 15:
+            # High wind
+            passing_adj -= 0.08
+            total_adj -= 0.04
+            severity_parts.append("High Wind")
+        elif wind >= 10:
+            # Moderate wind
+            passing_adj -= 0.03
+            total_adj -= 0.01
+            severity_parts.append("Moderate Wind")
+
+    # Determine severity string
+    if not severity_parts:
+        severity = "None"
+    else:
+        severity = " + ".join(severity_parts)
+
+    return round(total_adj, 3), round(passing_adj, 3), severity
 
 
 def check_divisional_game(home_team: str, away_team: str, week: int, season: int = 2025) -> bool:
@@ -309,30 +486,34 @@ def integrate_all_factors(
             logger.warning(f"   ⚠️  Defensive EPA integration failed: {e}")
             integrated_df['opponent_def_epa_vs_position'] = 0.0
 
-    # Step 2: Integrate Weather
-    logger.info("\n2. Integrating Weather Adjustments...")
+    # Step 2: Integrate Weather (from NFLverse schedules)
+    logger.info("\n2. Integrating Weather Adjustments (from NFLverse schedules)...")
     try:
-        weather_df = load_weather_for_week(week)
+        weather_df = load_weather_for_week(week, season)
 
         # Merge weather data by team
-        if 'team' in integrated_df.columns:
+        if 'team' in integrated_df.columns and len(weather_df) > 0:
+            merge_cols = ['team', 'total_adjustment', 'passing_adjustment', 'severity']
+            available_cols = [c for c in merge_cols if c in weather_df.columns]
             integrated_df = integrated_df.merge(
-                weather_df[['team', 'total_adjustment', 'passing_adjustment', 'severity']],
+                weather_df[available_cols],
                 on='team',
                 how='left'
             )
             integrated_df['weather_total_adjustment'] = integrated_df['total_adjustment'].fillna(0.0)
             integrated_df['weather_passing_adjustment'] = integrated_df['passing_adjustment'].fillna(0.0)
-            logger.info(f"   ✅ Weather integrated for {len(weather_df)} teams")
+
+            # Count games with weather impact
+            non_neutral = len(weather_df[weather_df['severity'] != 'None']) // 2
+            logger.info(f"   ✅ Weather integrated ({non_neutral} games with weather impact)")
         else:
-            raise ValueError("'team' column required for weather integration")
-    except FileNotFoundError as e:
-        if fail_on_missing:
-            raise
-        else:
-            logger.warning(f"   ⚠️  Weather data not available: {e}")
+            logger.warning("   ⚠️  No weather data available, using neutral adjustments")
             integrated_df['weather_total_adjustment'] = 0.0
             integrated_df['weather_passing_adjustment'] = 0.0
+    except Exception as e:
+        logger.warning(f"   ⚠️  Weather integration failed: {e}")
+        integrated_df['weather_total_adjustment'] = 0.0
+        integrated_df['weather_passing_adjustment'] = 0.0
 
     # Step 3: Integrate Divisional Status
     logger.info("\n3. Integrating Divisional Game Status...")
@@ -589,21 +770,54 @@ def integrate_all_factors(
         logger.warning(f"   ⚠️  Field surface integration failed: {e}")
         integrated_df['field_surface'] = 'grass'
 
-    # Step 12: Team Usage (from game simulations) - Note: This requires game context
-    logger.info("\n12. Integrating Team Usage (from simulations)...")
-    # Team usage should come from game simulations, not calculated here
-    # This is a placeholder - actual integration happens when game context is available
-    integrated_df['team_pass_attempts'] = None  # Will be filled from game context
-    integrated_df['team_rush_attempts'] = None  # Will be filled from game context
-    integrated_df['team_targets'] = None  # Will be filled from game context
-    logger.info("   ⚠️  Team usage requires game context (will be filled from simulations)")
+    # Step 12: Team Usage (from historical data and game context)
+    logger.info("\n12. Integrating Team Usage...")
+    try:
+        team_usage = get_team_usage_stats(season, week)
+        if team_usage is not None and 'team' in integrated_df.columns:
+            integrated_df = integrated_df.merge(
+                team_usage[['team', 'pass_attempts_per_game', 'rush_attempts_per_game', 'targets_per_game']],
+                on='team',
+                how='left'
+            )
+            integrated_df['team_pass_attempts'] = integrated_df['pass_attempts_per_game']
+            integrated_df['team_rush_attempts'] = integrated_df['rush_attempts_per_game']
+            integrated_df['team_targets'] = integrated_df['targets_per_game']
+            integrated_df = integrated_df.drop(columns=['pass_attempts_per_game', 'rush_attempts_per_game', 'targets_per_game'], errors='ignore')
+            logger.info(f"   ✅ Team usage integrated for {integrated_df['team_pass_attempts'].notna().sum()} players")
+        else:
+            # Fallback to league averages
+            integrated_df['team_pass_attempts'] = 35.0  # League average
+            integrated_df['team_rush_attempts'] = 26.0  # League average
+            integrated_df['team_targets'] = 30.0  # League average
+            logger.info("   ⚠️  Using league average team usage (no historical data)")
+    except Exception as e:
+        logger.warning(f"   ⚠️  Team usage integration failed: {e}")
+        integrated_df['team_pass_attempts'] = 35.0
+        integrated_df['team_rush_attempts'] = 26.0
+        integrated_df['team_targets'] = 30.0
 
-    # Step 13: Game Script (dynamic) - Note: This requires game simulations
-    logger.info("\n13. Integrating Game Script (dynamic)...")
-    # Dynamic game script evolves during simulation
-    # This is a placeholder - actual integration happens when game context is available
-    integrated_df['game_script_dynamic'] = None  # Will be filled from game context
-    logger.info("   ⚠️  Dynamic game script requires game context (will be filled from simulations)")
+    # Step 13: Game Script (from Vegas spread)
+    logger.info("\n13. Integrating Game Script (from Vegas)...")
+    try:
+        game_script = get_game_script_from_vegas(season, week)
+        if game_script is not None and 'team' in integrated_df.columns:
+            # Drop existing game_script_dynamic if present (to avoid merge collision creating _x/_y suffixes)
+            if 'game_script_dynamic' in integrated_df.columns:
+                integrated_df = integrated_df.drop(columns=['game_script_dynamic'])
+            integrated_df = integrated_df.merge(
+                game_script[['team', 'game_script_dynamic']],
+                on='team',
+                how='left'
+            )
+            integrated_df['game_script_dynamic'] = integrated_df['game_script_dynamic'].fillna(0.0)
+            logger.info(f"   ✅ Game script integrated for {integrated_df['game_script_dynamic'].notna().sum()} players")
+        else:
+            integrated_df['game_script_dynamic'] = 0.0  # Neutral
+            logger.info("   ⚠️  Using neutral game script (no Vegas data)")
+    except Exception as e:
+        logger.warning(f"   ⚠️  Game script integration failed: {e}")
+        integrated_df['game_script_dynamic'] = 0.0
 
     # Step 14: Market Blending - Note: Requires odds data
     logger.info("\n14. Integrating Market Blending...")
@@ -759,14 +973,18 @@ def get_primetime_status(home_team: str, away_team: str, week: int, season: int 
     Returns:
         Dictionary with:
             - is_primetime: bool
-            - primetime_type: str ('SNF', 'MNF', 'TNF', or None)
+            - primetime_type: str ('SNF', 'MNF', 'TNF', 'EARLY', 'AFTERNOON', or None)
     """
+    # Try schedules.parquet first (more reliable)
+    schedules_path = Path('data/nflverse/schedules.parquet')
     games_path = Path('data/nflverse/games.parquet')
-    if not games_path.exists():
+
+    df_path = schedules_path if schedules_path.exists() else games_path
+    if not df_path.exists():
         return {'is_primetime': False, 'primetime_type': None}
 
     try:
-        games_df = pd.read_parquet(games_path)
+        games_df = pd.read_parquet(df_path)
         game = games_df[
             (games_df['home_team'] == home_team) &
             (games_df['away_team'] == away_team) &
@@ -775,14 +993,33 @@ def get_primetime_status(home_team: str, away_team: str, week: int, season: int 
         ]
 
         if len(game) > 0:
-            # Check game time slot
-            game_time = game.iloc[0].get('gametime', '')
-            if 'TNF' in str(game_time) or 'Thursday' in str(game_time):
-                return {'is_primetime': True, 'primetime_type': 'TNF'}
-            elif 'SNF' in str(game_time) or 'Sunday Night' in str(game_time):
-                return {'is_primetime': True, 'primetime_type': 'SNF'}
-            elif 'MNF' in str(game_time) or 'Monday Night' in str(game_time):
-                return {'is_primetime': True, 'primetime_type': 'MNF'}
+            row = game.iloc[0]
+            gametime = str(row.get('gametime', ''))
+            weekday = str(row.get('weekday', ''))
+
+            # Parse the hour from gametime (format: "20:20", "13:00", etc.)
+            try:
+                hour = int(gametime.split(':')[0]) if ':' in gametime else 0
+            except (ValueError, IndexError):
+                hour = 0
+
+            # Primetime = games at 8pm (20:00) or later
+            if hour >= 20:
+                if 'Thursday' in weekday:
+                    return {'is_primetime': True, 'primetime_type': 'TNF'}
+                elif 'Sunday' in weekday:
+                    return {'is_primetime': True, 'primetime_type': 'SNF'}
+                elif 'Monday' in weekday:
+                    return {'is_primetime': True, 'primetime_type': 'MNF'}
+                elif 'Friday' in weekday or 'Saturday' in weekday:
+                    return {'is_primetime': True, 'primetime_type': 'PRIMETIME'}
+                else:
+                    return {'is_primetime': True, 'primetime_type': 'PRIMETIME'}
+            elif 16 <= hour < 18:
+                return {'is_primetime': False, 'primetime_type': 'AFTERNOON'}
+            else:
+                return {'is_primetime': False, 'primetime_type': 'EARLY'}
+
     except Exception as e:
         logger.debug(f"Could not determine primetime status: {e}")
 
@@ -912,7 +1149,14 @@ def calculate_red_zone_shares_from_pbp(
         last_name = ' '.join(last_name_parts)
         return f"{first_initial}.{last_name}"
 
-    pbp_path = Path(f'data/processed/pbp_{season}.parquet')
+    # Use fresh NFLverse PBP data (updated daily) instead of stale processed file
+    pbp_path = Path('data/nflverse/pbp.parquet')
+    if not pbp_path.exists():
+        # Fallback to season-specific file
+        pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+    if not pbp_path.exists():
+        # Last resort: processed file
+        pbp_path = Path(f'data/processed/pbp_{season}.parquet')
     if not pbp_path.exists():
         return {
             'redzone_target_share': None,
@@ -1044,20 +1288,13 @@ def calculate_snap_share_from_data(
     try:
         snap_counts = pd.read_parquet(snap_path)
 
-        # Normalize player name for matching
-        # Handle variations: "A.J. Brown" vs "AJ Brown", "Patrick Mahomes Jr." vs "Patrick Mahomes"
-        def normalize_name(name: str) -> str:
-            if not name or not isinstance(name, str):
-                return ""
-            # Remove periods, convert to lowercase for comparison
-            return name.replace('.', '').replace(' Jr', '').replace(' Sr', '').strip().lower()
-
-        player_normalized = normalize_name(player_name)
+        # Normalize player name for matching using canonical function
+        player_normalized = normalize_player_name(player_name)
 
         # Filter to player, team, season
         # Try exact match first, then partial match on last name
         player_snaps = snap_counts[
-            (snap_counts['player'].apply(normalize_name) == player_normalized) &
+            (snap_counts['player'].apply(normalize_player_name) == player_normalized) &
             (snap_counts['team'] == team) &
             (snap_counts['season'] == season) &
             (snap_counts['week'] < week)
@@ -1159,17 +1396,12 @@ def calculate_snap_share_metrics(
     try:
         snap_counts = pd.read_parquet(snap_path)
 
-        # Normalize player name
-        def normalize_name(name: str) -> str:
-            if not name or not isinstance(name, str):
-                return ""
-            return name.replace('.', '').replace(' Jr', '').replace(' Sr', '').strip().lower()
-
-        player_normalized = normalize_name(player_name)
+        # Normalize player name using canonical function
+        player_normalized = normalize_player_name(player_name)
 
         # Filter to player, team, season, weeks before current week
         player_snaps = snap_counts[
-            (snap_counts['player'].apply(normalize_name) == player_normalized) &
+            (snap_counts['player'].apply(normalize_player_name) == player_normalized) &
             (snap_counts['team'] == team) &
             (snap_counts['season'] == season) &
             (snap_counts['week'] < week)
@@ -1288,3 +1520,332 @@ def verify_integration_completeness(df: pd.DataFrame) -> Dict[str, bool]:
         status[factor] = column in df.columns
 
     return status
+
+
+def get_team_usage_stats(season: int, week: int) -> Optional[pd.DataFrame]:
+    """
+    Calculate team-level pass/rush/target attempts per game from historical PBP data.
+
+    Uses all completed games before the specified week to calculate team tendencies.
+
+    Returns:
+        DataFrame with columns: team, pass_attempts_per_game, rush_attempts_per_game, targets_per_game
+    """
+    import numpy as np
+
+    # Try to load PBP data
+    pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+    if not pbp_path.exists():
+        pbp_path = Path(f'data/nflverse/pbp_{season-1}.parquet')
+    if not pbp_path.exists():
+        logger.warning(f"No PBP data found for season {season} or {season-1}")
+        return None
+
+    try:
+        pbp = pd.read_parquet(pbp_path)
+
+        # Filter to regular season games before the target week
+        pbp = pbp[
+            (pbp['season_type'] == 'REG') &
+            (pbp['week'] < week)
+        ]
+
+        if len(pbp) == 0:
+            return None
+
+        # Count pass and rush attempts by team per game
+        pbp['is_pass'] = pbp['play_type'] == 'pass'
+        pbp['is_rush'] = pbp['play_type'] == 'run'
+        pbp['is_target'] = pbp['pass_attempt'] == 1  # Use pass_attempt for targets
+
+        # Group by game and possession team
+        team_game_stats = pbp.groupby(['game_id', 'posteam']).agg({
+            'is_pass': 'sum',
+            'is_rush': 'sum',
+            'is_target': 'sum'
+        }).reset_index()
+        team_game_stats.columns = ['game_id', 'team', 'pass_attempts', 'rush_attempts', 'targets']
+
+        # Calculate per-game averages by team
+        team_avgs = team_game_stats.groupby('team').agg({
+            'pass_attempts': 'mean',
+            'rush_attempts': 'mean',
+            'targets': 'mean'
+        }).reset_index()
+        team_avgs.columns = ['team', 'pass_attempts_per_game', 'rush_attempts_per_game', 'targets_per_game']
+
+        logger.debug(f"Calculated team usage for {len(team_avgs)} teams")
+        return team_avgs
+
+    except Exception as e:
+        logger.warning(f"Error calculating team usage stats: {e}")
+        return None
+
+
+def get_game_script_from_vegas(season: int, week: int) -> Optional[pd.DataFrame]:
+    """
+    Calculate game script adjustment from Vegas spread.
+
+    Game script logic:
+    - Negative spread (team favored) → expect more rushing, conservative play (-1 to 0)
+    - Positive spread (underdog) → expect more passing, aggressive play (0 to +1)
+
+    Returns:
+        DataFrame with columns: team, game_script_dynamic
+    """
+    import numpy as np
+
+    # Try to load game lines
+    game_lines_path = Path(f'data/game_line_predictions_week{week}.csv')
+    if not game_lines_path.exists():
+        logger.warning(f"No game lines found for week {week}")
+        return None
+
+    try:
+        gl = pd.read_csv(game_lines_path)
+
+        if 'vegas_spread' not in gl.columns:
+            logger.warning("No vegas_spread column in game lines")
+            return None
+
+        game_scripts = []
+
+        for _, row in gl.iterrows():
+            home_team = row.get('home_team', '')
+            away_team = row.get('away_team', '')
+            spread = row.get('vegas_spread', 0)
+
+            if pd.isna(spread):
+                spread = 0
+
+            # Clamp to reasonable range
+            spread = np.clip(spread, -14, 14)
+
+            # For home team: negative spread = favored = run-heavy (negative game script)
+            # For away team: positive spread (from their perspective) = underdog = pass-heavy
+            home_script = -spread / 14.0  # -1 (heavy favorite) to +1 (heavy underdog)
+            away_script = spread / 14.0   # Opposite of home
+
+            game_scripts.append({'team': home_team, 'game_script_dynamic': home_script})
+            game_scripts.append({'team': away_team, 'game_script_dynamic': away_script})
+
+        result = pd.DataFrame(game_scripts)
+        logger.debug(f"Calculated game script for {len(result)} teams")
+        return result
+
+    except Exception as e:
+        logger.warning(f"Error calculating game script from Vegas: {e}")
+        return None
+
+
+# =============================================================================
+# P1 FIXES: Functions that add predictive signal (2025-12-07)
+# =============================================================================
+
+def get_volume_adjustment_from_total(vegas_total: float) -> float:
+    """
+    P1-A: Adjust player projections based on Vegas game total.
+
+    Hypothesis: High totals = more offensive plays = higher individual stats.
+
+    Args:
+        vegas_total: Vegas over/under line for the game
+
+    Returns:
+        Multiplier for yards/reception projections:
+        - Total 50+: 1.08 (8% boost)
+        - Total 45-50: 1.04 (4% boost)
+        - Total 40-45: 1.0 (neutral)
+        - Total 38-40: 0.96 (4% reduction)
+        - Total <38: 0.92 (8% reduction)
+    """
+    if vegas_total is None or pd.isna(vegas_total):
+        return 1.0
+
+    if vegas_total >= 50:
+        return 1.08
+    elif vegas_total >= 45:
+        return 1.04
+    elif vegas_total >= 40:
+        return 1.0
+    elif vegas_total >= 38:
+        return 0.96
+    else:
+        return 0.92
+
+
+def get_spread_adjustment(team_spread: float, stat_type: str) -> float:
+    """
+    P1-B: Adjust player projections based on Vegas spread (game script).
+
+    Hypothesis:
+    - Underdogs pass more (chasing)
+    - Favorites run more (protecting lead)
+
+    Args:
+        team_spread: Spread from team's perspective (negative = favorite)
+        stat_type: 'passing_yards', 'rushing_yards', 'receiving_yards', 'receptions'
+
+    Returns:
+        Multiplier for projections
+    """
+    if team_spread is None or pd.isna(team_spread):
+        return 1.0
+
+    # Rushing: Favorites run more
+    if stat_type in ['rushing_yards', 'rushing_attempts']:
+        if team_spread < -7:  # Heavy favorite
+            return 1.10  # Expect 10% more rushing
+        elif team_spread < -3:  # Moderate favorite
+            return 1.05
+        elif team_spread > 7:  # Heavy underdog
+            return 0.90  # Expect 10% less rushing
+        elif team_spread > 3:  # Moderate underdog
+            return 0.95
+        else:
+            return 1.0
+
+    # Passing/Receiving: Underdogs pass more
+    if stat_type in ['passing_yards', 'receiving_yards', 'receptions', 'targets']:
+        if team_spread > 7:  # Heavy underdog
+            return 1.10  # Expect 10% more passing
+        elif team_spread > 3:  # Moderate underdog
+            return 1.05
+        elif team_spread < -7:  # Heavy favorite
+            return 0.95  # Expect 5% less passing (game control)
+        elif team_spread < -3:  # Moderate favorite
+            return 0.97
+        else:
+            return 1.0
+
+    # Other stats: no adjustment
+    return 1.0
+
+
+def get_vegas_context_for_game(
+    home_team: str,
+    away_team: str,
+    week: int,
+    season: int = 2025
+) -> Dict[str, Any]:
+    """
+    Get Vegas context (total, spread) for a game.
+
+    Args:
+        home_team: Home team abbreviation
+        away_team: Away team abbreviation
+        week: Week number
+        season: Season year
+
+    Returns:
+        Dict with:
+        - total_line: Vegas over/under
+        - spread_line: Vegas spread (from home team perspective)
+        - home_spread: Spread for home team (negative = favorite)
+        - away_spread: Spread for away team
+        - volume_adj: Volume adjustment multiplier
+    """
+    schedules_path = Path('data/nflverse/schedules.parquet')
+
+    if not schedules_path.exists():
+        return {
+            'total_line': None,
+            'spread_line': None,
+            'home_spread': None,
+            'away_spread': None,
+            'volume_adj': 1.0
+        }
+
+    try:
+        schedules = pd.read_parquet(schedules_path)
+        game = schedules[
+            (schedules['home_team'] == home_team) &
+            (schedules['away_team'] == away_team) &
+            (schedules['week'] == week) &
+            (schedules['season'] == season)
+        ]
+
+        if len(game) == 0:
+            return {
+                'total_line': None,
+                'spread_line': None,
+                'home_spread': None,
+                'away_spread': None,
+                'volume_adj': 1.0
+            }
+
+        row = game.iloc[0]
+        total_line = row.get('total_line')
+        spread_line = row.get('spread_line')  # Negative = home favorite
+
+        return {
+            'total_line': total_line,
+            'spread_line': spread_line,
+            'home_spread': spread_line if pd.notna(spread_line) else None,
+            'away_spread': -spread_line if pd.notna(spread_line) else None,
+            'volume_adj': get_volume_adjustment_from_total(total_line)
+        }
+
+    except Exception as e:
+        logger.warning(f"Error getting Vegas context: {e}")
+        return {
+            'total_line': None,
+            'spread_line': None,
+            'home_spread': None,
+            'away_spread': None,
+            'volume_adj': 1.0
+        }
+
+
+def apply_p1_adjustments(
+    prediction: float,
+    stat_type: str,
+    team: str,
+    opponent: str,
+    week: int,
+    season: int = 2025,
+    is_home: bool = True
+) -> Tuple[float, Dict[str, float]]:
+    """
+    Apply all P1 adjustments (Vegas total + spread) to a prediction.
+
+    Args:
+        prediction: Raw model prediction
+        stat_type: Type of stat (rushing_yards, passing_yards, etc.)
+        team: Player's team
+        opponent: Opponent team
+        week: Week number
+        season: Season year
+        is_home: Whether player's team is home
+
+    Returns:
+        Tuple of (adjusted_prediction, adjustment_breakdown)
+    """
+    if prediction is None or prediction <= 0:
+        return prediction, {}
+
+    # Get Vegas context
+    home_team = team if is_home else opponent
+    away_team = opponent if is_home else team
+    vegas = get_vegas_context_for_game(home_team, away_team, week, season)
+
+    # P1-A: Volume adjustment from total
+    volume_adj = vegas.get('volume_adj', 1.0)
+
+    # P1-B: Spread adjustment
+    team_spread = vegas.get('home_spread') if is_home else vegas.get('away_spread')
+    spread_adj = get_spread_adjustment(team_spread, stat_type)
+
+    # Combine adjustments (multiplicative)
+    total_adj = volume_adj * spread_adj
+    adjusted = prediction * total_adj
+
+    breakdown = {
+        'volume_adj': volume_adj,
+        'spread_adj': spread_adj,
+        'total_adj': total_adj,
+        'total_line': vegas.get('total_line'),
+        'team_spread': team_spread
+    }
+
+    return adjusted, breakdown

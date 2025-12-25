@@ -20,10 +20,13 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 import logging
 
+# Use centralized path configuration
+from nfl_quant.config_paths import NFLVERSE_DIR
+
 logger = logging.getLogger(__name__)
 
-# Data paths
-DATA_DIR = Path(__file__).parent.parent.parent / 'data' / 'nflverse'
+# Data paths (from centralized config)
+DATA_DIR = NFLVERSE_DIR
 
 
 class MicroMetricsCalculator:

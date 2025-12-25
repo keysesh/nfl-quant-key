@@ -1,83 +1,84 @@
 {
-    "description": "Market-specific bias correction factors - UPDATED 2025-11-26 based on backtest",
-    "last_updated": "2025-11-26",
-    "methodology": "CORRECTED: Previous factors were BACKWARDS. Model under-predicts, so factors should be >= 1.0",
+    "description": "Market-specific bias correction factors - UPDATED 2025-12-07 based on P0 backtest",
+    "last_updated": "2025-12-07",
+    "methodology": "Using ADDITIVE corrections (subtract from prediction) based on walk_forward_with_lines_results.csv",
     "backtest_findings": {
-        "note": "Backtest on Weeks 2-11 (6970 props) showed model UNDER-predicts, not over-predicts",
+        "note": "Backtest on Weeks 5-13 (1710 props) found significant market-specific biases",
         "raw_model_bias": {
-            "passing_yards": "-20% (model predicts too LOW)",
-            "receiving_yards": "-4% (model predicts too LOW)",
-            "receptions": "+2% (nearly correct)",
-            "rushing_yards": "-5% (model predicts too LOW)"
+            "passing_yards": "-71.7 (model predicts too LOW, add 71.7)",
+            "receiving_yards": "+8.2 (model predicts too HIGH, subtract 8.2)",
+            "receptions": "-0.3 (nearly correct)",
+            "rushing_yards": "+34.9 (model predicts too HIGH, subtract 34.9)"
         },
-        "recommendation": "Set factors to 1.0 to use raw model predictions, which are more accurate"
+        "correction_type": "additive",
+        "formula": "corrected = prediction - additive_bias"
     },
     "corrections": {
         "passing_yards": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 299,
-            "_note": "CHANGED from 0.866. Raw predictions are better than 'corrected' ones."
+            "additive_bias": -71.7,
+            "sample_size": 167,
+            "_note": "Model under-predicts passing yards, ADD 71.7 to predictions"
         },
         "receiving_yards": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 1355,
-            "_note": "CHANGED from 0.863"
+            "additive_bias": 8.2,
+            "sample_size": 486,
+            "_note": "Model over-predicts receiving yards, SUBTRACT 8.2 from predictions"
         },
         "receptions": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 512,
-            "_note": "CHANGED from 0.858"
+            "additive_bias": -0.3,
+            "sample_size": 396,
+            "_note": "Nearly unbiased, minor under-prediction"
         },
         "rushing_yards": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 685,
-            "_note": "CHANGED from 0.905"
+            "additive_bias": 34.9,
+            "sample_size": 233,
+            "_note": "Model over-predicts rushing yards, SUBTRACT 34.9 from predictions"
         },
         "rushing_attempts": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 200,
-            "_note": "CHANGED from 0.95"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         },
         "passing_tds": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 150,
-            "_note": "CHANGED from 0.90"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         },
         "passing_completions": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 100,
-            "_note": "CHANGED from 0.87"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         },
         "passing_attempts": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 100,
-            "_note": "CHANGED from 0.92"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         },
         "targets": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 500,
-            "_note": "CHANGED from 0.87"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         },
         "receiving_tds": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 200,
-            "_note": "CHANGED from 0.85"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         },
         "rushing_tds": {
             "factor": 1.0,
-            "bias_pct": 0,
-            "sample_size": 150,
-            "_note": "CHANGED from 0.88"
+            "additive_bias": 0,
+            "sample_size": 0,
+            "_note": "No backtest data available"
         }
     },
     "market_mapping": {

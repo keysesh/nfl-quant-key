@@ -10,13 +10,11 @@ Critical for scenarios like:
 
 import json
 import pandas as pd
-import numpy as np
-from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 
-DATA_DIR = Path(__file__).parent.parent.parent / 'data'
-CONFIGS_DIR = Path(__file__).parent.parent.parent / 'configs'
+# Use centralized path configuration
+from nfl_quant.config_paths import CONFIGS_DIR
 
 
 class RoleChangeDetector:

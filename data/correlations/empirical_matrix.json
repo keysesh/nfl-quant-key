@@ -1,0 +1,65 @@
+{
+  "same_player": {
+    "player_receptions|player_reception_yds": {
+      "market1": "player_receptions",
+      "market2": "player_reception_yds",
+      "relationship": "same_player",
+      "correlation": 0.6116,
+      "sample_size": 1962,
+      "p_value": 0.0,
+      "confidence_interval_low": 0.5832,
+      "confidence_interval_high": 0.6386
+    }
+  },
+  "same_team": {
+    "player_pass_yds|player_reception_yds": {
+      "market1": "player_pass_yds",
+      "market2": "player_reception_yds",
+      "relationship": "same_team",
+      "correlation": NaN,
+      "sample_size": 36497,
+      "p_value": NaN,
+      "confidence_interval_low": NaN,
+      "confidence_interval_high": NaN
+    }
+  },
+  "same_game": {
+    "player_pass_yds|player_rush_yds": {
+      "market1": "player_pass_yds",
+      "market2": "player_rush_yds",
+      "relationship": "same_game",
+      "correlation": -0.0012,
+      "sample_size": 304873,
+      "p_value": 0.525148,
+      "confidence_interval_low": -0.0047,
+      "confidence_interval_high": 0.0024
+    },
+    "player_receptions|player_rush_yds": {
+      "market1": "player_receptions",
+      "market2": "player_rush_yds",
+      "relationship": "same_game",
+      "correlation": NaN,
+      "sample_size": 1251129,
+      "p_value": NaN,
+      "confidence_interval_low": NaN,
+      "confidence_interval_high": NaN
+    }
+  },
+  "cross_game": {
+    "any|any": {
+      "market1": "any",
+      "market2": "any",
+      "relationship": "cross_game",
+      "correlation": -0.017,
+      "sample_size": 450,
+      "p_value": 0.719745,
+      "confidence_interval_low": -0.1092,
+      "confidence_interval_high": 0.0756
+    }
+  },
+  "metadata": {
+    "source_file": "data/backtest/combined_odds_actuals_ENRICHED.csv",
+    "total_records": 37461,
+    "date_generated": "2025-12-19T19:04:23.943432"
+  }
+}

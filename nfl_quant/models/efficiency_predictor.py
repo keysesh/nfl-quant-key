@@ -26,6 +26,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
 import joblib
 
+from nfl_quant.features.feature_defaults import safe_fillna
+
 logger = logging.getLogger(__name__)
 
 
@@ -213,8 +215,8 @@ class EfficiencyPredictor:
 
         X = df[feature_cols].copy()
 
-        # Fill NaN with 0
-        X = X.fillna(0)
+        # Fill NaN with semantic defaults
+        X = safe_fillna(X)
 
         # Extract targets
         targets = {}
@@ -342,8 +344,8 @@ class EfficiencyPredictor:
             # Legacy: flat list of feature columns
             feature_cols_to_use = self.feature_cols
 
-        # Ensure features match training
-        features_subset = features[feature_cols_to_use].fillna(0)
+        # Ensure features match training with semantic defaults
+        features_subset = safe_fillna(features[feature_cols_to_use])
 
         predictions = {}
 
@@ -406,6 +408,65 @@ class EfficiencyPredictor:
                 generic_predictions[generic_name] = values
 
         predictions = generic_predictions
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # ROOT FIX (Dec 7, 2025): Anchor efficiency predictions on trailing values
+        # ═══════════════════════════════════════════════════════════════════════
+        # PROBLEM: XGBoost predicts absolute efficiency, causing regression to mean
+        #   - Chase: trailing Y/T = 7.03, model predicts 8.60 (+22% inflation!)
+        #   - Model weights: opponent/pace features dominate, trailing only ~19%
+        #
+        # SOLUTION: Use trailing as baseline, model only provides small adjustment
+        #   - Final = 80% trailing + 20% model_adjustment
+        #   - Adjustment capped at ±15% of trailing
+        #   - This ensures predictions stay anchored to player's actual efficiency
+        # ═══════════════════════════════════════════════════════════════════════
+
+        TRAILING_WEIGHT = 0.80  # 80% trailing, 20% model
+        MAX_ADJUSTMENT_PCT = 0.15  # Model can only adjust ±15%
+
+        # Anchor Y/T prediction
+        if 'yards_per_target' in predictions and 'trailing_yards_per_target' in features.columns:
+            trailing_ypt = features['trailing_yards_per_target'].values
+            model_ypt = predictions['yards_per_target']
+
+            # Defensive null handling: replace None/NaN with 0.0
+            trailing_ypt = np.where(np.isnan(trailing_ypt) | (trailing_ypt is None), 0.0, trailing_ypt)
+            trailing_ypt = np.nan_to_num(trailing_ypt, nan=0.0)
+
+            # Calculate adjustment from trailing
+            adjustment = model_ypt - trailing_ypt
+
+            # Cap adjustment at ±15% of trailing (avoid div by zero)
+            max_adj = np.where(trailing_ypt > 0, trailing_ypt * MAX_ADJUSTMENT_PCT, 1.0)
+            capped_adj = np.clip(adjustment, -max_adj, max_adj)
+
+            # Final prediction = trailing + capped adjustment (weighted)
+            # This keeps predictions anchored to player's actual efficiency
+            predictions['yards_per_target'] = trailing_ypt + (capped_adj * (1 - TRAILING_WEIGHT))
+
+            if player_name:
+                logger.info(f"   🔧 Y/T ANCHORED: trailing={trailing_ypt[0]:.2f}, model={model_ypt[0]:.2f}, "
+                           f"adj={adjustment[0]:+.2f} → capped={capped_adj[0]:+.2f}, "
+                           f"final={predictions['yards_per_target'][0]:.2f}")
+
+        # Anchor Y/C prediction (yards per carry)
+        if 'yards_per_carry' in predictions and 'trailing_yards_per_carry' in features.columns:
+            trailing_ypc = features['trailing_yards_per_carry'].values
+            model_ypc = predictions['yards_per_carry']
+
+            # Defensive null handling: replace None/NaN with 0.0
+            trailing_ypc = np.nan_to_num(trailing_ypc, nan=0.0)
+
+            adjustment = model_ypc - trailing_ypc
+            # Cap adjustment at ±15% of trailing (avoid div by zero)
+            max_adj = np.where(trailing_ypc > 0, trailing_ypc * MAX_ADJUSTMENT_PCT, 1.0)
+            capped_adj = np.clip(adjustment, -max_adj, max_adj)
+            predictions['yards_per_carry'] = trailing_ypc + (capped_adj * (1 - TRAILING_WEIGHT))
+
+            if player_name:
+                logger.info(f"   🔧 Y/C ANCHORED: trailing={trailing_ypc[0]:.2f}, model={model_ypc[0]:.2f}, "
+                           f"adj={adjustment[0]:+.2f} → final={predictions['yards_per_carry'][0]:.2f}")
 
         # 🔍 DEBUG LOGGING: Log predictions BEFORE clipping
         if player_name and len(features) > 0:

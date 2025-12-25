@@ -1,0 +1,78 @@
+{
+  "timestamp": "2025-12-14T20:14:26.889228",
+  "n_samples": 390,
+  "seasons": [
+    2024,
+    2025
+  ],
+  "features": [
+    "sim_home_win_prob",
+    "sim_fair_spread",
+    "sim_fair_total",
+    "sim_spread_confidence",
+    "vegas_spread",
+    "vegas_total",
+    "has_vegas_line",
+    "sim_vs_vegas_spread",
+    "sim_vs_vegas_total",
+    "home_rest",
+    "away_rest",
+    "rest_advantage",
+    "is_divisional",
+    "temperature",
+    "cold_game",
+    "wind_speed",
+    "high_wind",
+    "is_dome",
+    "week",
+    "early_season",
+    "late_season"
+  ],
+  "spread_mae": 9.77238264709461,
+  "total_mae": 10.085940230406377,
+  "win_prob_brier": 0.20415948418487018,
+  "spread_top_features": [
+    {
+      "feature": "sim_home_win_prob",
+      "importance": 315
+    },
+    {
+      "feature": "vegas_total",
+      "importance": 266
+    },
+    {
+      "feature": "vegas_spread",
+      "importance": 235
+    },
+    {
+      "feature": "sim_vs_vegas_spread",
+      "importance": 235
+    },
+    {
+      "feature": "week",
+      "importance": 219
+    }
+  ],
+  "total_top_features": [
+    {
+      "feature": "sim_home_win_prob",
+      "importance": 370
+    },
+    {
+      "feature": "vegas_total",
+      "importance": 229
+    },
+    {
+      "feature": "sim_vs_vegas_total",
+      "importance": 217
+    },
+    {
+      "feature": "sim_vs_vegas_spread",
+      "importance": 214
+    },
+    {
+      "feature": "sim_fair_total",
+      "importance": 202
+    }
+  ]
+}

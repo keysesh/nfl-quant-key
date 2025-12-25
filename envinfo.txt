@@ -1,0 +1,21 @@
+npm warn exec The following package was not found and will be installed: envinfo@7.21.0
+
+## System:
+ - OS: macOS 26.1
+ - CPU: (8) arm64 Apple M1 Pro
+ - Memory: 250.67 MB / 16.00 GB
+ - Shell: 5.9 - /bin/zsh
+## Binaries:
+ - Node: 20.19.5 - /Users/keyonnesession/.nvm/versions/node/v20.19.5/bin/node
+ - Yarn: 1.22.22 - /usr/local/bin/yarn
+ - npm: 10.8.2 - /Users/keyonnesession/.nvm/versions/node/v20.19.5/bin/npm
+## Browsers:
+ - Chrome: 143.0.7499.170
+ - Safari: 26.1
+## npmPackages:
+ - @types/node: ^20.0.0 => 20.19.23 
+ - commander: ^11.0.0 => 11.1.0 
+ - papaparse: ^5.4.1 => 5.5.3 
+ - tsx: ^4.0.0 => 4.20.6 
+ - typescript: ^5.0.0 => 5.9.3 
+

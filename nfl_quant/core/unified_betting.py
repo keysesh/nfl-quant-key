@@ -12,6 +12,12 @@ from enum import Enum
 from typing import Optional
 import numpy as np
 
+from nfl_quant.betting.kelly_criterion import (
+    calculate_kelly_fraction as _canonical_kelly,
+    calculate_fractional_kelly as _canonical_fractional_kelly,
+    american_to_decimal,
+)
+
 
 class ConfidenceTier(str, Enum):
     """Unified confidence tiers across all bet types."""
@@ -113,6 +119,7 @@ def calculate_kelly_fraction(
     Calculate Kelly optimal bet sizing.
 
     Uses quarter Kelly (0.25) by default for risk management.
+    Delegates to canonical implementation in nfl_quant.betting.kelly_criterion.
 
     Args:
         model_prob: Model's probability of winning (0.0 to 1.0)
@@ -125,20 +132,10 @@ def calculate_kelly_fraction(
     if model_prob <= 0 or model_prob >= 1:
         return 0.0
 
-    decimal_odds = american_to_decimal_odds(american_odds)
-    b = decimal_odds - 1  # Net odds (profit per unit wagered)
-    q = 1 - model_prob    # Probability of losing
+    # Delegate to canonical implementation
+    kelly = _canonical_fractional_kelly(model_prob, american_odds, fractional)
 
-    if b <= 0:
-        return 0.0
-
-    # Full Kelly: f* = (bp - q) / b = (model_prob * b - q) / b
-    full_kelly = (model_prob * b - q) / b
-
-    # Apply fractional Kelly for risk management
-    kelly = max(0.0, full_kelly * fractional)
-
-    # Cap at 10% of bankroll for safety
+    # Cap at 10% of bankroll for safety (unified_betting specific limit)
     return min(kelly, 0.10)
 
 
@@ -165,68 +162,70 @@ def assign_confidence_tier(
     bet_type: str = "player_prop"
 ) -> ConfidenceTier:
     """
-    Assign unified confidence tier based on edge and probability.
+    Assign confidence tier based purely on model probability (confidence).
 
-    Uses consistent thresholds across all bet types.
+    Tiers are based on how confident the model is in its prediction,
+    NOT on edge percentage (which can be misleading).
 
     Args:
-        edge_pct: Edge percentage (e.g., 15.0 = 15% edge)
-        model_prob: Model probability (0.0 to 1.0)
-        bet_type: Type of bet ("player_prop", "spread", "total", "moneyline")
+        edge_pct: Edge percentage (kept for backwards compatibility, not used)
+        model_prob: Model probability (0.0 to 1.0) - PRIMARY SIGNAL
+        bet_type: Type of bet (kept for backwards compatibility, not used)
 
     Returns:
         ConfidenceTier enum value
     """
-    # Unified tiering based on edge and probability
-    # ELITE: Exceptional edge with high confidence
-    if edge_pct >= 20.0 and model_prob >= 0.70:
-        return ConfidenceTier.ELITE
-    if edge_pct >= 15.0 and model_prob >= 0.80:
+    # Confidence-based tiering (model_prob is the only signal that matters)
+    # ELITE: Very high confidence (70%+)
+    if model_prob >= 0.70:
         return ConfidenceTier.ELITE
 
-    # HIGH: Strong edge with good confidence
-    if edge_pct >= 10.0 and model_prob >= 0.65:
-        return ConfidenceTier.HIGH
-    if edge_pct >= 15.0 and model_prob >= 0.55:
+    # HIGH: High confidence (60-70%)
+    if model_prob >= 0.60:
         return ConfidenceTier.HIGH
 
-    # STANDARD: Meets minimum edge threshold
-    if edge_pct >= 5.0 and model_prob >= 0.55:
+    # STANDARD: Moderate confidence (55-60%)
+    if model_prob >= 0.55:
         return ConfidenceTier.STANDARD
 
-    # Adjust for bet type specific characteristics
-    if bet_type == "spread":
-        # Spreads have smaller edges typically
-        if edge_pct >= 3.0 and model_prob >= 0.55:
-            return ConfidenceTier.STANDARD
-    elif bet_type == "total":
-        # Totals similar to spreads
-        if edge_pct >= 3.0 and model_prob >= 0.55:
-            return ConfidenceTier.STANDARD
-
-    # LOW: Below standard thresholds
+    # LOW: Below actionable threshold (<55%)
     return ConfidenceTier.LOW
 
 
 def calculate_expected_roi(edge_pct: float, american_odds: float = -110) -> float:
     """
-    Calculate expected ROI accounting for vig.
+    Calculate expected ROI as: E[ROI] = (model_prob * payout) - 1
+
+    For a fair bet, expected ROI = 0.
+    For a +EV bet, expected ROI > 0.
 
     Args:
-        edge_pct: Edge percentage (e.g., 15.0)
-        american_odds: American odds (default -110)
+        edge_pct: Edge percentage (e.g., 5.0 means 5% edge over fair market prob)
+        american_odds: American odds for the bet
 
     Returns:
         Expected ROI percentage
-    """
-    # Standard assumption: -110 both ways means 4.545% vig
-    # Effective return is edge * (100/110) for -110 odds
-    if american_odds < 0:
-        vig_factor = 100 / abs(american_odds)
-    else:
-        vig_factor = american_odds / 100
 
-    return edge_pct * vig_factor
+    Example:
+        - Model prob 55%, market prob 50% (5% edge), odds -110
+        - Decimal odds = 1.909
+        - E[ROI] = 0.55 * 1.909 - 1 = 0.05 = 5%
+    """
+    # Convert edge_pct back to probability difference
+    # edge_pct = (model_prob - market_prob) * 100
+    # We need model_prob to calculate expected value
+    # Since we don't have it directly, use the approximation:
+    # E[ROI] ≈ edge_pct * (decimal_odds - 1) / decimal_odds for symmetric bets
+    #
+    # More accurate formula using decimal odds:
+    decimal_odds = american_to_decimal_odds(american_odds)
+
+    # Expected ROI = edge * (potential_profit / stake)
+    # For unit stake, potential_profit = decimal_odds - 1
+    # E[ROI] ≈ edge * (decimal_odds - 1) when bet is close to fair
+    # This is an approximation that works well for small edges
+
+    return edge_pct * (decimal_odds - 1)
 
 
 def select_best_side(

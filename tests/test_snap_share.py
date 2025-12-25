@@ -3,9 +3,23 @@ from pathlib import Path
 from nfl_quant.models.td_predictor import TouchdownPredictor, estimate_usage_factors
 import pandas as pd
 
+
+def get_pbp_path(season: int = 2025) -> Path:
+    """Get PBP path using cascading lookup (fresh → season-specific → processed)."""
+    paths = [
+        Path('data/nflverse/pbp.parquet'),
+        Path(f'data/nflverse/pbp_{season}.parquet'),
+        Path(f'data/processed/pbp_{season}.parquet'),
+    ]
+    for p in paths:
+        if p.exists():
+            return p
+    return paths[-1]  # Return last path even if doesn't exist
+
+
 # Initialize TD predictor
 hist_stats_path = Path('data/nflverse_cache/stats_player_week_2025.csv')
-pbp_path = Path('data/processed/pbp_2025.parquet')
+pbp_path = get_pbp_path(2025)
 td_predictor = TouchdownPredictor(
     historical_stats_path=hist_stats_path if hist_stats_path.exists() else None,
     pbp_path=pbp_path if pbp_path.exists() else None

@@ -270,7 +270,9 @@ class TestExtractFeaturesForBet:
         assert 'trailing_receiving_epa' in features
 
         # Verify values are reasonable
-        assert features['line_vs_trailing'] == 1.0  # 6.5 - 5.5
+        # line_vs_trailing uses percentage method: (line - trailing) / trailing
+        # (6.5 - 5.5) / 5.5 ≈ 0.1818
+        assert abs(features['line_vs_trailing'] - (1.0 / 5.5)) < 0.001  # (6.5 - 5.5) / 5.5
         assert features['line_level'] == 6.5
 
     def test_extract_features_rushing_market(self):

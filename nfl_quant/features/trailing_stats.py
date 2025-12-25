@@ -446,3 +446,304 @@ def get_trailing_stats_extractor() -> TrailingStatsExtractor:
         else:
             logger.info("Using standard 4-week trailing stats extractor")
     return _EXTRACTOR
+
+
+# =============================================================================
+# EDGE SYSTEM TRAILING STATS - Functions for LVT edge computation
+# =============================================================================
+
+# Market -> stat column mapping for edge system
+EDGE_MARKET_STAT_MAP: Dict[str, str] = {
+    'player_receptions': 'receptions',
+    'player_rush_yds': 'rushing_yards',
+    'player_reception_yds': 'receiving_yards',
+    'player_rush_attempts': 'carries',
+    'player_pass_attempts': 'attempts',  # NFL pass attempts
+    'player_pass_completions': 'completions',  # NEW - 55.4% UNDER historical
+    # player_pass_yds: REMOVED - -14.1% ROI in walk-forward
+}
+
+# Trailing column names for edge system
+EDGE_TRAILING_COL_MAP: Dict[str, str] = {
+    'player_receptions': 'trailing_receptions',
+    'player_rush_yds': 'trailing_rushing_yards',
+    'player_reception_yds': 'trailing_receiving_yards',
+    'player_rush_attempts': 'trailing_carries',
+    'player_pass_attempts': 'trailing_pass_attempts',
+    'player_pass_completions': 'trailing_completions',  # NEW
+    # player_pass_yds: REMOVED
+}
+
+# Default EWMA span for edge system
+EDGE_EWMA_SPAN = 6
+
+# Market-specific EWMA spans (some stats are more volatile)
+MARKET_EWMA_SPANS: Dict[str, int] = {
+    'player_receptions': 6,
+    'player_rush_yds': 6,
+    'player_reception_yds': 4,  # Shorter span - receiving yards are volatile
+    'player_rush_attempts': 6,
+    'player_pass_attempts': 4,  # Shorter span - attempts vary by game script
+    'player_pass_completions': 4,  # NEW - shorter span like attempts
+    # player_pass_yds: REMOVED
+}
+
+# Deflation factors (imported from model_config)
+try:
+    from configs.model_config import TRAILING_DEFLATION_FACTORS
+except ImportError:
+    TRAILING_DEFLATION_FACTORS = {
+        'player_receptions': 0.92,
+        'player_reception_yds': 0.83,
+        'player_rush_yds': 0.95,
+        'player_pass_yds': 1.02,
+        'player_rush_attempts': 0.95,
+    }
+
+
+def load_player_stats_for_edge() -> pd.DataFrame:
+    """
+    Load NFLverse player stats for edge trailing calculation.
+
+    Returns:
+        DataFrame with player stats across seasons
+    """
+    from nfl_quant.config_paths import DATA_DIR
+
+    stats_files = [
+        DATA_DIR / 'nflverse' / 'player_stats_2024_2025.csv',
+        DATA_DIR / 'nflverse' / 'player_stats_2023.csv',
+    ]
+
+    dfs = []
+    for path in stats_files:
+        if path.exists():
+            df = pd.read_csv(path, low_memory=False)
+            dfs.append(df)
+
+    if not dfs:
+        raise FileNotFoundError("No player stats files found")
+
+    stats = pd.concat(dfs, ignore_index=True)
+
+    # Normalize player names
+    from nfl_quant.utils.player_names import normalize_player_name
+    stats['player_norm'] = stats['player_display_name'].apply(normalize_player_name)
+
+    return stats.sort_values(['player_norm', 'season', 'week'])
+
+
+def compute_edge_trailing_stats(
+    stats_df: pd.DataFrame,
+    markets: Optional[list] = None,
+    ewma_span: int = None,
+    use_market_specific_spans: bool = True,
+) -> pd.DataFrame:
+    """
+    Compute trailing stats for edge system (all markets).
+
+    Args:
+        stats_df: NFLverse player stats with player_norm, season, week columns
+        markets: List of markets to compute (default: all)
+        ewma_span: Override EWMA span for all markets (default: use market-specific)
+        use_market_specific_spans: If True, use MARKET_EWMA_SPANS per market
+
+    Returns:
+        DataFrame with trailing_* columns added
+    """
+    if markets is None:
+        markets = list(EDGE_MARKET_STAT_MAP.keys())
+
+    stats_df = stats_df.copy()
+    stats_df = stats_df.sort_values(['player_norm', 'season', 'week'])
+
+    for market in markets:
+        stat_col = EDGE_MARKET_STAT_MAP.get(market)
+        if stat_col is None or stat_col not in stats_df.columns:
+            continue
+
+        trailing_col = EDGE_TRAILING_COL_MAP.get(market, f'trailing_{stat_col}')
+
+        # Use market-specific EWMA span or override
+        if ewma_span is not None:
+            span = ewma_span
+        elif use_market_specific_spans and market in MARKET_EWMA_SPANS:
+            span = MARKET_EWMA_SPANS[market]
+        else:
+            span = EDGE_EWMA_SPAN
+
+        # EWMA with shift(1) to prevent leakage
+        stats_df[trailing_col] = (
+            stats_df.groupby('player_norm')[stat_col]
+            .transform(lambda x: x.ewm(span=span, min_periods=1).mean().shift(1))
+        )
+
+    return stats_df
+
+
+def merge_edge_trailing_stats(
+    df: pd.DataFrame,
+    stats_df: pd.DataFrame,
+    markets: Optional[list] = None,
+) -> pd.DataFrame:
+    """
+    Merge trailing stats from stats_df into main DataFrame.
+
+    For predictions, we need the PRIOR week's trailing stats to avoid leakage.
+    E.g., for week 16 predictions, use trailing stats computed for week 15
+    (which uses data from weeks 1-14).
+
+    Args:
+        df: Main DataFrame with player_norm, season, week columns
+        stats_df: Stats DataFrame with trailing_* columns
+        markets: List of markets to merge (default: all)
+
+    Returns:
+        df with trailing_* columns merged
+    """
+    import warnings
+
+    if markets is None:
+        markets = list(EDGE_TRAILING_COL_MAP.keys())
+
+    # Get trailing columns to merge
+    trailing_cols = [EDGE_TRAILING_COL_MAP.get(m) for m in markets if m in EDGE_TRAILING_COL_MAP]
+    trailing_cols = [c for c in trailing_cols if c in stats_df.columns]
+
+    if not trailing_cols:
+        warnings.warn("No trailing columns found in stats_df")
+        return df
+
+    # Merge using PRIOR week's trailing stats (week - 1) to avoid leakage
+    # For week 16 predictions, use week 15 trailing stats
+    merge_cols = ['player_norm', 'season', 'week'] + trailing_cols
+    stats_subset = stats_df[merge_cols].drop_duplicates(
+        subset=['player_norm', 'season', 'week']
+    ).copy()
+
+    # Shift week forward in stats so it aligns with prediction week
+    # stats week 15 -> joins with odds week 16
+    stats_subset['week'] = stats_subset['week'] + 1
+
+    result = df.merge(
+        stats_subset,
+        on=['player_norm', 'season', 'week'],
+        how='left',
+        suffixes=('', '_stats')
+    )
+
+    # Handle duplicate columns (prefer new values)
+    for col in trailing_cols:
+        if f'{col}_stats' in result.columns:
+            result[col] = result[col].fillna(result[f'{col}_stats'])
+            result.drop(columns=[f'{col}_stats'], inplace=True)
+
+    return result
+
+
+def compute_line_vs_trailing(
+    df: pd.DataFrame,
+    market: str,
+) -> pd.Series:
+    """
+    Compute line_vs_trailing (LVT) for a specific market.
+
+    LVT = ((line - deflated_trailing) / deflated_trailing) * 100
+
+    Args:
+        df: DataFrame with 'line' and trailing_* columns
+        market: Market to compute LVT for
+
+    Returns:
+        Series with LVT values (percentage)
+    """
+    import warnings
+    import numpy as np
+
+    trailing_col = EDGE_TRAILING_COL_MAP.get(market)
+    if trailing_col is None:
+        return pd.Series(0, index=df.index)
+
+    if trailing_col not in df.columns:
+        warnings.warn(f"Missing {trailing_col} column, LVT will be 0")
+        return pd.Series(0, index=df.index)
+
+    if 'line' not in df.columns:
+        warnings.warn("Missing 'line' column, LVT will be 0")
+        return pd.Series(0, index=df.index)
+
+    # Get trailing values, fill missing with line (neutral LVT)
+    trailing = df[trailing_col].fillna(df['line'])
+
+    # Apply deflation factor
+    deflation = TRAILING_DEFLATION_FACTORS.get(market, 0.90)
+    deflated = trailing * deflation
+
+    # Calculate LVT as percentage
+    lvt = np.where(
+        deflated > 0,
+        (df['line'] - deflated) / deflated * 100,
+        0
+    )
+
+    # Clip extreme values
+    return pd.Series(np.clip(lvt, -100, 100), index=df.index)
+
+
+def prepare_edge_data_with_trailing(
+    df: pd.DataFrame,
+    week: Optional[int] = None,
+    season: int = 2025,
+) -> pd.DataFrame:
+    """
+    Prepare a DataFrame with all trailing stats computed for edge system.
+
+    This is the main entry point for preparing data for edge inference.
+
+    Args:
+        df: DataFrame with player_norm (or player), season, week, line columns
+        week: Current week (for filtering historical data)
+        season: Current season
+
+    Returns:
+        DataFrame with trailing_* and line_vs_trailing columns
+    """
+    from nfl_quant.utils.player_names import normalize_player_name
+
+    df = df.copy()
+
+    # Ensure player_norm exists
+    if 'player_norm' not in df.columns:
+        if 'player' in df.columns:
+            df['player_norm'] = df['player'].apply(normalize_player_name)
+        else:
+            raise ValueError("DataFrame must have 'player' or 'player_norm' column")
+
+    # Load and compute trailing stats
+    stats = load_player_stats_for_edge()
+
+    # Filter to historical data only (prevent leakage)
+    if week is not None:
+        historical_mask = (
+            (stats['season'] < season) |
+            ((stats['season'] == season) & (stats['week'] < week))
+        )
+        stats = stats[historical_mask]
+
+    # Compute trailing stats
+    stats = compute_edge_trailing_stats(stats)
+
+    # Merge into main DataFrame
+    df = merge_edge_trailing_stats(df, stats)
+
+    return df
+
+
+def get_edge_trailing_col(market: str) -> str:
+    """Get trailing column name for a market (edge system)."""
+    return EDGE_TRAILING_COL_MAP.get(market, f'trailing_{market}')
+
+
+def get_edge_stat_col(market: str) -> str:
+    """Get stat column name for a market (edge system)."""
+    return EDGE_MARKET_STAT_MAP.get(market, market)

@@ -1,15 +1,138 @@
-"""Odds conversion, EV calculation, and Kelly sizing."""
+"""
+Odds conversion, EV calculation, and Kelly sizing.
+
+This module is the CANONICAL source for all odds utilities.
+Other modules should import from here rather than defining their own.
+
+Usage:
+    from nfl_quant.utils.odds import (
+        american_to_prob,
+        american_to_decimal,
+        calculate_ev,
+        calculate_kelly,
+    )
+"""
 
 import csv
 import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from collections import Counter
+from typing import Dict, List, Optional, Tuple, Union
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
 from nfl_quant.schemas import BetSizing, OddsRecord
+from nfl_quant.core.unified_betting import (
+    american_odds_to_implied_prob as _canonical_american_to_implied,
+    american_to_decimal_odds as _canonical_american_to_decimal,
+    calculate_kelly_fraction as _canonical_kelly,
+)
+
+
+# =============================================================================
+# CANONICAL ODDS UTILITIES - Import these functions elsewhere
+# =============================================================================
+
+def american_to_prob(odds: Union[int, float]) -> float:
+    """
+    Convert American odds to implied probability.
+
+    This is the CANONICAL implementation. All other modules should import
+    this function rather than defining their own.
+
+    Args:
+        odds: American odds (e.g., -110, +150)
+
+    Returns:
+        Implied probability (0.0 to 1.0)
+
+    Examples:
+        >>> american_to_prob(-110)
+        0.5238095238095238
+        >>> american_to_prob(150)
+        0.4
+    """
+    return _canonical_american_to_implied(float(odds))
+
+
+def american_to_decimal(odds: Union[int, float]) -> float:
+    """
+    Convert American odds to decimal odds.
+
+    This is the CANONICAL implementation. All other modules should import
+    this function rather than defining their own.
+
+    Args:
+        odds: American odds (e.g., -110, +150)
+
+    Returns:
+        Decimal odds (e.g., 1.91, 2.50)
+
+    Examples:
+        >>> american_to_decimal(-110)
+        1.909090909090909
+        >>> american_to_decimal(150)
+        2.5
+    """
+    return _canonical_american_to_decimal(float(odds))
+
+
+def calculate_ev(prob: float, odds: Union[int, float]) -> float:
+    """
+    Calculate expected value of a bet.
+
+    This is the CANONICAL implementation.
+
+    Args:
+        prob: Model's true probability of winning (0.0 to 1.0)
+        odds: American odds
+
+    Returns:
+        Expected value as decimal (e.g., 0.05 = 5% EV)
+
+    Examples:
+        >>> calculate_ev(0.55, -110)  # 55% chance at -110
+        0.0045454545454545
+    """
+    decimal_odds = american_to_decimal(odds)
+    return prob * (decimal_odds - 1) - (1 - prob)
+
+
+def calculate_kelly(
+    prob: float,
+    odds: Union[int, float],
+    fraction: float = 0.25
+) -> float:
+    """
+    Calculate Kelly criterion bet size.
+
+    This is the CANONICAL implementation. Uses quarter-Kelly by default.
+
+    Args:
+        prob: Model's true probability of winning (0.0 to 1.0)
+        odds: American odds
+        fraction: Kelly fraction (default 0.25 for quarter-Kelly)
+
+    Returns:
+        Fraction of bankroll to bet (0.0 to 1.0, capped at 10%)
+
+    Examples:
+        >>> calculate_kelly(0.60, -110)  # 60% chance at -110
+        0.025  # 2.5% of bankroll
+    """
+    decimal_odds = american_to_decimal(odds)
+    q = 1 - prob
+    kelly = ((decimal_odds - 1) * prob - q) / (decimal_odds - 1)
+    return max(0, min(kelly * fraction, 0.10))  # Cap at 10%
+
+
+# Aliases for backwards compatibility
+american_to_implied_prob = american_to_prob
+american_to_probability = american_to_prob
+american_to_decimal_odds = american_to_decimal
 
 logger = logging.getLogger(__name__)
 
@@ -21,18 +144,15 @@ class OddsEngine:
     def american_to_implied_prob(american_odds: int) -> float:
         """Convert American odds to implied probability.
 
+        Delegates to canonical implementation in nfl_quant.core.unified_betting.
+
         Args:
             american_odds: American odds (e.g., -110, +120)
 
         Returns:
             Implied probability [0, 1]
         """
-        if american_odds < 0:
-            # Negative odds: implied_prob = |odds| / (|odds| + 100)
-            return abs(american_odds) / (abs(american_odds) + 100)
-        else:
-            # Positive odds: implied_prob = 100 / (odds + 100)
-            return 100 / (american_odds + 100)
+        return _canonical_american_to_implied(american_odds)
 
     @staticmethod
     def implied_prob_to_american(prob: float) -> int:
@@ -228,12 +348,54 @@ class OddsEngine:
             return False
 
 
-def load_game_status_map(week: int, season: int = 2025) -> Dict[str, str]:
-    """Load NFLverse game status for given week.
+def parse_kickoff_time(gameday: str, gametime: str) -> Optional[datetime]:
+    """Parse kickoff datetime from NFLverse schedule fields.
+
+    Args:
+        gameday: Date string like "2024-09-08"
+        gametime: Time string like "13:00" or "20:20"
+
+    Returns:
+        Timezone-aware datetime in UTC, or None if parsing fails.
+        NFLverse times are US/Eastern and converted to UTC.
+    """
+    if not gameday or not gametime or pd.isna(gameday) or pd.isna(gametime):
+        return None
+
+    try:
+        # Parse date and time
+        dt_str = f"{gameday} {gametime}"
+        naive_dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
+
+        # NFLverse times are US/Eastern
+        eastern = ZoneInfo("America/New_York")
+        local_dt = naive_dt.replace(tzinfo=eastern)
+
+        # Convert to UTC for comparison
+        return local_dt.astimezone(timezone.utc)
+    except Exception as e:
+        logger.debug(f"Failed to parse kickoff time from '{gameday}' '{gametime}': {e}")
+        return None
+
+
+def load_game_status_map(
+    week: int,
+    season: int = 2025,
+    minutes_after_kickoff_threshold: int = 30,
+    minutes_before_kickoff_warning: int = 15
+) -> Dict[str, str]:
+    """Load NFLverse game status for given week with real-time kickoff detection.
+
+    Determines game status using:
+    1. result column populated → "complete"
+    2. current_time > kickoff + threshold → "in_progress"
+    3. otherwise → "pre_game"
 
     Args:
         week: NFL week number
         season: NFL season year
+        minutes_after_kickoff_threshold: Minutes after kickoff to mark as in_progress (default 30)
+        minutes_before_kickoff_warning: Log warning for games starting soon (default 15)
 
     Returns:
         Dictionary mapping game_id -> status
@@ -268,32 +430,82 @@ def load_game_status_map(week: int, season: int = 2025) -> Dict[str, str]:
             logger.warning(f"No games found for Week {week}, Season {season}")
             return {}
 
+        # Get current time in UTC for comparison
+        current_time = datetime.now(timezone.utc)
+
         # Build game status map from NFLverse schedule data
-        # NFLverse game_id format: 2025_01_KC_BAL
-        # Map NFLverse result column to status:
-        # - result is NaN/None = "pre_game"
-        # - result exists = "complete"
         game_status_map = {}
+        imminent_games = []  # Track games about to start
+
         for _, game in week_games.iterrows():
             game_id = game.get('game_id')
             if not game_id:
                 continue
 
-            # Determine status from result column
             result = game.get('result')
-            if pd.isna(result) or result is None or result == '':
-                status = "pre_game"
-            else:
+
+            # Priority 1: Check if game is complete (result populated)
+            if pd.notna(result) and result != '':
                 status = "complete"
+            else:
+                # Priority 2: Check if game is in progress based on kickoff time
+                kickoff_dt = parse_kickoff_time(
+                    game.get('gameday'),
+                    game.get('gametime')
+                )
+
+                if kickoff_dt:
+                    minutes_since_kickoff = (current_time - kickoff_dt).total_seconds() / 60
+
+                    if minutes_since_kickoff >= minutes_after_kickoff_threshold:
+                        status = "in_progress"
+                        logger.debug(f"Game {game_id} marked in_progress ({minutes_since_kickoff:.0f}min since kickoff)")
+                    elif minutes_since_kickoff >= 0:
+                        # Game has started but within threshold - still mark in_progress
+                        status = "in_progress"
+                        logger.debug(f"Game {game_id} just started ({minutes_since_kickoff:.0f}min ago)")
+                    elif abs(minutes_since_kickoff) <= minutes_before_kickoff_warning:
+                        # Game about to start - log warning
+                        status = "pre_game"
+                        imminent_games.append((game_id, abs(minutes_since_kickoff)))
+                    else:
+                        status = "pre_game"
+                else:
+                    # Can't determine kickoff time - default to pre_game
+                    status = "pre_game"
 
             game_status_map[str(game_id)] = status
 
-        logger.info(f"Loaded {len(game_status_map)} game statuses from NFLverse for Week {week}")
+        # Summary logging
+        counts = Counter(game_status_map.values())
+        logger.info(f"Week {week} game status: {dict(counts)}")
+
+        # Warn about imminent games
+        for game_id, mins in imminent_games:
+            logger.warning(f"Game {game_id} kicks off in {mins:.0f} minutes - predictions may be stale")
+
         return game_status_map
 
     except Exception as e:
         logger.error(f"Failed to load game status map from NFLverse: {e}")
         return {}
+
+
+def get_actionable_games(week: int, season: int = 2025) -> List[str]:
+    """Return only game_ids that are still pre-game (actionable for predictions).
+
+    Use this to filter pipeline processing to only games where predictions
+    are still useful.
+
+    Args:
+        week: NFL week number
+        season: NFL season year
+
+    Returns:
+        List of game_ids with status "pre_game"
+    """
+    status_map = load_game_status_map(week, season)
+    return [gid for gid, status in status_map.items() if status == "pre_game"]
 
 
 def is_valid_pregame_odds(

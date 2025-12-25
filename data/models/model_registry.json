@@ -1,0 +1,2290 @@
+{
+  "active": "model_20251224_1259_4ed5f307",
+  "models": {
+    "model_20251206_1658_45e7a5f8": {
+      "created": "2025-12-06T16:58:54.812914",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "45e7a5f8",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 8.888608932495117
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 5.182126998901367
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 8.782548904418945
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 2.7347891330718994
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.129683017730713
+        }
+      },
+      "path": "data/models/model_20251206_1658_45e7a5f8.joblib",
+      "notes": "Migrated from V23",
+      "feature_count": 35
+    },
+    "model_20251207_0051_ed5a8030": {
+      "created": "2025-12-07T00:51:01.234430",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "player_injury_status",
+        "qb_injury_status",
+        "team_wr1_out",
+        "team_rb1_out"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "ed5a8030",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 8.693968057632446
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 5.135835886001587
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 8.640704870223999
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 2.5750300884246826
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.1124160289764404
+        }
+      },
+      "path": "data/models/model_20251207_0051_ed5a8030.joblib",
+      "notes": "Trained V23",
+      "feature_count": 39
+    },
+    "model_20251207_2334_ed5a8030": {
+      "created": "2025-12-07T23:34:31.886477",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "player_injury_status",
+        "qb_injury_status",
+        "team_wr1_out",
+        "team_rb1_out"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "ed5a8030",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 8.848038911819458
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 2.8685362339019775
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 8.797944068908691
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 2.708232879638672
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.1231610774993896
+        }
+      },
+      "path": "data/models/model_20251207_2334_ed5a8030.joblib",
+      "notes": "Trained V23",
+      "feature_count": 39
+    },
+    "model_20251207_2346_ed5a8030": {
+      "created": "2025-12-07T23:46:10.912888",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "player_injury_status",
+        "qb_injury_status",
+        "team_wr1_out",
+        "team_rb1_out"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "ed5a8030",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 9.668869256973267
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 3.0896050930023193
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 9.416184902191162
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 2.6868269443511963
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.1796128749847412
+        }
+      },
+      "path": "data/models/model_20251207_2346_ed5a8030.joblib",
+      "notes": "Trained V23",
+      "feature_count": 39
+    },
+    "model_20251207_2348_ed5a8030": {
+      "created": "2025-12-07T23:48:12.024856",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "player_injury_status",
+        "qb_injury_status",
+        "team_wr1_out",
+        "team_rb1_out"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "ed5a8030",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 9.272073984146118
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 2.923962116241455
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 9.2098069190979
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 2.587416172027588
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.113558053970337
+        }
+      },
+      "path": "data/models/model_20251207_2348_ed5a8030.joblib",
+      "notes": "Trained V23",
+      "feature_count": 39
+    },
+    "model_20251208_1254_cb83b688": {
+      "created": "2025-12-08T12:54:04.067132",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "cb83b688",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 10.33824896812439
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 3.7415268421173096
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 10.328143835067749
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.0065231323242188
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.2913191318511963
+        }
+      },
+      "path": "data/models/model_20251208_1254_cb83b688.joblib",
+      "notes": "Trained V24",
+      "feature_count": 46
+    },
+    "model_20251208_1309_cb83b688": {
+      "created": "2025-12-08T13:09:38.795855",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "cb83b688",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 10.983544826507568
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 3.994960069656372
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 11.108708143234253
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.038835048675537
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.338681936264038
+        }
+      },
+      "path": "data/models/model_20251208_1309_cb83b688.joblib",
+      "notes": "Trained V24",
+      "feature_count": 46
+    },
+    "model_20251208_1310_cb83b688": {
+      "created": "2025-12-08T13:10:28.826548",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "cb83b688",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 10.750268936157227
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 3.784597873687744
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 11.016332864761353
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.070420026779175
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.3436789512634277
+        }
+      },
+      "path": "data/models/model_20251208_1310_cb83b688.joblib",
+      "notes": "Trained V24",
+      "feature_count": 46
+    },
+    "model_20251214_1547_074b6128": {
+      "created": "2025-12-14T15:47:14.006290",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 12.874232053756714
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.55137014389038
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 12.186881065368652
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 4.029566049575806
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.7410039901733398
+        }
+      },
+      "path": "data/models/model_20251214_1547_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1548_074b6128": {
+      "created": "2025-12-14T15:48:15.696501",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 13.15575098991394
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.522974967956543
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 11.807485103607178
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 4.018007040023804
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.785567045211792
+        }
+      },
+      "path": "data/models/model_20251214_1548_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1554_074b6128": {
+      "created": "2025-12-14T15:54:02.051696",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 13.45060110092163
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.500576972961426
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 11.867616176605225
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.887644052505493
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.6802802085876465
+        }
+      },
+      "path": "data/models/model_20251214_1554_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1557_074b6128": {
+      "created": "2025-12-14T15:57:57.289811",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 13.011304140090942
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.306327104568481
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 11.496722936630249
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.651383876800537
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.5960378646850586
+        }
+      },
+      "path": "data/models/model_20251214_1557_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1601_074b6128": {
+      "created": "2025-12-14T16:01:18.613478",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 13.153480052947998
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.166674137115479
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 11.55850601196289
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.528602123260498
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.5255749225616455
+        }
+      },
+      "path": "data/models/model_20251214_1601_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1605_074b6128": {
+      "created": "2025-12-14T16:05:28.750119",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 12.451453924179077
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.40630292892456
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 10.944875001907349
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.6734631061553955
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.5940990447998047
+        }
+      },
+      "path": "data/models/model_20251214_1605_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1616_074b6128": {
+      "created": "2025-12-14T16:16:34.039026",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_def_vs_avg",
+        "opp_rush_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "074b6128",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 12.268394947052002
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.245068073272705
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 10.66754698753357
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.670531749725342
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.6028268337249756
+        }
+      },
+      "path": "data/models/model_20251214_1616_074b6128.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1625_6d9f2737": {
+      "created": "2025-12-14T16:25:54.034778",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "6d9f2737",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 12.289845943450928
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 8.320425271987915
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 10.70735788345337
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 3.71290922164917
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 1.6100199222564697
+        }
+      },
+      "path": "data/models/model_20251214_1625_6d9f2737.joblib",
+      "notes": "Trained V24",
+      "feature_count": 54
+    },
+    "model_20251214_1951_6d9f2737": {
+      "created": "2025-12-14T19:51:26.931743",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "6d9f2737",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 641.6756339073181
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 618.9950299263
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 624.8849549293518
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 593.1060707569122
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 530.2981822490692
+        }
+      },
+      "path": "data/models/model_20251214_1951_6d9f2737.joblib",
+      "notes": "Trained V25",
+      "feature_count": 54
+    },
+    "model_20251214_2046_6d9f2737": {
+      "created": "2025-12-14T20:46:59.447846",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "6d9f2737",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1566,
+          "elapsed": 642.420875787735
+        },
+        "player_rush_yds": {
+          "n_bets": 797,
+          "elapsed": 636.3225498199463
+        },
+        "player_reception_yds": {
+          "n_bets": 1614,
+          "elapsed": 642.8394870758057
+        },
+        "player_pass_yds": {
+          "n_bets": 283,
+          "elapsed": 613.7790229320526
+        },
+        "player_rush_attempts": {
+          "n_bets": 196,
+          "elapsed": 530.4143450260162
+        }
+      },
+      "path": "data/models/model_20251214_2046_6d9f2737.joblib",
+      "notes": "Trained V25",
+      "feature_count": 54
+    },
+    "model_20251214_2248_6d9f2737": {
+      "created": "2025-12-14T22:48:13.348297",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "team_synergy_multiplier",
+        "oline_health_score_v25",
+        "wr_corps_health",
+        "has_synergy_bonus",
+        "cascade_efficiency_boost",
+        "wr_coverage_reduction",
+        "returning_player_count",
+        "has_synergy_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_pass_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "6d9f2737",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 675.9615621566772
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 582.5533668994904
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 604.9025239944458
+        },
+        "player_pass_yds": {
+          "n_bets": 293,
+          "elapsed": 544.1723778247833
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 678.9758541584015
+        }
+      },
+      "path": "data/models/model_20251214_2248_6d9f2737.joblib",
+      "notes": "Trained V25",
+      "feature_count": 54
+    },
+    "model_20251215_1913_00aaf879": {
+      "created": "2025-12-15T19:13:51.609550",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "00aaf879",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 670.612606048584
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 575.253574848175
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 594.3802070617676
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 684.4580280780792
+        }
+      },
+      "path": "data/models/model_20251215_1913_00aaf879.joblib",
+      "notes": "Trained V26",
+      "feature_count": 46
+    },
+    "model_20251220_1430_197cc459": {
+      "created": "2025-12-20T14:30:53.723762",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "elo_rating_home",
+        "elo_rating_away",
+        "elo_diff",
+        "ybc_proxy",
+        "rest_days",
+        "hfa_adjustment",
+        "injury_status_encoded",
+        "practice_status_encoded",
+        "has_injury_designation"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "197cc459",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 720.8184139728546
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 611.4136707782745
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 645.1706681251526
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 732.18510389328
+        }
+      },
+      "path": "data/models/model_20251220_1430_197cc459.joblib",
+      "notes": "Trained V28",
+      "feature_count": 55
+    },
+    "model_20251220_2049_197cc459": {
+      "created": "2025-12-20T20:49:41.429943",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "elo_rating_home",
+        "elo_rating_away",
+        "elo_diff",
+        "ybc_proxy",
+        "rest_days",
+        "hfa_adjustment",
+        "injury_status_encoded",
+        "practice_status_encoded",
+        "has_injury_designation"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "197cc459",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 699.5403778553009
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 644.0377390384674
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 619.5498518943787
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 687.5115740299225
+        }
+      },
+      "path": "data/models/model_20251220_2049_197cc459.joblib",
+      "notes": "Trained V28",
+      "feature_count": 55
+    },
+    "model_20251220_2152_197cc459": {
+      "created": "2025-12-20T21:52:54.217946",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "elo_rating_home",
+        "elo_rating_away",
+        "elo_diff",
+        "ybc_proxy",
+        "rest_days",
+        "hfa_adjustment",
+        "injury_status_encoded",
+        "practice_status_encoded",
+        "has_injury_designation"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts"
+      ],
+      "fingerprint": "197cc459",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 683.611320734024
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 580.7563352584839
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 626.1665341854095
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 712.9106349945068
+        }
+      },
+      "path": "data/models/model_20251220_2152_197cc459.joblib",
+      "notes": "Trained V28",
+      "feature_count": 55
+    },
+    "model_20251221_0250_2ab0c809": {
+      "created": "2025-12-21T02:50:57.828261",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "elo_rating_home",
+        "elo_rating_away",
+        "elo_diff",
+        "ybc_proxy",
+        "rest_days",
+        "hfa_adjustment",
+        "injury_status_encoded",
+        "practice_status_encoded",
+        "has_injury_designation"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts",
+        "player_pass_attempts",
+        "player_pass_completions"
+      ],
+      "fingerprint": "2ab0c809",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 688.5547451972961
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 587.3415880203247
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 610.4744770526886
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 695.4291288852692
+        },
+        "player_pass_attempts": {
+          "n_bets": 144,
+          "elapsed": 581.8185043334961
+        },
+        "player_pass_completions": {
+          "n_bets": 144,
+          "elapsed": 582.0389499664307
+        }
+      },
+      "path": "data/models/model_20251221_0250_2ab0c809.joblib",
+      "notes": "Trained V28",
+      "feature_count": 55
+    },
+    "model_20251221_2158_2ab0c809": {
+      "created": "2025-12-21T21:58:21.830705",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "elo_rating_home",
+        "elo_rating_away",
+        "elo_diff",
+        "ybc_proxy",
+        "rest_days",
+        "hfa_adjustment",
+        "injury_status_encoded",
+        "practice_status_encoded",
+        "has_injury_designation"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts",
+        "player_pass_attempts",
+        "player_pass_completions"
+      ],
+      "fingerprint": "2ab0c809",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 719.6631472110748
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 616.4512441158295
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 638.3483929634094
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 723.8581647872925
+        },
+        "player_pass_attempts": {
+          "n_bets": 144,
+          "elapsed": 595.0552833080292
+        },
+        "player_pass_completions": {
+          "n_bets": 144,
+          "elapsed": 595.4127807617188
+        }
+      },
+      "path": "data/models/model_20251221_2158_2ab0c809.joblib",
+      "notes": "Trained V28",
+      "feature_count": 55
+    },
+    "model_20251224_1259_4ed5f307": {
+      "created": "2025-12-24T12:59:29.378252",
+      "features": [
+        "line_vs_trailing",
+        "line_level",
+        "line_in_sweet_spot",
+        "player_under_rate",
+        "player_bias",
+        "market_under_rate",
+        "LVT_x_player_tendency",
+        "LVT_x_player_bias",
+        "LVT_x_regime",
+        "LVT_in_sweet_spot",
+        "market_bias_strength",
+        "player_market_aligned",
+        "lvt_x_defense",
+        "lvt_x_rest",
+        "avg_separation",
+        "avg_cushion",
+        "trailing_catch_rate",
+        "snap_share",
+        "target_share",
+        "opp_wr1_receptions_allowed",
+        "game_pace",
+        "vegas_total",
+        "vegas_spread",
+        "implied_team_total",
+        "adot",
+        "pressure_rate",
+        "opp_pressure_rate",
+        "oline_health_score",
+        "box_count_expected",
+        "slot_snap_pct",
+        "target_share_trailing",
+        "opp_pass_yds_def_vs_avg",
+        "opp_rush_yds_def_vs_avg",
+        "opp_def_epa",
+        "has_opponent_context",
+        "pos_rank",
+        "is_starter",
+        "is_slot_receiver",
+        "slot_alignment_pct",
+        "opp_position_yards_allowed_trailing",
+        "opp_position_volume_allowed_trailing",
+        "opp_man_coverage_rate_trailing",
+        "slot_funnel_score",
+        "man_coverage_adjustment",
+        "position_role_x_opp_yards",
+        "has_position_context",
+        "elo_rating_home",
+        "elo_rating_away",
+        "elo_diff",
+        "ybc_proxy",
+        "rest_days",
+        "hfa_adjustment",
+        "injury_status_encoded",
+        "practice_status_encoded",
+        "has_injury_designation",
+        "vegas_agreement",
+        "lvt_direction"
+      ],
+      "markets": [
+        "player_receptions",
+        "player_rush_yds",
+        "player_reception_yds",
+        "player_rush_attempts",
+        "player_pass_attempts",
+        "player_pass_completions"
+      ],
+      "fingerprint": "4ed5f307",
+      "metrics": {
+        "player_receptions": {
+          "n_bets": 1626,
+          "elapsed": 709.3624722957611
+        },
+        "player_rush_yds": {
+          "n_bets": 837,
+          "elapsed": 608.7521889209747
+        },
+        "player_reception_yds": {
+          "n_bets": 1678,
+          "elapsed": 644.8094429969788
+        },
+        "player_rush_attempts": {
+          "n_bets": 284,
+          "elapsed": 740.297492980957
+        },
+        "player_pass_attempts": {
+          "n_bets": 144,
+          "elapsed": 620.822075843811
+        },
+        "player_pass_completions": {
+          "n_bets": 144,
+          "elapsed": 619.1385519504547
+        }
+      },
+      "path": "data/models/model_20251224_1259_4ed5f307.joblib",
+      "notes": "Trained V29",
+      "feature_count": 57
+    }
+  },
+  "created": "2025-12-06T16:58:54.812907"
+}

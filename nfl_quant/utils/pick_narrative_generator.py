@@ -9,6 +9,8 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Optional
 
+from nfl_quant.utils.player_names import normalize_player_name
+
 
 def generate_pick_narrative(
     pick_row: pd.Series,
@@ -240,17 +242,8 @@ def generate_narrative_with_historical_data(
     team = pick_row['team']
     market = pick_row['market']
 
-    # Normalize player name for matching
-    def normalize_name(name):
-        if pd.isna(name):
-            return ""
-        import re
-        name = str(name).strip().lower()
-        name = re.sub(r'\s+', ' ', name)
-        name = re.sub(r'[.\']', '', name)
-        return name
-
-    player_norm = normalize_name(player_name)
+    # Normalize player name for matching using canonical function
+    player_norm = normalize_player_name(player_name)
 
     # Get stat column
     stat_col = market_stat_map.get(market)
@@ -261,7 +254,7 @@ def generate_narrative_with_historical_data(
     if stat_col and stat_col in weekly_stats.columns:
         # Filter to this player, recent weeks
         player_stats = weekly_stats[
-            (weekly_stats['player_display_name'].apply(normalize_name) == player_norm) &
+            (weekly_stats['player_display_name'].apply(normalize_player_name) == player_norm) &
             (weekly_stats['team'] == team) &
             (weekly_stats['season'] == 2025) &
             (weekly_stats['week'] >= 8) &

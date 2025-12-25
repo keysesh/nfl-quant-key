@@ -270,11 +270,11 @@ def match_odds_to_schedule(
     )
 
     # Rename schedule columns for clarity
-    matched.rename(columns={
+    matched = matched.rename(columns={
         'game_id': 'schedule_game_id',
         'home_team_schedule': 'schedule_home_team',
         'away_team_schedule': 'schedule_away_team'
-    }, inplace=True)
+    })
 
     # Log matching statistics
     total_odds = len(odds_df)

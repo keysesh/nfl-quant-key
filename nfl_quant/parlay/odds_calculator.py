@@ -3,6 +3,10 @@
 from typing import List, Dict, Optional
 import numpy as np
 
+from nfl_quant.core.unified_betting import (
+    american_odds_to_implied_prob as _canonical_american_to_implied,
+)
+
 
 class ParlayOddsCalculator:
     """Calculate true parlay odds and compare to book offerings."""
@@ -10,17 +14,16 @@ class ParlayOddsCalculator:
     @staticmethod
     def american_to_implied_prob(american_odds: int) -> float:
         """Convert American odds to implied probability.
-        
+
+        Delegates to canonical implementation in nfl_quant.core.unified_betting.
+
         Args:
             american_odds: American odds (e.g., -118, +145)
-            
+
         Returns:
             Implied probability [0, 1]
         """
-        if american_odds < 0:
-            return abs(american_odds) / (abs(american_odds) + 100)
-        else:
-            return 100 / (american_odds + 100)
+        return _canonical_american_to_implied(american_odds)
     
     @staticmethod
     def implied_prob_to_american(prob: float) -> int:

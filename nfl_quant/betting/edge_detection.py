@@ -5,7 +5,7 @@ Implements:
 1. Proper no-vig probability calculation
 2. Edge calculation with market-specific thresholds
 3. CLV tracking (key metric for long-term success)
-4. Kelly criterion bet sizing
+4. Kelly criterion bet sizing (delegates to kelly_criterion.py)
 5. Risk management controls
 """
 
@@ -14,6 +14,14 @@ import pandas as pd
 from typing import Dict, Tuple, Optional, List
 from dataclasses import dataclass
 import logging
+
+from nfl_quant.betting.kelly_criterion import (
+    calculate_fractional_kelly as _canonical_kelly,
+    american_to_decimal,
+)
+from nfl_quant.core.unified_betting import (
+    american_odds_to_implied_prob as _canonical_american_to_implied,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -85,23 +93,22 @@ class EdgeDetector:
         """
         Convert American odds to implied probability.
 
+        Delegates to canonical implementation in nfl_quant.core.unified_betting.
+
         Args:
             odds: American odds (e.g., -110, +150)
 
         Returns:
             Implied probability (0-1)
         """
-        if odds > 0:
-            return 100 / (odds + 100)
-        else:
-            return abs(odds) / (abs(odds) + 100)
+        return _canonical_american_to_implied(odds)
 
     def american_to_decimal(self, odds: int) -> float:
-        """Convert American odds to decimal odds."""
-        if odds > 0:
-            return (odds / 100) + 1
-        else:
-            return (100 / abs(odds)) + 1
+        """Convert American odds to decimal odds.
+
+        Delegates to canonical implementation in nfl_quant.betting.kelly_criterion.
+        """
+        return american_to_decimal(odds)
 
     def calculate_no_vig_probability(
         self,
@@ -190,6 +197,8 @@ class EdgeDetector:
         """
         Calculate Kelly criterion bet fraction.
 
+        Delegates to canonical implementation in nfl_quant.betting.kelly_criterion.
+
         Args:
             win_prob: Probability of winning
             odds: American odds
@@ -198,18 +207,11 @@ class EdgeDetector:
         Returns:
             Fraction of bankroll to bet
         """
-        decimal_odds = self.american_to_decimal(odds)
-        b = decimal_odds - 1
-        p = win_prob
-        q = 1 - p
+        # Delegate to canonical implementation
+        kelly = _canonical_kelly(win_prob, odds, fraction)
 
-        # Full Kelly formula: f* = (p*b - q) / b
-        full_kelly = (p * b - q) / b
-
-        # Apply fraction and bounds
-        kelly = max(0, min(full_kelly * fraction, 0.05))  # Cap at 5%
-
-        return kelly
+        # Apply edge_detection specific cap at 5%
+        return min(kelly, 0.05)
 
     def get_confidence_tier(self, edge: float) -> str:
         """Determine confidence tier based on edge."""

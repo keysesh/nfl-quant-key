@@ -134,8 +134,9 @@ class PlayerSimulatorV4:
         self.calibrator = calibrator
         self.td_calibrator = td_calibrator
 
-        if seed is not None:
-            np.random.seed(seed)
+        # Use thread-local RandomState instead of global np.random.seed()
+        # This makes the simulator thread-safe for parallel execution
+        self._rng = np.random.RandomState(seed if seed is not None else 42)
 
         # Cache for raw samples (used by simulate_player backward compat)
         self._last_samples_cache: Dict[str, np.ndarray] = {}
@@ -216,14 +217,79 @@ class PlayerSimulatorV4:
         position = player_input.position
 
         # Create feature dataframe for usage predictor
-        # Use getattr with defaults for optional fields
+        # Map schema fields to predictor features:
+        # - avg_rec_tgt (schema) → trailing_attempts (predictor) for WR/TE
+        # - avg_rush_yd (schema) / ~4 YPC → trailing_carries (predictor) for RB
+        #
+        # CRITICAL FIX (Dec 5, 2025): trailing_snaps must match training data!
+        # Training data used different definitions of "snaps" by position:
+        # - WR/TE: snaps = targets
+        # - RB: snaps = rush_attempts + targets
+        # - QB: snaps = pass_attempts + rush_attempts
+        # Using snap_share × 60 caused ~65% target inflation due to feature mismatch!
+        snap_share = player_input.trailing_snap_share or 0.0
+
+        # FIX (Dec 8, 2025): Use trailing_targets and trailing_carries DIRECTLY
+        # ROOT CAUSE OF INFLATION: Previously derived from yards/efficiency which introduced 10-15% error
+        # when efficiency varied week-to-week (e.g., 128 yards on 12 carries = 10.7 YPC inflates estimate)
+
+        # For WR/TE/RB: trailing_attempts = targets (use trailing_targets directly if available)
+        trailing_attempts = getattr(player_input, 'trailing_targets', None) or 0.0
+
+        # Fallback to avg_rec_tgt if trailing_targets not available
+        if trailing_attempts == 0.0:
+            trailing_attempts = getattr(player_input, 'avg_rec_tgt', None) or 0.0
+
+        # Final fallback: estimate from target_share (legacy path)
+        if trailing_attempts == 0.0 and position in ('WR', 'TE', 'RB'):
+            trailing_target_share = getattr(player_input, 'trailing_target_share', None) or 0.0
+            # FIX: Use projected_team_pass_attempts (the schema field) instead of team_pass_attempts
+            team_pass_att = getattr(player_input, 'projected_team_pass_attempts', None) or 35.0
+            if trailing_target_share > 0:
+                trailing_attempts = trailing_target_share * team_pass_att
+                logger.debug(
+                    f"Estimated trailing_attempts={trailing_attempts:.1f} from "
+                    f"target_share={trailing_target_share:.3f} × team_pass_att={team_pass_att:.0f}"
+                )
+
+        # For RB: trailing_carries = use trailing_carries DIRECTLY if available
+        trailing_carries = getattr(player_input, 'trailing_carries', None) or 0.0
+
+        # Fallback to deriving from avg_rush_yd / YPC (legacy path, less accurate)
+        if trailing_carries == 0.0:
+            avg_rush_yd = getattr(player_input, 'avg_rush_yd', None) or 0.0
+            trailing_ypc = getattr(player_input, 'trailing_yards_per_carry', None) or 4.0
+            trailing_carries = avg_rush_yd / trailing_ypc if trailing_ypc > 0 else 0.0
+            if trailing_carries > 0:
+                logger.debug(
+                    f"Derived trailing_carries={trailing_carries:.1f} from "
+                    f"avg_rush_yd={avg_rush_yd:.1f} / YPC={trailing_ypc:.2f} (fallback)"
+                )
+
+        # FIX: For QB, use avg_pass_att (pass attempts per game) instead of avg_rec_tgt
+        # This was causing all QBs to default to 20 pass attempts
+        avg_pass_att = getattr(player_input, 'avg_pass_att', None) or 0.0
+
+        # CRITICAL: trailing_snaps must match training definition by position
+        # This was the root cause of 65% projection inflation!
+        if position in ('WR', 'TE'):
+            # WR/TE: Model was trained with snaps = targets
+            trailing_snaps = trailing_attempts
+        elif position == 'RB':
+            # RB: Model was trained with snaps = rush_attempts + targets
+            trailing_snaps = trailing_carries + trailing_attempts
+        else:  # QB
+            # QB: Model was trained with snaps = pass_attempts + rush_attempts
+            # FIX: Use avg_pass_att for QB (not avg_rec_tgt which is 0 for QBs)
+            trailing_attempts = avg_pass_att  # Override with pass attempts for QBs
+            trailing_snaps = trailing_attempts + trailing_carries
+
         usage_features = pd.DataFrame([{
             'week': player_input.week,
-            'trailing_snaps': getattr(player_input, 'trailing_snaps', 0.0),
-            'trailing_attempts': getattr(player_input, 'trailing_attempts', 0.0),
-            'trailing_carries': getattr(player_input, 'trailing_carries', 0.0),
-            'trailing_targets': getattr(player_input, 'trailing_targets', 0.0),
-            'snap_share': getattr(player_input, 'snap_share', player_input.trailing_snap_share or 0.0),
+            'trailing_snaps': trailing_snaps,
+            'trailing_attempts': trailing_attempts,  # Targets for WR/TE, pass attempts for QB
+            'trailing_carries': trailing_carries,
+            'snap_share': snap_share,
             'opp_pass_def_epa': getattr(player_input, 'opp_pass_def_epa', player_input.opponent_def_epa_vs_position or 0.0),
             'opp_pass_def_rank': getattr(player_input, 'opp_pass_def_rank', 16.0),  # Middle of pack default
             'trailing_opp_pass_def_epa': getattr(player_input, 'trailing_opp_pass_def_epa', 0.0),
@@ -244,6 +310,31 @@ class PlayerSimulatorV4:
                 targets_array = usage_preds.get('targets', np.array([0.0]))
                 mean_targets = float(targets_array[0] if len(targets_array) > 0 else 0.0)
 
+                # FIX (Dec 7, 2025): Constrain prediction to prevent excessive regression
+                # XGBoost over-regresses to population mean; limit to ±25% of trailing
+                if trailing_attempts > 0:
+                    min_targets = trailing_attempts * 0.75  # -25% from trailing
+                    max_targets = trailing_attempts * 1.25  # +25% from trailing
+                    original_targets = mean_targets
+                    mean_targets = np.clip(mean_targets, min_targets, max_targets)
+                    if abs(mean_targets - original_targets) > 0.1:
+                        logger.debug(
+                            f"Constrained targets: {original_targets:.1f} -> {mean_targets:.1f} "
+                            f"(trailing={trailing_attempts:.1f})"
+                        )
+                else:
+                    # FIX (Dec 8, 2025): If no trailing data, apply position-specific cap
+                    # Prevents extreme inflation when constraint can't be applied
+                    POSITION_MAX_TARGETS = {'WR': 10.0, 'TE': 8.0, 'RB': 6.0}
+                    max_targets = POSITION_MAX_TARGETS.get(position, 10.0)
+                    original_targets = mean_targets
+                    if mean_targets > max_targets:
+                        mean_targets = max_targets
+                        logger.warning(
+                            f"No trailing data for {player_input.player_name} - "
+                            f"capped targets: {original_targets:.1f} -> {mean_targets:.1f}"
+                        )
+
                 # Estimate variance using NFL-typical overdispersion
                 # Empirical: variance ≈ 1.8 × mean for NFL targets
                 variance_targets = estimate_target_variance(
@@ -258,6 +349,18 @@ class PlayerSimulatorV4:
                 carries_array = usage_preds.get('carries', np.array([0.0]))
                 mean_carries = float(carries_array[0] if len(carries_array) > 0 else 0.0)
 
+                # FIX (Dec 7, 2025): Constrain carries to prevent excessive regression
+                if trailing_carries > 0:
+                    min_carries = trailing_carries * 0.75  # -25% from trailing
+                    max_carries = trailing_carries * 1.25  # +25% from trailing
+                    original_carries = mean_carries
+                    mean_carries = np.clip(mean_carries, min_carries, max_carries)
+                    if abs(mean_carries - original_carries) > 0.1:
+                        logger.debug(
+                            f"Constrained carries: {original_carries:.1f} -> {mean_carries:.1f} "
+                            f"(trailing={trailing_carries:.1f})"
+                        )
+
                 # Carries also overdispersed (variance > mean)
                 variance_carries = estimate_target_variance(
                     mean_carries, overdispersion_factor=1.6
@@ -270,6 +373,19 @@ class PlayerSimulatorV4:
                 # For QB, 'targets' key actually contains passing attempts
                 attempts_array = usage_preds.get('targets', np.array([0.0]))
                 mean_attempts = float(attempts_array[0] if len(attempts_array) > 0 else 0.0)
+
+                # FIX (Dec 7, 2025): Constrain attempts to prevent excessive regression
+                # trailing_attempts holds pass attempts for QB
+                if trailing_attempts > 0:
+                    min_attempts = trailing_attempts * 0.80  # -20% (QB more stable)
+                    max_attempts = trailing_attempts * 1.20  # +20%
+                    original_attempts = mean_attempts
+                    mean_attempts = np.clip(mean_attempts, min_attempts, max_attempts)
+                    if abs(mean_attempts - original_attempts) > 0.1:
+                        logger.debug(
+                            f"Constrained QB attempts: {original_attempts:.1f} -> {mean_attempts:.1f} "
+                            f"(trailing={trailing_attempts:.1f})"
+                        )
 
                 # QB attempts less overdispersed (more predictable)
                 variance_attempts = estimate_target_variance(
@@ -302,49 +418,39 @@ class PlayerSimulatorV4:
         """
         position = player_input.position
 
+        # Helper to safely get attributes with None handling
+        # getattr returns None if attr exists but is None, so we need `or default`
+        def _safe_get(attr: str, default):
+            """Get attribute with None coalescing to default."""
+            val = getattr(player_input, attr, None)
+            return val if val is not None else default
+
         # Create feature dataframe for efficiency predictor
         # Match the format from player_simulator_v3_correlated.py lines 1040-1049
+        # Use _safe_get to handle None values that would break arithmetic in efficiency_predictor
         efficiency_features = pd.DataFrame([{
             'week': player_input.week,
-            'trailing_yards_per_target': getattr(
-                player_input, 'trailing_yards_per_target', 0.0
+            'trailing_yards_per_target': _safe_get('trailing_yards_per_target', 0.0),
+            'trailing_yards_per_carry': _safe_get('trailing_yards_per_carry', 0.0),
+            'trailing_td_rate_pass': _safe_get('trailing_td_rate_pass', 0.0),
+            'trailing_td_rate_rush': _safe_get('trailing_td_rate_rush', 0.0),
+            'trailing_comp_pct': _safe_get('trailing_comp_pct', 0.0),
+            'trailing_yards_per_completion': _safe_get('trailing_yards_per_completion', 0.0),
+            'opp_pass_def_epa': _safe_get(
+                'opp_pass_def_epa',
+                _safe_get('opponent_def_epa_vs_position', 0.0)
             ),
-            'trailing_yards_per_carry': getattr(
-                player_input, 'trailing_yards_per_carry', 0.0
+            'opp_pass_def_rank': _safe_get('opp_pass_def_rank', 16.0),
+            'trailing_opp_pass_def_epa': _safe_get('trailing_opp_pass_def_epa', 0.0),
+            'opp_rush_def_epa': _safe_get(
+                'opp_rush_def_epa',
+                _safe_get('opponent_def_epa_vs_position', 0.0)
             ),
-            'trailing_td_rate_pass': getattr(
-                player_input, 'trailing_td_rate_pass', 0.0
-            ),
-            'trailing_td_rate_rush': getattr(
-                player_input, 'trailing_td_rate_rush', 0.0
-            ),
-            'trailing_comp_pct': getattr(
-                player_input, 'trailing_comp_pct', 0.0
-            ),
-            'trailing_yards_per_completion': getattr(
-                player_input, 'trailing_yards_per_completion', 0.0
-            ),
-            'opp_pass_def_epa': getattr(
-                player_input, 'opp_pass_def_epa', player_input.opponent_def_epa_vs_position or 0.0
-            ),
-            'opp_pass_def_rank': getattr(
-                player_input, 'opp_pass_def_rank', 16.0
-            ),
-            'trailing_opp_pass_def_epa': getattr(
-                player_input, 'trailing_opp_pass_def_epa', 0.0
-            ),
-            'opp_rush_def_epa': getattr(
-                player_input, 'opp_rush_def_epa', player_input.opponent_def_epa_vs_position or 0.0
-            ),
-            'opp_rush_def_rank': getattr(
-                player_input, 'opp_rush_def_rank', 16.0
-            ),
-            'trailing_opp_rush_def_epa': getattr(
-                player_input, 'trailing_opp_rush_def_epa', 0.0
-            ),
-            'team_pace': getattr(
-                player_input, 'team_pace',
-                player_input.projected_pace * 2.0 if player_input.projected_pace else 64.0
+            'opp_rush_def_rank': _safe_get('opp_rush_def_rank', 16.0),
+            'trailing_opp_rush_def_epa': _safe_get('trailing_opp_rush_def_epa', 0.0),
+            'team_pace': _safe_get(
+                'team_pace',
+                (player_input.projected_pace * 2.0) if player_input.projected_pace else 64.0
             ),
         }])
 
@@ -424,9 +530,33 @@ class PlayerSimulatorV4:
         mean_ypt = efficiency_pred['yards_per_target_mean']
         cv_ypt = efficiency_pred['yards_per_target_cv']
 
-        # Estimate correlation from player history (if available)
-        # Default: -0.25 for WR, -0.20 for TE
-        correlation = get_default_target_ypt_correlation(player_input.position)
+        # Handle edge case: variance must be > mean for NegBin
+        if mean_targets < 0.5 or variance_targets <= mean_targets:
+            variance_targets = max(mean_targets * 1.5, mean_targets + 1.0) if mean_targets > 0 else 2.0
+            mean_targets = max(mean_targets, 1.0)
+
+        # Handle edge case: YPT must be positive
+        mean_ypt = max(mean_ypt, 1.0)
+        cv_ypt = max(cv_ypt, 0.1)
+
+        # NOTE: Y/T capping removed (Dec 7, 2025)
+        # Root fix now in EfficiencyPredictor.predict() which anchors predictions
+        # to trailing Y/T with ±15% max adjustment. Band-aid capping no longer needed.
+
+        # Estimate correlation from player archetype (dynamic)
+        # Uses aDOT, slot%, and Y/T variance to adjust correlation
+        # Deep threats: stronger negative correlation
+        # Slot/possession: weaker negative correlation
+        adot = getattr(player_input, 'adot', None)
+        slot_snap_pct = getattr(player_input, 'slot_snap_pct', None)
+        ypt_variance = getattr(player_input, 'ypt_variance', None)
+
+        correlation = get_default_target_ypt_correlation(
+            position=player_input.position,
+            adot=adot,
+            slot_snap_pct=slot_snap_pct,
+            ypt_variance=ypt_variance,
+        )
 
         logger.debug(
             f"{player_input.player_name} ({player_input.position}): "
@@ -455,7 +585,7 @@ class PlayerSimulatorV4:
 
         # Estimate receiving TDs using TD rate per target
         td_rate_per_target = self._get_td_rate_per_target(player_input)
-        receiving_td_samples = np.random.binomial(
+        receiving_td_samples = self._rng.binomial(
             n=targets_samples.astype(int),
             p=td_rate_per_target,
             size=self.trials
@@ -509,6 +639,12 @@ class PlayerSimulatorV4:
         mean_ypc = efficiency_pred['yards_per_carry_mean']
         cv_ypc = efficiency_pred['yards_per_carry_cv']
 
+        # Handle edge case: variance must be > mean for NegBin
+        if mean_carries < 0.5 or variance_carries <= mean_carries:
+            # Use Poisson fallback or minimum variance
+            variance_carries = max(mean_carries * 1.5, mean_carries + 1.0) if mean_carries > 0 else 1.0
+            mean_carries = max(mean_carries, 0.5)
+
         # Sample carries from NegBin
         carries_sampler = NegativeBinomialSampler(
             mean=mean_carries, variance=variance_carries
@@ -517,7 +653,9 @@ class PlayerSimulatorV4:
             size=self.trials, random_state=self.seed
         )
 
-        # Sample YPC from Lognormal
+        # Sample YPC from Lognormal (handle zero/negative mean)
+        mean_ypc = max(mean_ypc, 1.0)  # Minimum 1.0 YPC
+        cv_ypc = max(cv_ypc, 0.1)  # Minimum 10% CV
         ypc_sampler = LognormalSampler(mean=mean_ypc, cv=cv_ypc)
         ypc_samples = ypc_sampler.sample(
             size=self.trials, random_state=self.seed + 1
@@ -528,7 +666,7 @@ class PlayerSimulatorV4:
 
         # Rushing TDs
         td_rate_per_carry = self._get_td_rate_per_carry(player_input)
-        rushing_td_samples = np.random.binomial(
+        rushing_td_samples = self._rng.binomial(
             n=carries_samples.astype(int),
             p=td_rate_per_carry,
             size=self.trials
@@ -540,46 +678,65 @@ class PlayerSimulatorV4:
         mean_ypt = efficiency_pred['yards_per_target_mean']
         cv_ypt = efficiency_pred['yards_per_target_cv']
 
-        # RB correlation weaker (dump-offs less affected)
-        correlation = get_default_target_ypt_correlation('RB')  # -0.15
+        # Handle edge case: RBs with no receiving role
+        if mean_targets < 0.5 or variance_targets <= mean_targets:
+            # No meaningful receiving role - return zeros
+            targets_samples = np.zeros(self.trials)
+            ypt_samples = np.zeros(self.trials)
+            receiving_yards_samples = np.zeros(self.trials)
+            receptions_samples = np.zeros(self.trials)
+        else:
+            # RB correlation weaker (dump-offs less affected)
+            # Use dynamic correlation but RB archetype features less impactful
+            rb_adot = getattr(player_input, 'adot', None)
+            correlation = get_default_target_ypt_correlation(
+                position='RB',
+                adot=rb_adot,
+            )
 
-        targets_samples, ypt_samples = sample_correlated_targets_ypt(
-            mean_targets=mean_targets,
-            target_variance=variance_targets,
-            mean_ypt=mean_ypt,
-            ypt_cv=cv_ypt,
-            correlation=correlation,
-            size=self.trials,
-            random_state=self.seed + 2
-        )
+            targets_samples, ypt_samples = sample_correlated_targets_ypt(
+                mean_targets=mean_targets,
+                target_variance=variance_targets,
+                mean_ypt=mean_ypt,
+                ypt_cv=cv_ypt,
+                correlation=correlation,
+                size=self.trials,
+                random_state=self.seed + 2
+            )
 
-        receiving_yards_samples = targets_samples * ypt_samples
-        catch_rate = self._get_catch_rate(player_input)
-        receptions_samples = targets_samples * catch_rate
+            receiving_yards_samples = targets_samples * ypt_samples
+            catch_rate = self._get_catch_rate(player_input)
+            receptions_samples = targets_samples * catch_rate
 
-        # Build RB output
-        return PlayerPropOutput(
+        # Cache samples for backward compatibility (simulate_player API)
+        self._last_samples_cache = {
+            'carries': carries_samples,
+            'rushing_yards': rushing_yards_samples,
+            'rushing_tds': rushing_td_samples,
+            'targets': targets_samples,
+            'receptions': receptions_samples,
+            'receiving_yards': receiving_yards_samples,
+        }
+
+        # Build RB output using V4 schema (matching WR pattern)
+        return PlayerPropOutputV4(
             player_id=player_input.player_id,
             player_name=player_input.player_name,
             position=player_input.position,
             team=player_input.team,
             week=player_input.week,
+            trial_count=self.trials,
+            seed=self.seed,
 
-            # Rushing
-            **self._create_v4_output(carries_samples, 'carries').to_dict(),
-            **self._create_v4_output(
-                rushing_yards_samples, 'rushing_yards'
-            ).to_dict(),
-            **self._create_v4_output(
-                rushing_td_samples, 'rushing_tds'
-            ).to_dict(),
+            # Rushing stats
+            carries=self._create_v4_stat_dist(carries_samples),
+            rushing_yards=self._create_v4_stat_dist(rushing_yards_samples),
+            rushing_tds=self._create_v4_stat_dist(rushing_td_samples),
 
-            # Receiving
-            **self._create_v4_output(targets_samples, 'targets').to_dict(),
-            **self._create_v4_output(receptions_samples, 'receptions').to_dict(),
-            **self._create_v4_output(
-                receiving_yards_samples, 'receiving_yards'
-            ).to_dict(),
+            # Receiving stats (RBs catch passes too)
+            targets=self._create_v4_stat_dist(targets_samples),
+            receptions=self._create_v4_stat_dist(receptions_samples),
+            receiving_yards=self._create_v4_stat_dist(receiving_yards_samples),
         )
 
     def _simulate_qb(
@@ -600,6 +757,18 @@ class PlayerSimulatorV4:
         mean_ypc = efficiency_pred['yards_per_completion_mean']
         cv_ypc = efficiency_pred['yards_per_completion_cv']
 
+        # Handle edge case: variance must be > mean for NegBin
+        if mean_attempts < 1.0 or variance_attempts <= mean_attempts:
+            variance_attempts = max(mean_attempts * 1.5, mean_attempts + 5.0) if mean_attempts > 0 else 30.0
+            mean_attempts = max(mean_attempts, 20.0)  # QBs typically throw 25-40 passes
+
+        # Handle edge case: ensure completion pct is valid
+        completion_pct = max(0.5, min(0.8, completion_pct))  # Clamp to 50-80%
+
+        # Handle edge case: Y/C must be positive
+        mean_ypc = max(mean_ypc, 8.0)  # Minimum 8 yards per completion
+        cv_ypc = max(cv_ypc, 0.1)
+
         # Sample attempts from NegBin
         attempts_sampler = NegativeBinomialSampler(
             mean=mean_attempts, variance=variance_attempts
@@ -609,7 +778,7 @@ class PlayerSimulatorV4:
         )
 
         # Completions = attempts × completion%
-        completions_samples = np.random.binomial(
+        completions_samples = self._rng.binomial(
             n=attempts_samples.astype(int),
             p=completion_pct,
             size=self.trials
@@ -626,7 +795,7 @@ class PlayerSimulatorV4:
 
         # Passing TDs
         td_rate_per_attempt = self._get_td_rate_per_attempt(player_input)
-        passing_td_samples = np.random.binomial(
+        passing_td_samples = self._rng.binomial(
             n=attempts_samples.astype(int),
             p=td_rate_per_attempt,
             size=self.trials
@@ -634,34 +803,37 @@ class PlayerSimulatorV4:
 
         # Interceptions
         int_rate = self._get_int_rate(player_input)
-        interceptions_samples = np.random.binomial(
+        interceptions_samples = self._rng.binomial(
             n=attempts_samples.astype(int),
             p=int_rate,
             size=self.trials
         )
 
-        # Build QB output
-        return PlayerPropOutput(
+        # Cache samples for backward compatibility (simulate_player API)
+        self._last_samples_cache = {
+            'passing_attempts': attempts_samples,
+            'passing_completions': completions_samples,
+            'passing_yards': passing_yards_samples,
+            'passing_tds': passing_td_samples,
+            'interceptions': interceptions_samples,
+        }
+
+        # Build QB output using V4 schema (matching WR pattern)
+        return PlayerPropOutputV4(
             player_id=player_input.player_id,
             player_name=player_input.player_name,
             position=player_input.position,
             team=player_input.team,
             week=player_input.week,
+            trial_count=self.trials,
+            seed=self.seed,
 
-            # Passing
-            **self._create_v4_output(attempts_samples, 'attempts').to_dict(),
-            **self._create_v4_output(
-                completions_samples, 'completions'
-            ).to_dict(),
-            **self._create_v4_output(
-                passing_yards_samples, 'passing_yards'
-            ).to_dict(),
-            **self._create_v4_output(
-                passing_td_samples, 'passing_tds'
-            ).to_dict(),
-            **self._create_v4_output(
-                interceptions_samples, 'interceptions'
-            ).to_dict(),
+            # Passing stats
+            attempts=self._create_v4_stat_dist(attempts_samples),
+            completions=self._create_v4_stat_dist(completions_samples),
+            passing_yards=self._create_v4_stat_dist(passing_yards_samples),
+            passing_tds=self._create_v4_stat_dist(passing_td_samples),
+            interceptions=self._create_v4_stat_dist(interceptions_samples),
         )
 
     def _create_v4_stat_dist(self, samples: np.ndarray) -> V4StatDistribution:
@@ -745,23 +917,163 @@ class PlayerSimulatorV4:
     # Helper methods (simplified versions - full implementations in V3)
 
     def _get_catch_rate(self, player_input: PlayerPropInput) -> float:
-        """Get position-specific catch rate."""
-        defaults = {'RB': 0.77, 'WR': 0.65, 'TE': 0.70}
-        return defaults.get(player_input.position, 0.65)
+        """
+        Get dynamic catch rate with coverage quality adjustment.
+
+        V4 Improvement: Uses player's trailing catch rate + opponent coverage adjustment.
+        Previously used static defaults (WR: 0.65, TE: 0.70, RB: 0.77).
+
+        Formula: base_rate * coverage_adjustment
+        - base_rate: player's trailing catch rate or position default
+        - coverage_adjustment: 1.0 - (opp_def_epa * 0.15)
+          Good defense (negative EPA) → adjustment > 1.0 → LOWER catch rate
+          Bad defense (positive EPA) → adjustment < 1.0 → HIGHER catch rate
+
+        Returns: Catch rate bounded between 0.45 and 0.85
+        """
+        # Position defaults (used when trailing data unavailable)
+        position_defaults = {'RB': 0.77, 'WR': 0.65, 'TE': 0.70}
+
+        # Get base catch rate from trailing data or position default
+        base_rate = player_input.trailing_catch_rate
+        if base_rate is None or base_rate <= 0:
+            base_rate = position_defaults.get(player_input.position, 0.65)
+
+        # Adjust for opponent coverage quality
+        # opponent_def_epa_vs_position: negative = good defense, positive = bad defense
+        opp_def_epa = player_input.opponent_def_epa_vs_position
+
+        # Coverage adjustment factor:
+        # - Good defense (EPA = -0.1): adjustment = 1.0 - (-0.1 * 0.15) = 1.015 → catch rate DOWN
+        # - Bad defense (EPA = +0.1): adjustment = 1.0 - (0.1 * 0.15) = 0.985 → catch rate UP
+        # The 0.15 multiplier means each 0.1 EPA shifts catch rate by ~1.5%
+        coverage_adjustment = 1.0 - (opp_def_epa * 0.15)
+
+        # Apply adjustment and bound result
+        adjusted_rate = base_rate * coverage_adjustment
+
+        # Bound catch rate to realistic range [0.45, 0.85]
+        return min(0.85, max(0.45, adjusted_rate))
 
     def _get_td_rate_per_target(self, player_input: PlayerPropInput) -> float:
-        """Get TD rate per target by position."""
+        """
+        Get TD rate per target using player's actual trailing rate.
+
+        CRITICAL FIX (Dec 14, 2025): Previously used hardcoded position defaults
+        (WR: 5.5%, TE: 5.0%, RB: 3.5%) which severely underestimated elite TD scorers.
+        Now uses player's actual trailing_td_rate_pass with position defaults as fallback.
+        """
+        # Use player's actual receiving TD rate if available
+        trailing_rate = getattr(player_input, 'trailing_td_rate_pass', None)
+        if trailing_rate is not None and trailing_rate > 0:
+            # Cap at reasonable maximum (20% per target is extreme outlier)
+            return min(trailing_rate, 0.20)
+
+        # Fallback to position defaults
         defaults = {'WR': 0.055, 'TE': 0.050, 'RB': 0.035}
         return defaults.get(player_input.position, 0.050)
 
     def _get_td_rate_per_carry(self, player_input: PlayerPropInput) -> float:
-        """Get rushing TD rate per carry."""
-        return 0.025  # Typical RB rushing TD rate
+        """
+        Get rushing TD rate per carry using player's actual trailing rate.
+
+        CRITICAL FIX (Dec 14, 2025): Previously used hardcoded 2.5% default
+        which underestimated goal-line backs and high-TD players.
+        Now uses player's actual trailing_td_rate_rush with default as fallback.
+        """
+        # Use player's actual rushing TD rate if available
+        trailing_rate = getattr(player_input, 'trailing_td_rate_rush', None)
+        if trailing_rate is not None and trailing_rate > 0:
+            # Cap at reasonable maximum (15% per carry is extreme outlier)
+            return min(trailing_rate, 0.15)
+
+        # Fallback to position defaults
+        defaults = {'RB': 0.025, 'QB': 0.015}  # QBs score fewer rushing TDs
+        return defaults.get(player_input.position, 0.025)
 
     def _get_td_rate_per_attempt(self, player_input: PlayerPropInput) -> float:
-        """Get passing TD rate per attempt."""
+        """
+        Get passing TD rate per attempt using player's actual trailing rate.
+
+        CRITICAL FIX (Dec 14, 2025): Previously used hardcoded 4.5% default
+        which severely underestimated elite QBs (Josh Allen actual: ~7.5%).
+        Now uses player's actual trailing_td_rate_pass with default as fallback.
+        """
+        # Use player's actual passing TD rate if available
+        trailing_rate = getattr(player_input, 'trailing_td_rate_pass', None)
+        if trailing_rate is not None and trailing_rate > 0:
+            # Cap at reasonable maximum (12% per attempt is extreme outlier)
+            return min(trailing_rate, 0.12)
+
+        # Fallback to league average
         return 0.045  # Typical QB TD rate
 
     def _get_int_rate(self, player_input: PlayerPropInput) -> float:
         """Get interception rate per attempt."""
         return 0.023  # Typical QB INT rate
+
+    # =========================================================================
+    # V4.1: EXACT PROBABILITY FROM SAMPLES (Dec 7, 2025)
+    # =========================================================================
+
+    def get_p_under(self, stat: str, line: float) -> float:
+        """
+        Get P(UNDER) directly from simulation distribution.
+
+        CRITICAL FIX: Normal approximation doesn't capture skewed distributions
+        (NegativeBinomial + Lognormal). This uses actual MC samples for exact
+        probability calculation.
+
+        Args:
+            stat: Stat name matching _last_samples_cache key
+                  e.g., 'receiving_yards', 'receptions', 'rushing_yards'
+            line: Betting line to evaluate
+
+        Returns:
+            Exact P(UNDER line) from simulation samples.
+            Returns 0.5 if no samples available.
+
+        Example:
+            >>> simulator.simulate(player_input)
+            >>> p_under = simulator.get_p_under('receiving_yards', 88.5)
+            >>> p_over = 1.0 - p_under
+        """
+        samples = self._last_samples_cache.get(stat)
+        if samples is None:
+            return 0.5
+        return float(np.mean(samples < line))
+
+    def get_p_over(self, stat: str, line: float) -> float:
+        """
+        Get P(OVER) directly from simulation distribution.
+
+        Convenience method: P(OVER) = 1 - P(UNDER).
+
+        Args:
+            stat: Stat name matching _last_samples_cache key
+            line: Betting line to evaluate
+
+        Returns:
+            Exact P(OVER line) from simulation samples.
+        """
+        return 1.0 - self.get_p_under(stat, line)
+
+    def get_percentile_at_line(self, stat: str, line: float) -> float:
+        """
+        Get what percentile a line represents in the distribution.
+
+        Useful for understanding where the betting line falls in the
+        simulated distribution.
+
+        Args:
+            stat: Stat name matching _last_samples_cache key
+            line: Betting line to evaluate
+
+        Returns:
+            Percentile (0-100) where the line falls.
+            Example: 75 means line is at 75th percentile.
+        """
+        samples = self._last_samples_cache.get(stat)
+        if samples is None:
+            return 50.0
+        return float(np.mean(samples < line) * 100)

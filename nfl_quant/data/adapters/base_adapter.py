@@ -9,6 +9,8 @@ from pathlib import Path
 import pandas as pd
 from typing import Optional
 
+from nfl_quant.utils.player_names import normalize_player_name as _canonical_normalize
+
 
 class StatsAdapter(ABC):
     """
@@ -59,19 +61,15 @@ class StatsAdapter(ABC):
         """
         Normalize player name for consistent matching across sources.
 
+        Delegates to canonical implementation in nfl_quant.utils.player_names.
+
         Args:
             name: Raw player name
 
         Returns:
             Normalized player name
         """
-        import re
-        name = str(name).strip().lower()
-        # Remove suffixes like jr., sr., ii, iii, iv
-        name = re.sub(r'\s+(jr\.?|sr\.?|ii|iii|iv|v)$', '', name, flags=re.IGNORECASE)
-        # Remove extra whitespace
-        name = ' '.join(name.split())
-        return name
+        return _canonical_normalize(name)
 
     def normalize_team_name(self, team: str) -> str:
         """

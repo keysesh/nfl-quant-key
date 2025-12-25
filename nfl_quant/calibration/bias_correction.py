@@ -124,6 +124,42 @@ def get_correction_factor(market: str) -> float:
     return 1.0
 
 
+def get_additive_bias(market: str) -> float:
+    """
+    Get the ADDITIVE bias correction for a specific market.
+
+    Formula: corrected = prediction - additive_bias
+
+    Args:
+        market: Market name (e.g., 'player_reception_yds' or 'rushing_yards')
+
+    Returns:
+        Additive bias value (subtract from prediction)
+    """
+    config = load_bias_corrections()
+    corrections = config.get("corrections", {})
+    market_mapping = config.get("market_mapping", {})
+
+    # Try direct lookup first
+    if market in corrections:
+        return corrections[market].get("additive_bias", 0.0)
+
+    # Try mapping from DraftKings market name
+    mapped_market = market_mapping.get(market)
+    if mapped_market and mapped_market in corrections:
+        return corrections[mapped_market].get("additive_bias", 0.0)
+
+    # Handle combined yards specially
+    if market in ["player_rush_reception_yds", "combined_yards"]:
+        rush_bias = corrections.get("rushing_yards", {}).get("additive_bias", 0.0)
+        rec_bias = corrections.get("receiving_yards", {}).get("additive_bias", 0.0)
+        # Use weighted average
+        return (rush_bias + rec_bias) / 2
+
+    # Default: no correction
+    return 0.0
+
+
 def apply_bias_correction(
     value: Union[float, int],
     market: str,
@@ -131,6 +167,11 @@ def apply_bias_correction(
 ) -> float:
     """
     Apply bias correction to a predicted value.
+
+    Uses ADDITIVE bias correction (P0 fix, 2025-12-07):
+        corrected = prediction - additive_bias
+
+    Falls back to multiplicative factor if no additive bias is set.
 
     Args:
         value: The predicted value to correct
@@ -143,8 +184,16 @@ def apply_bias_correction(
     if value is None or value <= 0:
         return value
 
+    # First apply additive correction (P0 fix)
+    additive_bias = get_additive_bias(market)
+    corrected = value - additive_bias
+
+    # Then apply multiplicative factor (legacy, usually 1.0)
     factor = get_correction_factor(market)
-    corrected = value * factor
+    corrected = corrected * factor
+
+    # Ensure non-negative predictions
+    corrected = max(0.0, corrected)
 
     return corrected
 
@@ -153,6 +202,9 @@ def apply_corrections_to_predictions(predictions: Dict[str, float], market: str)
     """
     Apply bias corrections to a dictionary of predictions.
 
+    Uses ADDITIVE bias correction (P0 fix, 2025-12-07):
+        corrected = prediction - additive_bias
+
     Args:
         predictions: Dict with keys like 'mean', 'std', 'median', etc.
         market: Market name for correction lookup
@@ -160,22 +212,24 @@ def apply_corrections_to_predictions(predictions: Dict[str, float], market: str)
     Returns:
         Corrected predictions dict
     """
+    additive_bias = get_additive_bias(market)
     factor = get_correction_factor(market)
 
     corrected = predictions.copy()
 
-    # Apply to mean values
+    # Apply additive correction then multiplicative factor to mean values
     if 'mean' in corrected:
-        corrected['mean'] = corrected['mean'] * factor
+        corrected['mean'] = max(0.0, (corrected['mean'] - additive_bias) * factor)
     if 'median' in corrected:
-        corrected['median'] = corrected['median'] * factor
+        corrected['median'] = max(0.0, (corrected['median'] - additive_bias) * factor)
 
     # Apply to percentiles
     for key in ['p10', 'p25', 'p50', 'p75', 'p90']:
         if key in corrected:
-            corrected[key] = corrected[key] * factor
+            corrected[key] = max(0.0, (corrected[key] - additive_bias) * factor)
 
     # Scale std proportionally to maintain coefficient of variation
+    # Note: additive bias doesn't change std, only multiplicative factor does
     if 'std' in corrected and corrected.get('mean', 0) > 0:
         corrected['std'] = corrected['std'] * factor
 

@@ -38,5 +38,18 @@ from nfl_quant.features.core import (
     calculate_route_participation,
 )
 
+from nfl_quant.features.situational_features import (
+    # Rest days
+    get_rest_days,
+    get_rest_advantage,
+
+    # Home field advantage
+    get_hfa_adjustment,
+    calculate_hfa_from_history,
+
+    # Combined
+    get_situational_features,
+)
+
 
 

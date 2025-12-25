@@ -147,25 +147,28 @@ class BetSizer:
         }
 
     def get_edge_threshold_for_market(self, market: str) -> float:
-        """Get minimum edge threshold for a specific market."""
-        market_thresholds = self.config.get('odds_requirements', {}).get('market_edge_thresholds', {})
+        """Get minimum edge threshold for a specific market.
 
-        default_threshold = self.min_edge_required
+        Loads from configs/betting_config.json market_edge_thresholds section.
+        """
+        # Load from config first (preferred)
+        market_thresholds = self.config.get('market_edge_thresholds', {})
 
-        # Market-specific thresholds
-        thresholds = {
-            'player_reception_yds': 0.03,  # Most liquid
-            'player_receptions': 0.03,
-            'player_rush_yds': 0.04,
-            'player_pass_yds': 0.05,
-            'player_pass_tds': 0.08,  # Binary events
-            'player_anytime_td': 0.08,
-        }
+        # Fallback defaults only if config is missing
+        if not market_thresholds:
+            market_thresholds = {
+                'player_reception_yds': 0.03,
+                'player_receptions': 0.03,
+                'player_rush_yds': 0.04,
+                'player_pass_yds': 0.05,
+                'player_pass_tds': 0.08,
+                'player_anytime_td': 0.08,
+                'player_rush_attempts': 0.03,
+                'default': 0.03,
+            }
 
-        # Override with config if available
-        thresholds.update(market_thresholds)
-
-        return thresholds.get(market, default_threshold)
+        default_threshold = market_thresholds.get('default', self.min_edge_required)
+        return market_thresholds.get(market, default_threshold)
 
     def get_confidence_tier(self, edge: float, market: str = 'player_receptions') -> str:
         """

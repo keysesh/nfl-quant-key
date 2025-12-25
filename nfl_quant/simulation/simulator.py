@@ -275,8 +275,10 @@ class MonteCarloSimulator:
         # Since 2020: ~54-57% home win rate with ~1.5 points average advantage
         # 1.5 points / ~12 possessions = ~0.125 points/possession
         # In EPA terms: ~0.015-0.020 EPA/play boost (empirically validated)
+        # Value loaded from config (simulation_config.json -> game_line_betting -> home_field_advantage)
         if is_home:
-            home_epa_boost = 0.018  # Stronger HFA to match actual 54% home win rate
+            hfa_config = config.simulation.game_line_betting.get('home_field_advantage', {})
+            home_epa_boost = hfa_config.get('epa_boost', 0.018)
             net_epa += home_epa_boost
             logger.debug(f"  Home field advantage applied: +{home_epa_boost:.3f} EPA")
 

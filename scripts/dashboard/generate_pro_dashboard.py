@@ -178,6 +178,120 @@ def generate_uuid_short():
     return hashlib.md5(str(datetime.now().timestamp()).encode()).hexdigest()[:8]
 
 
+# Global cache for L6 TD games data
+_l6_td_cache = None
+_l5_stats_cache = None
+
+def get_l5_hit_rate(player_name: str, market: str, line: float, season: int = None) -> dict:
+    """Get the L5 hit rate for a player on a specific market line.
+
+    Args:
+        player_name: Player's display name
+        market: Market type (e.g., 'player_receptions', 'player_rush_yds')
+        line: The betting line to compare against
+        season: NFL season year (defaults to current)
+
+    Returns:
+        dict with 'hits', 'total_games', 'values' (last 5 game values)
+    """
+    global _l5_stats_cache
+
+    if season is None:
+        season = get_current_season()
+
+    # Map market to stat column
+    market_to_stat = {
+        'player_receptions': 'receptions',
+        'player_reception_yds': 'receiving_yards',
+        'player_rush_yds': 'rushing_yards',
+        'player_rush_attempts': 'carries',
+        'player_pass_yds': 'passing_yards',
+        'player_pass_attempts': 'attempts',
+        'player_pass_completions': 'completions',
+    }
+
+    stat_col = market_to_stat.get(market)
+    if not stat_col:
+        return {'hits': 0, 'total_games': 0, 'values': []}
+
+    # Load and cache weekly stats
+    if _l5_stats_cache is None:
+        try:
+            ws_path = DATA_DIR / 'nflverse' / 'weekly_stats.parquet'
+            if ws_path.exists():
+                _l5_stats_cache = pd.read_parquet(ws_path)
+            else:
+                return {'hits': 0, 'total_games': 0, 'values': []}
+        except Exception as e:
+            return {'hits': 0, 'total_games': 0, 'values': []}
+
+    # Get player's last 5 games
+    player_data = _l5_stats_cache[
+        (_l5_stats_cache['player_display_name'] == player_name) &
+        (_l5_stats_cache['season'] == season)
+    ].sort_values('week', ascending=False).head(5)
+
+    if len(player_data) == 0 or stat_col not in player_data.columns:
+        return {'hits': 0, 'total_games': 0, 'values': []}
+
+    values = player_data[stat_col].fillna(0).tolist()
+    hits = sum(1 for v in values if v > line)
+
+    return {
+        'hits': hits,
+        'total_games': len(values),
+        'values': values
+    }
+
+
+def get_l6_td_games(player_name: str, season: int = None) -> dict:
+    """Get the number of games with TDs in the last 6 games for a player.
+
+    Args:
+        player_name: Player's display name
+        season: NFL season year (defaults to current)
+
+    Returns:
+        dict with 'games_with_td', 'total_games', 'total_tds'
+    """
+    global _l6_td_cache
+
+    if season is None:
+        season = get_current_season()
+
+    # Load and cache weekly stats
+    if _l6_td_cache is None:
+        try:
+            ws_path = DATA_DIR / 'nflverse' / 'weekly_stats.parquet'
+            if ws_path.exists():
+                ws = pd.read_parquet(ws_path)
+                # Calculate total TDs per game
+                ws['total_tds'] = ws['rushing_tds'].fillna(0) + ws['receiving_tds'].fillna(0)
+                _l6_td_cache = ws
+            else:
+                return {'games_with_td': 0, 'total_games': 0, 'total_tds': 0}
+        except Exception as e:
+            return {'games_with_td': 0, 'total_games': 0, 'total_tds': 0}
+
+    # Get player's last 6 games
+    player_data = _l6_td_cache[
+        (_l6_td_cache['player_display_name'] == player_name) &
+        (_l6_td_cache['season'] == season)
+    ].sort_values('week', ascending=False).head(6)
+
+    if len(player_data) == 0:
+        return {'games_with_td': 0, 'total_games': 0, 'total_tds': 0}
+
+    games_with_td = (player_data['total_tds'] >= 1).sum()
+    total_tds = int(player_data['total_tds'].sum())
+
+    return {
+        'games_with_td': int(games_with_td),
+        'total_games': len(player_data),
+        'total_tds': total_tds
+    }
+
+
 def format_player_name_compact(full_name: str, max_len: int = 14) -> str:
     """Format player name compactly: 'Justin Herbert' -> 'J. Herbert' if too long."""
     if not full_name or len(full_name) <= max_len:
@@ -2376,8 +2490,52 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
     # Hit rate class
     hit_class = 'high' if hist_rate >= 55 else 'medium' if hist_rate >= 45 else 'low'
 
+    # Check if TD prop - show L6 TD games instead of hist rate
+    is_td_prop = 'anytime_td' in market.lower() or '_td' in market.lower()
+    l5_hit_html = ''
+
+    if is_td_prop:
+        # TD props: show games with TDs
+        l6_data = get_l6_td_games(player)
+        if l6_data['total_games'] > 0:
+            games_with_td = l6_data['games_with_td']
+            total_games = l6_data['total_games']
+            td_pct = (games_with_td / total_games) * 100 if total_games > 0 else 0
+            td_class = 'high' if td_pct >= 67 else 'medium' if td_pct >= 50 else 'low'
+            l5_hit_html = f'''
+            <div class="l5-hit-indicator">
+                <span class="l5-hit-value {td_class}">{games_with_td}/{total_games}</span>
+                <span class="l5-hit-label">L{total_games} TDs</span>
+            </div>
+            '''
+    elif market in ['player_receptions', 'player_reception_yds', 'player_rush_yds', 'player_rush_attempts']:
+        # Continuous stats: show L5 hit rate vs line
+        l5_data = get_l5_hit_rate(player, market, float(line))
+        if l5_data['total_games'] > 0:
+            hits = l5_data['hits']
+            total = l5_data['total_games']
+            hit_pct = (hits / total) * 100 if total > 0 else 0
+            hit_class = 'high' if hit_pct >= 60 else 'medium' if hit_pct >= 40 else 'low'
+            # Market-specific label
+            label_map = {
+                'player_receptions': 'L5 Rec',
+                'player_reception_yds': 'L5 Rec Yds',
+                'player_rush_yds': 'L5 Rush',
+                'player_rush_attempts': 'L5 Att'
+            }
+            label = label_map.get(market, 'L5 Hit')
+            l5_hit_html = f'''
+            <div class="l5-hit-indicator">
+                <span class="l5-hit-value {hit_class}">{hits}/{total}</span>
+                <span class="l5-hit-label">{label} &gt;{line}</span>
+            </div>
+            '''
+
     # Game short format
     game_short = f"{team} vs {opponent}" if opponent else team
+
+    # Get game history for the modal chart
+    game_history = get_player_game_history(player, market, week)
 
     # Build pick_data for modal
     pick_data = {
@@ -2396,12 +2554,24 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
         'hist_over_rate': safe_float(hist_over_rate),
         'hist_count': safe_int(row.get('hist_count', 0)),
         'game': game,
+        'game_history': game_history,  # For Last 6 Games chart
     }
     pick_data_json = json.dumps(pick_data)
     pick_data_encoded = urllib.parse.quote(pick_data_json)
 
+    # Tier-based row class for visual hierarchy
+    tier = str(row.get('effective_tier', row.get('quality_tier', ''))).upper()
+    tier_class = ''
+    if tier == 'ELITE':
+        tier_class = 'tier-elite'
+    elif tier == 'STRONG':
+        tier_class = 'tier-strong'
+
+    # Escape game for data attribute
+    game_escaped = game.replace('"', '&quot;') if game else ''
+
     return f'''
-    <tr data-market="{market}" data-direction="{pick_dir}" data-position="{position}" data-confidence="{conf_pct:.1f}" data-bet-id="{bet_id}">
+    <tr class="{tier_class}" data-market="{market}" data-direction="{pick_dir}" data-position="{position}" data-confidence="{conf_pct:.1f}" data-tier="{tier.lower()}" data-game="{game_escaped}" data-bet-id="{bet_id}">
         <td>
             <div class="player-cell">
                 <div class="player-avatar">{initials}</div>
@@ -2424,12 +2594,14 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
         </td>
         <td class="ev-{ev_class}">{edge_val:+.1f}%</td>
         <td>
+            {l5_hit_html if l5_hit_html else f'''
             <div class="hit-rate">
                 <div class="hit-rate-bar">
                     <div class="hit-rate-fill {hit_class}" style="width: {hist_rate:.0f}%"></div>
                 </div>
                 <span class="hit-rate-value">{hist_rate:.0f}%</span>
             </div>
+            '''}
         </td>
         <td>
             <span class="pick-badge {pick_dir}">{'O' if pick_dir == 'over' else 'U'} {line}</span>
@@ -2482,11 +2654,29 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
             active = 'active' if market_key == 'all' else ''
             filter_pills_html += f'<button class="filter-pill {active}" data-filter="{market_key}" onclick="filterCheatSheet(\'{market_key}\', this)">{market_label}</button>\n'
 
+    # Get unique games for filter dropdown
+    games = sorted_df['game'].dropna().unique() if 'game' in sorted_df.columns else []
+    game_options_html = ""
+    for game in sorted(games):
+        if game:
+            # Shorten game name for dropdown (e.g., "Chicago Bears @ San Francisco 49ers" -> "CHI @ SF")
+            game_short = game
+            try:
+                parts = game.split(' @ ')
+                if len(parts) == 2:
+                    away = parts[0].split()[-1][:3].upper() if parts[0] else ''
+                    home = parts[1].split()[-1][:3].upper() if parts[1] else ''
+                    game_short = f"{away} @ {home}"
+            except:
+                pass
+            game_escaped = game.replace("'", "\\'")
+            game_options_html += f'<option value="{game_escaped}">{game_short}</option>\n'
+
     total_picks = len(sorted_df)
 
     return f'''
-        <!-- CHEAT SHEET VIEW - BettingPros-style dense table -->
-        <div class="view-section" id="cheat-sheet">
+        <!-- PICKS VIEW - BettingPros-style dense table (DEFAULT ACTIVE) -->
+        <div class="view-section active" id="cheat-sheet">
             <div class="table-section">
                 <div class="table-section-header">
                     <h2>Prop Bet Cheat Sheet</h2>
@@ -2503,6 +2693,10 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
 
                 <!-- Secondary Filters -->
                 <div class="filter-bar secondary">
+                    <select class="filter-dropdown" id="cs-game-filter" onchange="filterCheatSheetGame(this.value)">
+                        <option value="all">All Games</option>
+                        {game_options_html}
+                    </select>
                     <select class="filter-dropdown" id="cs-position-filter" onchange="filterCheatSheetPosition(this.value)">
                         <option value="all">All Positions</option>
                         <option value="QB">QB</option>
@@ -2556,8 +2750,24 @@ def generate_game_lines_table_row(row: pd.Series, away_team: str, home_team: str
         HTML string for the table row
     """
     import hashlib
+    from datetime import datetime as dt
 
     game = row.get('game', '')
+
+    # Parse game time from commence_time
+    commence_time = row.get('commence_time', '')
+    game_time_display = ''
+    if commence_time:
+        try:
+            if isinstance(commence_time, str):
+                # Parse ISO format
+                ct = pd.to_datetime(commence_time)
+            else:
+                ct = commence_time
+            # Format as "Sun 1:00 PM"
+            game_time_display = ct.strftime('%a %I:%M %p').replace(' 0', ' ')
+        except:
+            game_time_display = ''
     bet_type_raw = str(row.get('bet_type', '')).lower()
     pick = str(row.get('pick', '')).upper()
     line = row.get('market_line', row.get('line', 0))
@@ -2634,6 +2844,7 @@ def generate_game_lines_table_row(row: pd.Series, away_team: str, home_team: str
                 </div>
             </div>
         </td>
+        <td class="gl-time-cell">{game_time_display if game_time_display else '—'}</td>
         <td>
             <span class="gl-bet-type {bet_type_class}">{bet_type}</span>
         </td>
@@ -2720,6 +2931,7 @@ def generate_game_lines_table_section(game_lines_df: pd.DataFrame, week: int) ->
                         <thead>
                             <tr>
                                 <th data-sort="game" onclick="sortGameLines('game', this)">Game</th>
+                                <th data-sort="time" onclick="sortGameLines('time', this)">Time</th>
                                 <th data-sort="type" onclick="sortGameLines('type', this)">Type</th>
                                 <th data-sort="pick" class="no-sort">Pick</th>
                                 <th data-sort="rating" onclick="sortGameLines('confidence', this)">Rating</th>
@@ -10581,6 +10793,22 @@ def generate_css() -> str:
             background: var(--bg-card-hover);
         }
 
+        /* Tier-based row highlighting - Visual hierarchy */
+        .data-table tr.tier-elite {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid #F59E0B;
+        }
+        .data-table tr.tier-elite:hover {
+            background: rgba(245, 158, 11, 0.15);
+        }
+        .data-table tr.tier-strong {
+            background: rgba(34, 197, 94, 0.06);
+            border-left: 3px solid #22C55E;
+        }
+        .data-table tr.tier-strong:hover {
+            background: rgba(34, 197, 94, 0.12);
+        }
+
         /* Player cell component */
         .player-cell {
             display: flex;
@@ -10791,6 +11019,55 @@ def generate_css() -> str:
             border-color: var(--accent);
         }
 
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .empty-state-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .empty-state-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* L5 hit rate indicator for all props */
+        .l5-hit-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .l5-hit-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .l5-hit-value.high {
+            color: #22C55E;
+        }
+        .l5-hit-value.medium {
+            color: #EAB308;
+        }
+        .l5-hit-value.low {
+            color: #EF4444;
+        }
+        .l5-hit-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+
         /* Analyze button */
         .analyze-btn {
             background: var(--surface-elevated);
@@ -10924,6 +11201,13 @@ def generate_css() -> str:
             background: rgba(139, 92, 246, 0.15);
             color: #A78BFA;
             border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Game time cell */
+        .gl-time-cell {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
         }
 
         .gl-bet-type.total {
@@ -12814,6 +13098,12 @@ def generate_javascript() -> str:
             applyCheatSheetFilters();
         }
 
+        let csCurrentGameFilter = 'all';
+        function filterCheatSheetGame(game) {
+            csCurrentGameFilter = game;
+            applyCheatSheetFilters();
+        }
+
         function applyCheatSheetFilters() {
             const rows = document.querySelectorAll('#cheat-sheet-tbody tr');
             let visibleCount = 0;
@@ -12823,6 +13113,7 @@ def generate_javascript() -> str:
                 const direction = row.dataset.direction || '';
                 const position = row.dataset.position || '';
                 const confidence = parseFloat(row.dataset.confidence) || 0;
+                const game = row.dataset.game || '';
 
                 let show = true;
 
@@ -12841,6 +13132,11 @@ def generate_javascript() -> str:
                     show = false;
                 }
 
+                // Game filter
+                if (csCurrentGameFilter !== 'all' && game !== csCurrentGameFilter) {
+                    show = false;
+                }
+
                 // Tier filter
                 if (csCurrentTierFilter === 'elite' && confidence < 65) {
                     show = false;
@@ -12856,6 +13152,21 @@ def generate_javascript() -> str:
             const countEl = document.getElementById('cs-results-count');
             if (countEl) {
                 countEl.textContent = visibleCount + ' picks';
+            }
+
+            // Show/hide empty state
+            let emptyState = document.getElementById('cs-empty-state');
+            if (visibleCount === 0) {
+                if (!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.id = 'cs-empty-state';
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = '<div class="empty-state-icon">🔍</div><div class="empty-state-text">No picks match your filters</div><div class="empty-state-hint">Try adjusting your filter criteria</div>';
+                    document.getElementById('cheat-sheet-tbody').parentElement.appendChild(emptyState);
+                }
+                emptyState.style.display = 'block';
+            } else if (emptyState) {
+                emptyState.style.display = 'none';
             }
         }
 
@@ -14045,19 +14356,38 @@ def generate_game_line_card(game_df: pd.DataFrame) -> str:
 
         # Defensive advantage narrative
         def_advantage = opp_off_epa - picked_def_epa  # Negative = picked team's D is better
-        if def_advantage < -0.04:
+        picked_def_is_good = picked_def_epa < 0.02  # At least "average" or better (for defense, lower EPA = better)
+        opp_off_is_bad = opp_off_epa < -0.02  # Struggling or worse offense
+
+        if def_advantage < -0.04 and picked_def_is_good:
+            # Picked team has a GOOD defense that should contain opponent
             spread_story += f"Meanwhile, {picked_team}'s {epa_desc(picked_def_epa, 'defense')} defense should contain {opponent}'s {epa_desc(opp_off_epa)} offense. "
+        elif def_advantage < -0.04 and opp_off_is_bad and not picked_def_is_good:
+            # Picked team has weak defense, but opponent's offense is even worse
+            spread_story += f"Despite {picked_team}'s {epa_desc(picked_def_epa, 'defense')} defense, {opponent}'s {epa_desc(opp_off_epa)} offense limits the damage. "
         elif def_advantage > 0.04 and off_advantage > 0:
             spread_story += f"The concern is {opponent}'s {epa_desc(opp_off_epa)} offense against {picked_team}'s {epa_desc(picked_def_epa, 'defense')} defense, but the offensive edge compensates. "
 
         # Win probability context
         picked_win_prob = home_win_prob_val if picked_is_home else away_win_prob
+
+        # Get spread info for context
+        spread_line = abs(float(spread_bet.iloc[0].get('market_line', 0))) if len(spread_bet) > 0 else 0
+        fair_spread = float(spread_bet.iloc[0].get('model_fair_line', 0)) if len(spread_bet) > 0 else 0
+
         if picked_win_prob > 0.65:
             spread_story += f"The model gives {picked_team} a strong {picked_win_prob:.0%} win probability, suggesting the spread may not fully capture their advantage."
         elif picked_win_prob > 0.55:
             spread_story += f"At {picked_win_prob:.0%} win probability, {picked_team} is the rightful favorite — the value is in the number."
         elif picked_win_prob < 0.45:
             spread_story += f"Despite only a {picked_win_prob:.0%} win probability, the spread offers value as the market overestimates {opponent}."
+        else:
+            # Coin-flip game (45-55% win prob) - emphasize spread value
+            spread_diff = spread_line - abs(fair_spread)
+            if spread_diff > 3:
+                spread_story += f"This is a coin-flip game ({picked_win_prob:.0%} win prob), but the market is giving {picked_team} {spread_line:.1f} points when the fair line is closer to {fair_spread:+.1f}. That's {spread_diff:.1f} points of value."
+            else:
+                spread_story += f"At {picked_win_prob:.0%} win probability, the value is in the spread cushion."
 
         narrative_parts.append(spread_story)
 
@@ -14406,11 +14736,11 @@ def generate_dashboard(week: int = None, season: int = 2025):
     # Load data - prefer edge recommendations (new pipeline)
     recs_df = load_edge_recommendations(week)
 
-    # Fall back to old format if edge recommendations not found
-    if len(recs_df) == 0:
+    # Fall back to old format if edge recommendations not found OR too few
+    if len(recs_df) < 20:
         recs_path = PROJECT_ROOT / "reports" / "CURRENT_WEEK_RECOMMENDATIONS.csv"
         if recs_path.exists():
-            print("No edge recommendations found, falling back to XGBoost predictions")
+            print(f"Edge recommendations too few ({len(recs_df)}), falling back to XGBoost predictions")
             recs_df = pd.read_csv(recs_path)
             # Apply multi-factor scoring for tier only (keeps CAUTION flags)
             recs_df['effective_tier'] = recs_df.apply(get_adjusted_tier, axis=1)
@@ -14597,284 +14927,23 @@ def generate_dashboard(week: int = None, season: int = 2025):
                 </div>
             </div>
 
-            <!-- Search Bar -->
-            <div class="search-bar-container">
-                <input type="text" id="player-search" class="search-input" placeholder="Search players..." oninput="filterPicks()">
-                <div class="filter-chips">
-                    <button class="filter-chip active" data-filter="all" onclick="setFilter('all', this)">All</button>
-                    <button class="filter-chip" data-filter="elite" onclick="setFilter('elite', this)">Elite</button>
-                    <button class="filter-chip" data-filter="strong" onclick="setFilter('strong', this)">Strong</button>
-                    <button class="filter-chip" data-filter="over" onclick="setFilter('over', this)">OVER</button>
-                    <button class="filter-chip" data-filter="under" onclick="setFilter('under', this)">UNDER</button>
-                </div>
-            </div>
-
+            <!-- Consolidated 3-Tab Navigation -->
             <div class="tabs">
-                <button class="tab active" onclick="showView('top-picks', this)">Featured<span class="tab-count">{elite_count + high_count}</span></button>
-                <button class="tab" onclick="showView('cheat-sheet', this)">Cheat Sheet<span class="tab-count">{total_picks}</span></button>
-                <button class="tab" onclick="showView('by-game', this)">By Game<span class="tab-count">{games}</span></button>
-                <button class="tab" onclick="showView('all-picks', this)">All Picks<span class="tab-count">{total_picks}</span></button>
+                <button class="tab active" onclick="showView('cheat-sheet', this)">Picks<span class="tab-count">{total_picks}</span></button>
                 <button class="tab" onclick="showView('game-lines', this)">Lines<span class="tab-count">{game_line_count}</span></button>
                 <button class="tab" onclick="showView('parlays', this)">Parlays<span class="tab-count">{parlay_count}</span></button>
-            </div>
-
-            <!-- Tier Legend -->
-            <div class="tier-legend">
-                <span class="tier-legend-label">Tiers:</span>
-                <span class="tier-legend-item tier-elite-legend">ELITE (65%+)</span>
-                <span class="tier-legend-item tier-strong-legend">STRONG (60-65%)</span>
-                <span class="tier-legend-item tier-moderate-legend">MODERATE (55-60%)</span>
             </div>
         </div>
 '''
 
-    # Top Picks View - WITH FEATURED CARDS
-    # Generate featured elite picks as CARDS (user preference) - show ALL elite/strong picks
-    if 'quality_tier' in recs_df.columns:
-        elite_picks = recs_df[recs_df['quality_tier'].str.upper().isin(['ELITE', 'STRONG'])].sort_values('model_prob', ascending=False)
-    else:
-        elite_picks = top_picks
+    # ============================================
+    # CONSOLIDATED 3-TAB LAYOUT
+    # ============================================
 
-    # Build featured pick CARDS
-    featured_cards_html = ""
-    if len(elite_picks) > 0:
-        for _, row in elite_picks.iterrows():
-            featured_cards_html += generate_featured_pick_card(row, format_prop_display)
-
-    featured_section = ""
-    if featured_cards_html:
-        featured_section = f'''
-            <div class="featured-elite-section">
-                <div class="featured-elite-header">
-                    <h3 class="featured-elite-title">Featured Elite Picks</h3>
-                    <span class="featured-elite-subtitle">Highest confidence plays</span>
-                </div>
-                <div class="featured-elite-grid">
-                    {featured_cards_html}
-                </div>
-            </div>
-        '''
-
-    html += f'''
-        <div class="view-section active" id="top-picks">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="font-size: 14px; margin: 0;">Top Picks</h2>
-                <span style="font-size: 10px; color: var(--text-muted);">Click cards to view details</span>
-            </div>
-            {featured_section}
-        </div>
-    '''
-
-    # Cheat Sheet View - BettingPros-style dense data table
+    # 1. PICKS VIEW - BettingPros-style dense data table (DEFAULT ACTIVE)
     html += generate_cheat_sheet_section(recs_df, format_prop_display, week)
 
-    # All Picks View - Unified grid with search/filter
-    all_picks_cards = ""
-    all_picks_sorted = recs_df.sort_values('model_prob', ascending=False)
-    for _, row in all_picks_sorted.iterrows():
-        all_picks_cards += generate_game_pick_card(row, format_prop_display, view_prefix='all')
-
-    html += f'''
-        <div class="view-section" id="all-picks">
-            <div class="all-picks-header">
-                <h2>All Picks</h2>
-                <span class="picks-count">{len(recs_df)} picks across {games} games</span>
-            </div>
-            <div class="all-picks-grid" id="all-picks-grid">
-                {all_picks_cards}
-            </div>
-        </div>
-    '''
-
-    # By Game View - Improved layout
-    html += '''
-        <div class="view-section" id="by-game">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h2 style="font-size: 13px; margin: 0;">Picks By Game</h2>
-                <div class="expand-collapse-controls">
-                    <button onclick="toggleAllGames(true)">Expand All</button>
-                    <button onclick="toggleAllGames(false)">Collapse All</button>
-                </div>
-            </div>
-
-            <!-- Quick Filter Pills -->
-            <div class="quick-filters">
-                <button class="filter-pill active" data-filter="all">All Picks</button>
-                <button class="filter-pill" data-filter="elite">Elite Only</button>
-                <button class="filter-pill" data-filter="over">OVER</button>
-                <button class="filter-pill" data-filter="under">UNDER</button>
-                <button class="filter-pill" data-filter="high-edge">Edge 10%+</button>
-            </div>
-
-            <div class="game-cards-grid">
-    '''
-
-    if 'game' in recs_df.columns:
-        # Sort games by kickoff time (earliest first)
-        if 'commence_time' in recs_df.columns:
-            game_order = (
-                recs_df[['game', 'commence_time']]
-                .dropna(subset=['game'])
-                .drop_duplicates('game')
-                .sort_values('commence_time')['game']
-                .tolist()
-            )
-        else:
-            game_order = [g for g in recs_df['game'].unique() if g and not pd.isna(g)]
-
-        for game in game_order:
-            if not game or pd.isna(game):
-                continue
-
-            game_recs = recs_df[recs_df['game'] == game].copy()
-            # Sort picks within each game by confidence (highest first)
-            game_recs = game_recs.sort_values('model_prob', ascending=False)
-
-            # Generate the compact game card with collapsible header
-            html += generate_game_card(game, game_recs, format_prop_display)
-
-            # Add pick CARDS (restored card layout) - now sorted by confidence
-            for _, row in game_recs.iterrows():
-                html += generate_game_pick_card(row, format_prop_display, view_prefix='game')
-
-            # Close the game card
-            html += close_game_card()
-
-    html += '''
-            </div>
-        </div>
-    '''
-
-    # By Prop Type View
-    html += '''
-        <div class="view-section" id="by-prop">
-            <h2>Picks By Prop Type</h2>
-            <div class="expand-collapse-controls">
-                <button onclick="toggleAllSections('by-prop', true)">Expand All</button>
-                <button onclick="toggleAllSections('by-prop', false)">Collapse All</button>
-            </div>
-    '''
-
-    if 'market' in recs_df.columns:
-        for market in recs_df['market'].unique():
-            market_recs = recs_df[recs_df['market'] == market].copy()
-            # Sort picks within each market by confidence (highest first)
-            market_recs = market_recs.sort_values('model_prob', ascending=False)
-            market_display = format_prop_display(market)
-            market_id = market.replace('_', '-')
-
-            # Count elite/strong picks for this market
-            elite_count = len(market_recs[market_recs['quality_tier'].str.upper() == 'ELITE']) if 'quality_tier' in market_recs.columns else 0
-            strong_count = len(market_recs[market_recs['quality_tier'].str.upper() == 'STRONG']) if 'quality_tier' in market_recs.columns else 0
-
-            html += f'''
-            <div class="collapsible-container">
-                <div class="collapsible-header" onclick="toggleSection('prop-{market_id}')">
-                    <span class="toggle-icon" id="prop-{market_id}-icon">▼</span>
-                    <h3>{market_display}</h3>
-                    <span class="header-stats">
-                        {len(market_recs)} picks
-                        {f'<span class="header-elite-badge">{elite_count} Elite</span>' if elite_count > 0 else ''}
-                        {f'<span class="header-strong-badge">{strong_count} Strong</span>' if strong_count > 0 else ''}
-                    </span>
-                </div>
-                <div class="collapsible-content" id="prop-{market_id}">
-                    <div class="prop-cards-grid">
-            '''
-
-            for _, row in market_recs.iterrows():
-                html += generate_game_pick_card(row, format_prop_display, view_prefix='prop')
-
-            html += '''
-                    </div>
-                </div>
-            </div>
-            '''
-
-    html += '</div>'
-
-    # By Player View - Card-based with expandable picks
-    html += '''
-        <div class="view-section" id="by-player">
-            <h2>Picks By Player</h2>
-            <div class="filter-bar">
-                <input type="text" class="search-box" id="player-search" placeholder="Search player..." onkeyup="searchPlayerCards(this)" style="width: 300px;">
-            </div>
-            <div class="player-cards-grid">
-    '''
-
-    if 'player' in recs_df.columns:
-        player_stats = recs_df.groupby('player').agg({
-            'team': 'first',
-            'position': 'first',
-            'model_prob': ['count', 'mean'],
-            'edge_pct': 'mean'
-        }).reset_index()
-        player_stats.columns = ['player', 'team', 'position', 'pick_count', 'avg_prob', 'avg_edge']
-        player_stats = player_stats.sort_values('avg_prob', ascending=False)
-
-        for _, prow in player_stats.iterrows():
-            player_name = prow['player']
-            team = prow['team']
-            position = prow['position']
-            pick_count = int(prow['pick_count'])
-            avg_prob = prow['avg_prob'] * 100 if prow['avg_prob'] <= 1 else prow['avg_prob']
-            avg_edge = prow['avg_edge'] if not pd.isna(prow['avg_edge']) else 0
-
-            # Get this player's picks
-            player_picks = recs_df[recs_df['player'] == player_name].sort_values('model_prob', ascending=False)
-
-            # Determine tier styling
-            conf_class = 'conf-elite' if avg_prob >= CONF_THRESHOLD_ELITE else ('conf-high' if avg_prob >= CONF_THRESHOLD_HIGH else '')
-            edge_class = 'edge-positive' if avg_edge > 0 else ''
-
-            # Team logo
-            team_logo = get_team_logo_html(team, size=32)
-
-            player_id = player_name.replace(' ', '-').replace("'", "").replace('.', '')
-
-            html += f'''
-            <div class="player-summary-card" data-player="{player_name.lower()}">
-                <div class="player-summary-header" onclick="togglePlayerPicks('{player_id}')">
-                    {team_logo}
-                    <div class="player-summary-info">
-                        <span class="player-summary-name">{player_name}</span>
-                        <span class="player-summary-meta">{position} • {team}</span>
-                    </div>
-                    <div class="player-summary-stats">
-                        <div class="player-summary-stat">
-                            <span class="player-summary-value">{pick_count}</span>
-                            <span class="player-summary-label">Picks</span>
-                        </div>
-                        <div class="player-summary-stat">
-                            <span class="player-summary-value {conf_class}">{avg_prob:.0f}%</span>
-                            <span class="player-summary-label">Avg Conf</span>
-                        </div>
-                        <div class="player-summary-stat">
-                            <span class="player-summary-value {edge_class}">{avg_edge:+.1f}%</span>
-                            <span class="player-summary-label">Avg Edge</span>
-                        </div>
-                    </div>
-                    <span class="player-expand-icon" id="{player_id}-icon">▼</span>
-                </div>
-                <div class="player-picks-container" id="{player_id}-picks" style="display: none;">
-            '''
-
-            # Add each pick as a card
-            for _, pick_row in player_picks.iterrows():
-                html += generate_game_pick_card(pick_row, format_prop_display, view_prefix='plyr')
-
-            html += '''
-                </div>
-            </div>
-            '''
-
-    html += '''
-            </div>
-        </div>
-    '''
-
-    # Game Lines View - BettingPros-style table
+    # 2. GAME LINES VIEW - BettingPros-style table
     html += generate_game_lines_table_section(game_lines_df, week)
 
     # Parlays View

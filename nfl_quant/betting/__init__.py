@@ -1,33 +1,32 @@
-"""
-NFL QUANT Betting Module
+"""NFL Quant Betting Module - SNR-based filtering and bet sizing."""
 
-Sportsbook-specific betting rules and prop market logic.
-Currently implements DraftKings rules and Kelly Criterion sizing.
-"""
-
-from nfl_quant.betting.draftkings_prop_rules import (
-    DraftKingsAnytimeTDRules,
-    DraftKingsPropActionRules,
-    DraftKingsQBTDMarkets,
-    calculate_anytime_td_probability,
+from nfl_quant.betting.snr_filter import (
+    SNRFilter,
+    BetDecision,
+    filter_bets_by_snr,
 )
 
-from nfl_quant.betting.kelly_criterion import (
-    calculate_kelly_fraction,
-    calculate_fractional_kelly,
-    calculate_kelly_with_limits,
-    optimal_bet_size,
-    simulate_kelly_performance,
+from nfl_quant.betting.risk_of_ruin import (
+    calculate_risk_of_ruin,
+    calculate_risk_of_ruin_kelly,
+    simulate_bankroll_paths,
+    find_safe_bet_size,
+    analyze_betting_strategy,
+    recommend_position_size,
+    RiskMetrics,
 )
 
 __all__ = [
-    'DraftKingsAnytimeTDRules',
-    'DraftKingsPropActionRules',
-    'DraftKingsQBTDMarkets',
-    'calculate_anytime_td_probability',
-    'calculate_kelly_fraction',
-    'calculate_fractional_kelly',
-    'calculate_kelly_with_limits',
-    'optimal_bet_size',
-    'simulate_kelly_performance',
+    # SNR Filter
+    'SNRFilter',
+    'BetDecision',
+    'filter_bets_by_snr',
+    # Risk of Ruin (V28)
+    'calculate_risk_of_ruin',
+    'calculate_risk_of_ruin_kelly',
+    'simulate_bankroll_paths',
+    'find_safe_bet_size',
+    'analyze_betting_strategy',
+    'recommend_position_size',
+    'RiskMetrics',
 ]

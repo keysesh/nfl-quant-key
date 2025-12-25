@@ -24,6 +24,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
 import joblib
 
+from nfl_quant.features.feature_defaults import safe_fillna
+
 logger = logging.getLogger(__name__)
 
 
@@ -149,8 +151,8 @@ class UsagePredictor:
 
         X = df[feature_cols].copy()
 
-        # Fill NaN with 0 (for players with no targets/carries)
-        X = X.fillna(0)
+        # Fill NaN with semantic defaults
+        X = safe_fillna(X)
 
         y_snaps = df['snaps']
         y_targets = df['targets']
@@ -241,8 +243,8 @@ class UsagePredictor:
             # Legacy: flat list of feature columns
             feature_cols_to_use = self.feature_cols
 
-        # Ensure features match training
-        features_subset = features[feature_cols_to_use].fillna(0)
+        # Ensure features match training with semantic defaults
+        features_subset = safe_fillna(features[feature_cols_to_use])
 
         predictions = {}
 
@@ -268,12 +270,13 @@ class UsagePredictor:
             predictions['snaps'] = np.zeros(len(features_subset))
 
         # Handle targets prediction
-        # For WR/TE positions, the model key is 'attempts' (which represents targets)
+        # For WR/TE/RB positions, the model key is 'attempts' (which represents targets)
+        # Training script sets rb_games['attempts'] = rb_games['targets'] (line 133)
         # For other positions, use 'targets' directly
         if models.get('targets') is not None:
             predictions['targets'] = models['targets'].predict(features_subset)
-        elif models.get('attempts') is not None and position in ['WR', 'TE']:
-            # Map 'attempts' to 'targets' for WR/TE
+        elif models.get('attempts') is not None and position in ['WR', 'TE', 'RB']:
+            # Map 'attempts' to 'targets' for WR/TE/RB (all trained on receiving targets)
             predictions['targets'] = models['attempts'].predict(features_subset)
         else:
             predictions['targets'] = np.zeros(len(features_subset))

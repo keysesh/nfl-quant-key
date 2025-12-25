@@ -242,8 +242,8 @@ FEATURE_DEFAULTS: Dict[str, float] = {
 
     # Skill Features (NGS + Pressure)
     'adot': 8.5,                  # Average depth of target, league avg ~8.5
-    'pressure_rate': 0.25,        # O-line pressure rate allowed, ~25% league avg
-    'opp_pressure_rate': 0.25,    # Opponent's pass rush pressure rate generated
+    'pressure_rate': 0.154,       # O-line pressure rate allowed, actual 15.4% from 2024 data
+    'opp_pressure_rate': 0.154,   # Opponent's pass rush pressure rate generated, actual 15.4%
 
     # =========================================================================
     # V19 Rush/Receiving Improvement Features (2025-12-05)
@@ -254,7 +254,7 @@ FEATURE_DEFAULTS: Dict[str, float] = {
 
     # Receiving Efficiency (improves player_reception_yds market)
     'slot_snap_pct': 0.3,         # % of snaps from slot, affects route types/YAC
-    'target_share_trailing': 0.15, # 4-week rolling target share (WR1 ~25%, WR2 ~15%, WR3 ~8%)
+    'target_share_trailing': 0.10, # 4-week rolling target share - position-specific (WR=13%, TE=10%, RB=6%)
 
     # =========================================================================
     # V24 Position Matchup Features (2025-12-08)
@@ -265,25 +265,32 @@ FEATURE_DEFAULTS: Dict[str, float] = {
     'slot_alignment_pct': 0.3,    # Percentage of snaps in slot alignment
     'opp_position_yards_allowed_trailing': 0.0,  # EWMA yards opponent allows
     'opp_position_volume_allowed_trailing': 0.0, # EWMA receptions/carries
-    'opp_man_coverage_rate_trailing': 0.3,       # Man coverage % (~30% league avg)
+    'opp_man_coverage_rate_trailing': 0.49,      # Man coverage % (actual ~49% from PBP)
     'slot_funnel_score': 0.0,     # Slot vulnerability score
     'man_coverage_adjustment': 1.0,              # Coverage type multiplier (0.93-1.07)
     'position_role_x_opp_yards': 0.0,            # Interaction feature
     'has_position_context': 0,    # Flag: 1 if position data available
 
     # =========================================================================
-    # V25 Team Health Synergy Features (2025-12-11)
+    # V25 Team Health Synergy Features (2025-12-14)
     # Models compound effects of multiple players returning simultaneously
     # Key insight: Evans + Godwin together ≠ Evans alone + Godwin alone
     # =========================================================================
     'team_synergy_multiplier': 1.0,   # Overall team health synergy (1.0 = neutral)
-    'oline_health_score_v25': 1.0,    # O-line cohesion score (weighted by position)
-    'wr_corps_health': 1.0,           # WR corps depth health (WR1+WR2+WR3)
+    'oline_health_score_v25': 0.85,   # O-line cohesion score (0.85 = league avg)
+    'wr_corps_health': 0.80,          # WR corps depth health (0.80 = league avg)
     'has_synergy_bonus': 0,           # Flag: 1 if positive synergy active
-    'cascade_efficiency_boost': 1.0,  # Efficiency boost from teammate returning
-    'wr_coverage_reduction': 0.0,     # Coverage reduction from healthy WR corps
+    'cascade_efficiency_boost': 0.0,  # Efficiency boost from teammate returning (0.0-0.15)
+    'wr_coverage_reduction': 0.0,     # Coverage reduction from healthy WR corps (0.0-0.10)
     'returning_player_count': 0,      # Number of key players returning
     'has_synergy_context': 0,         # Flag: 1 if synergy data available
+
+    # =========================================================================
+    # V29 Vegas Agreement Features (2025-12-24)
+    # Week 16 analysis: WITH Vegas = 67% win rate, AGAINST = 27%
+    # =========================================================================
+    'lvt_direction': 0,               # Sign of LVT: +1 if line > trailing, -1 if less, 0 if equal
+    'vegas_agreement': 0.5,           # 0.5 neutral = uncertain; 1 if bet agrees with Vegas direction
 }
 
 

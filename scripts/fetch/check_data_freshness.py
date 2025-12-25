@@ -16,22 +16,36 @@ import os
 import sys
 import argparse
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import subprocess
 import glob as glob_module
 
 # Project root (adjust if needed)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
-# Current season
-CURRENT_SEASON = 2025
+# Add project root to path for imports
+sys.path.insert(0, str(PROJECT_ROOT))
+from nfl_quant.utils.season_utils import get_current_season
+
+# Dynamic current season
+CURRENT_SEASON = get_current_season()
+
+# NFL season start dates by year
+NFL_SEASON_STARTS = {
+    2024: datetime(2024, 9, 5, tzinfo=timezone.utc),  # Week 1 Thursday
+    2025: datetime(2025, 9, 4, tzinfo=timezone.utc),  # Week 1 Thursday
+    2026: datetime(2026, 9, 10, tzinfo=timezone.utc), # Estimated
+}
 
 
 def get_current_week():
-    """Estimate current NFL week based on date."""
-    # NFL 2025 season starts Sept 4, 2025 (Week 1)
-    season_start = datetime(2025, 9, 4)
-    today = datetime.now()
+    """Estimate current NFL week based on date with timezone awareness."""
+    season = CURRENT_SEASON
+    season_start = NFL_SEASON_STARTS.get(season, datetime(season, 9, 1, tzinfo=timezone.utc))
+
+    # Use timezone-aware datetime
+    today = datetime.now(timezone.utc)
+
     if today < season_start:
         return 1
     days_since_start = (today - season_start).days
@@ -81,12 +95,12 @@ OPTIONAL_FILES = [
 
 
 def get_file_age_hours(filepath: Path) -> float:
-    """Get file age in hours."""
+    """Get file age in hours (timezone-aware)."""
     if not filepath.exists():
         return float('inf')
-    
-    mtime = datetime.fromtimestamp(filepath.stat().st_mtime)
-    age = datetime.now() - mtime
+
+    mtime = datetime.fromtimestamp(filepath.stat().st_mtime, tz=timezone.utc)
+    age = datetime.now(timezone.utc) - mtime
     return age.total_seconds() / 3600
 
 
@@ -115,7 +129,7 @@ def check_freshness(verbose: bool = True, week: int = None) -> tuple[bool, list[
     """
     stale_files = []
     missing_required = []
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
 
     if week is None:
         week = get_current_week()

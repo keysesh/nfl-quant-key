@@ -7,10 +7,12 @@ Uses R-generated NFLverse parquet files as the canonical data source.
 
 from typing import Optional, Dict, List
 import pandas as pd
-from pathlib import Path
 
-# NFLverse parquet data directory (populated by R/nflreadr)
-NFLVERSE_DATA_DIR = Path(__file__).parent.parent.parent / 'data' / 'nflverse'
+# Use centralized path configuration
+from nfl_quant.config_paths import NFLVERSE_DIR
+
+# NFLverse parquet data directory (from centralized config)
+NFLVERSE_DATA_DIR = NFLVERSE_DIR
 
 
 def calculate_rb_targets_from_historical_data(

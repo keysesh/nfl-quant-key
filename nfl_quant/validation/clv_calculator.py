@@ -9,13 +9,8 @@ import numpy as np
 import pandas as pd
 from typing import Dict, Optional
 
-
-def american_to_prob(odds: int) -> float:
-    """Convert American odds to implied probability."""
-    if odds > 0:
-        return 100 / (odds + 100)
-    else:
-        return abs(odds) / (abs(odds) + 100)
+# Use canonical odds utilities
+from nfl_quant.utils.odds import american_to_prob
 
 
 def calculate_clv_spread(bet_line: float, closing_line: float, bet_side: str) -> float:

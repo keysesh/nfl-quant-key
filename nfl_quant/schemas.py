@@ -260,6 +260,7 @@ class PlayerPropInput(BaseModel):
     trailing_carry_share: Optional[float] = None
     trailing_yards_per_opportunity: float
     trailing_td_rate: float
+    trailing_catch_rate: Optional[float] = None  # Player's trailing catch rate (receptions/targets)
     # QB-specific efficiency metrics (for trained model)
     trailing_comp_pct: Optional[float] = None
     trailing_yards_per_completion: Optional[float] = None
@@ -273,9 +274,32 @@ class PlayerPropInput(BaseModel):
     avg_rec_yd: Optional[float] = None  # Actual average receiving yards per game
     avg_rec_tgt: Optional[float] = None  # Actual average targets per game (if available)
     avg_rush_yd: Optional[float] = None  # Actual average rushing yards per game
+    avg_pass_att: Optional[float] = None  # FIX: QB pass attempts per game (was missing, causing 20 att default)
+
+    # FIX (Dec 8, 2025): Add trailing_targets and trailing_carries directly
+    # ROOT CAUSE OF INFLATION: Previously derived from yards/efficiency which introduced errors
+    # when efficiency varied week-to-week (e.g., 128 yards on 12 carries = 10.7 YPC inflates avg_rush_yd)
+    trailing_targets: Optional[float] = None  # Actual EWMA targets per game
+    trailing_carries: Optional[float] = None  # Actual EWMA carries per game
 
     # Opponent defense strength
     opponent_def_epa_vs_position: float
+
+    # FIX: Granular opponent defense stats (Dec 13, 2025)
+    # These provide separate pass/rush defense context for the usage predictor
+    opp_pass_def_epa: Optional[float] = None  # Pass defense EPA (affects QB/WR/TE and receiving RBs)
+    opp_pass_def_rank: Optional[float] = None  # Pass defense rank 1-32 (1 = best)
+    opp_rush_def_epa: Optional[float] = None  # Rush defense EPA (affects RBs)
+    opp_rush_def_rank: Optional[float] = None  # Rush defense rank 1-32 (1 = best)
+
+    # FIX: Trailing opponent defense EPA (schedule strength - what defenses has player faced?)
+    trailing_opp_pass_def_epa: Optional[float] = None  # EWMA of past opponents' pass defense EPA
+    trailing_opp_rush_def_epa: Optional[float] = None  # EWMA of past opponents' rush defense EPA
+
+    # FIX: Team pace (from team_pace.parquet)
+    # NOTE: This is PLAYS PER GAME (e.g., 63.4), NOT seconds per play!
+    # The usage predictor was trained with plays per game.
+    team_pace: Optional[float] = None  # Plays per game for this team (~55-70)
 
     # NEW: Kicker-specific fields (only populated when position='K')
     trailing_fg_attempts_per_game: Optional[float] = None
@@ -332,6 +356,11 @@ class PlayerPropInput(BaseModel):
     # NEW: Team Usage (from game simulations)
     projected_team_pass_attempts: Optional[float] = None  # Team pass attempts from simulation
     projected_team_rush_attempts: Optional[float] = None  # Team rush attempts from simulation
+
+    # NEW: Player Archetype Features (for dynamic copula correlation)
+    adot: Optional[float] = None  # Average depth of target (WR: 6-14 yards typical)
+    slot_snap_pct: Optional[float] = None  # Percentage of snaps in slot (0-1)
+    ypt_variance: Optional[float] = None  # Y/T variance from player history
     projected_team_targets: Optional[float] = None  # Team targets from simulation
 
     # NEW: Injury Status (from unified integration)

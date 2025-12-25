@@ -301,6 +301,24 @@ def train_efficiency_models_v2(train_df: pd.DataFrame, metric_name: str, feature
 
     logger.info(f"  {metric_name}: Weighted training - top 20% (>={percentile_80:.2f}) 2x, top 10% (>={percentile_90:.2f}) 3x")
 
+    # FIX (Dec 7, 2025): Add MONOTONE CONSTRAINTS to force model to respect trailing metrics
+    # Without this, the model over-weights opponent features and regresses toward mean
+    # Example: trailing Y/T = 7.0 was predicting 10.0 (43% inflation!)
+    # Constraint = 1 means: as feature increases, prediction should increase
+    # Constraint = 0 means: no constraint
+    monotone_constraints = [0] * len(feature_cols)  # Default: no constraints
+
+    # Apply positive monotone constraint on trailing efficiency metrics
+    for i, col in enumerate(feature_cols):
+        if col in ['trailing_yards_per_target', 'trailing_yards_per_carry',
+                   'trailing_yards_per_completion', 'trailing_comp_pct']:
+            monotone_constraints[i] = 1  # Positive: more trailing -> more predicted
+            logger.info(f"  {metric_name}: Monotone constraint +1 on {col} (index {i})")
+
+    # Convert to tuple format for XGBoost
+    monotone_constraints_str = '(' + ','.join(str(x) for x in monotone_constraints) + ')'
+    logger.info(f"  {metric_name}: Monotone constraints = {monotone_constraints_str}")
+
     # Train
     # Load hyperparameters from config
     model = XGBRegressor(
@@ -308,7 +326,8 @@ def train_efficiency_models_v2(train_df: pd.DataFrame, metric_name: str, feature
         max_depth=_model_params['max_depth'],
         learning_rate=_model_params['learning_rate'],
         objective='reg:squarederror',
-        random_state=_model_params['random_state']
+        random_state=_model_params['random_state'],
+        monotone_constraints=tuple(monotone_constraints)  # NEW: Force respect for trailing metrics
     )
     model.fit(X, y, sample_weight=sample_weights)
 

@@ -9,7 +9,7 @@ from pandas import DataFrame
 
 from nfl_quant.config import settings
 from nfl_quant.data.fetcher import DataFetcher
-from nfl_quant.features.engine import FeatureEngine
+from nfl_quant.features.core import FeatureEngine
 from nfl_quant.features.injuries import InjuryImpactModel
 from nfl_quant.schemas import InjuryImpact, SimulationInput
 from nfl_quant.simulation.simulator import MonteCarloSimulator
@@ -363,7 +363,9 @@ def simulate(
 
 @app.command()
 def train_models() -> None:
-    """Train V12 interaction model for player prop predictions.
+    """Train interaction model for player prop predictions.
+
+    Uses centralized config from configs/model_config.py.
 
     Examples:
         quant train-models
@@ -373,9 +375,9 @@ def train_models() -> None:
         import sys
         from pathlib import Path
 
-        logger.info("Training V12 interaction model...")
+        logger.info("Training interaction model...")
 
-        script_path = Path(__file__).parent.parent / "scripts" / "train" / "train_v12_interaction_model_v2.py"
+        script_path = Path(__file__).parent.parent / "scripts" / "train" / "train_model.py"
         if not script_path.exists():
             typer.echo(f"Training script not found: {script_path}")
             raise typer.Exit(code=1)
@@ -391,8 +393,8 @@ def train_models() -> None:
             raise typer.Exit(code=1)
 
         print(result.stdout)
-        typer.echo("V12 interaction model trained successfully")
-        typer.echo("Model saved to data/models/v12_interaction_classifier.joblib")
+        typer.echo("Interaction model trained successfully")
+        typer.echo("Model saved to data/models/active_model.joblib")
 
     except Exception as e:
         logger.error(f"Train models command failed: {e}")
@@ -407,7 +409,7 @@ def props(
 
     This runs the full prediction pipeline:
     1. generate_model_predictions.py - Monte Carlo simulations
-    2. generate_unified_recommendations_v3.py - V12 validated recommendations
+    2. generate_unified_recommendations_v3.py - Model-validated recommendations
 
     Examples:
         quant props --week 13
@@ -437,8 +439,8 @@ def props(
             raise typer.Exit(code=1)
         print(result.stdout)
 
-        # Step 2: Generate recommendations
-        logger.info(f"Generating V12 recommendations for week {week}...")
+        # Step 2: Generate recommendations (using v3 unified script)
+        logger.info(f"Generating model recommendations for week {week}...")
         rec_script = scripts_dir / "generate_unified_recommendations_v3.py"
         if not rec_script.exists():
             typer.echo(f"Recommendations script not found: {rec_script}")

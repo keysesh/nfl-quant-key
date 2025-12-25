@@ -20,6 +20,8 @@ from pathlib import Path
 from datetime import datetime
 import argparse
 
+from nfl_quant.utils.player_names import normalize_player_name
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -115,13 +117,6 @@ def get_week_recommendations(week: int) -> pd.DataFrame:
     raise FileNotFoundError(f"No recommendations found for Week {week}")
 
 
-def normalize_name(name: str) -> str:
-    """Normalize player name for matching."""
-    if pd.isna(name):
-        return ""
-    return str(name).lower().strip().replace('.', '').replace("'", "")
-
-
 def track_week_results(week: int, season: int = 2025) -> dict:
     """
     Track bet results for a completed week (supports partial weeks).
@@ -148,8 +143,8 @@ def track_week_results(week: int, season: int = 2025) -> dict:
         return None
 
     # Normalize names for matching
-    recs['player_norm'] = recs['player'].apply(normalize_name)
-    actuals['player_norm'] = actuals['player_display_name'].apply(normalize_name)
+    recs['player_norm'] = recs['player'].apply(normalize_player_name)
+    actuals['player_norm'] = actuals['player_display_name'].apply(normalize_player_name)
 
     # Map markets to stat columns
     market_to_stat = {

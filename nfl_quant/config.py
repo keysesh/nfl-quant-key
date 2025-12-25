@@ -33,12 +33,12 @@ class Settings(BaseSettings):
     ODDS_API_MARKETS: str = "spreads,totals,h2h"
     ODDS_API_ODDS_FORMAT: str = "american"
 
-    # External API Keys
-    METEOSTAT_API_KEY: Optional[str] = None
+    # Note: Weather data comes from NFLverse schedules (temp, wind, roof columns)
+    # No separate weather API needed
 
     # Dynamic Season/Week (overridable via environment)
-    CURRENT_SEASON: Optional[int] = None
-    CURRENT_WEEK: Optional[int] = None
+    CURRENT_SEASON: Optional[int] = 2025
+    CURRENT_WEEK: Optional[int] = 17
 
     # Feature Derivation
     EPA_THRESHOLD: float = 0.0  # Success = EPA > 0
@@ -61,6 +61,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=False,
+        extra="ignore",  # Ignore unknown env vars (e.g., old METEOSTAT_API_KEY)
     )
 
     def validate_season(self, season: Optional[int] = None) -> int:

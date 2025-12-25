@@ -399,4 +399,322 @@ class InjuryImpactModel:
 from pathlib import Path
 
 
+# =============================================================================
+# V24 INJURY FEATURE EXTRACTION
+# =============================================================================
+
+def get_v24_injury_features(
+    player_name: str,
+    team: str,
+    position: str,
+    week: int,
+    season: int,
+) -> dict:
+    """
+    Extract V24 classifier injury features for a player.
+
+    Features:
+    - player_injury_status: 0=healthy, 1=questionable, 2=doubtful
+    - qb_injury_status: 0=healthy, 1=questionable, 2=doubtful, 3=out/backup
+    - team_wr1_out: Binary, 1 if WR1 is out (opportunity boost for WR2/3)
+    - team_rb1_out: Binary, 1 if RB1 is out (opportunity boost for RB2)
+
+    Args:
+        player_name: Player's name
+        team: Team abbreviation
+        position: Player position
+        week: Current week
+        season: Current season
+
+    Returns:
+        Dict with V24 injury features
+    """
+    features = {
+        'player_injury_status': 0,
+        'qb_injury_status': 0,
+        'team_wr1_out': 0,
+        'team_rb1_out': 0,
+    }
+
+    try:
+        # Load injury data
+        injuries_file = Path("data/injuries/current_injuries.csv")
+        if not injuries_file.exists():
+            # Try alternate paths
+            alt_paths = [
+                Path("data/nflverse/injuries.parquet"),
+                Path("data/injuries.csv"),
+            ]
+            for alt_path in alt_paths:
+                if alt_path.exists():
+                    injuries_file = alt_path
+                    break
+            else:
+                logger.debug("No injury file found - using defaults")
+                return features
+
+        # Load injuries
+        if injuries_file.suffix == '.parquet':
+            injuries = pd.read_parquet(injuries_file)
+        else:
+            injuries = pd.read_csv(injuries_file)
+
+        if injuries.empty:
+            return features
+
+        # Filter to team
+        team_injuries = injuries[injuries['team'] == team].copy()
+
+        # ========================================
+        # 1. Player's own injury status
+        # ========================================
+        player_injury = _get_player_injury_status(team_injuries, player_name)
+        features['player_injury_status'] = player_injury
+
+        # ========================================
+        # 2. QB injury status for this team
+        # ========================================
+        qb_status = _get_qb_injury_status(team_injuries)
+        features['qb_injury_status'] = qb_status
+
+        # ========================================
+        # 3. Check if WR1 is out (for WR2/WR3/TE opportunity)
+        # ========================================
+        if position in ['WR', 'TE']:
+            features['team_wr1_out'] = _check_wr1_out(team_injuries, team, season)
+
+        # ========================================
+        # 4. Check if RB1 is out (for RB2 opportunity)
+        # ========================================
+        if position == 'RB':
+            features['team_rb1_out'] = _check_rb1_out(team_injuries, team, season)
+
+    except Exception as e:
+        logger.warning(f"Error extracting V24 injury features for {player_name}: {e}")
+
+    return features
+
+
+def _get_player_injury_status(injuries: pd.DataFrame, player_name: str) -> int:
+    """
+    Get player's injury status as numeric code.
+
+    Returns:
+        0=healthy, 1=questionable, 2=doubtful
+    """
+    if injuries.empty:
+        return 0
+
+    # Find player in injury report
+    # Try multiple name columns
+    name_cols = ['player_name', 'full_name', 'name']
+    player_injury = pd.DataFrame()
+
+    for col in name_cols:
+        if col in injuries.columns:
+            mask = injuries[col].str.contains(player_name, case=False, na=False)
+            if mask.any():
+                player_injury = injuries[mask]
+                break
+
+    if player_injury.empty:
+        return 0  # Not on injury report = healthy
+
+    # Get status
+    status_cols = ['injury_status', 'report_status', 'status']
+    status = None
+
+    for col in status_cols:
+        if col in player_injury.columns:
+            status = str(player_injury.iloc[0][col]).lower()
+            break
+
+    if not status or pd.isna(status):
+        return 0
+
+    # Map status to numeric
+    if 'doubtful' in status:
+        return 2
+    elif 'question' in status:
+        return 1
+    else:
+        return 0  # Out players shouldn't have props, treat as healthy default
+
+
+def _get_qb_injury_status(injuries: pd.DataFrame) -> int:
+    """
+    Get QB injury status for the team.
+
+    Returns:
+        0=healthy, 1=questionable, 2=doubtful, 3=out/backup playing
+    """
+    if injuries.empty:
+        return 0
+
+    # Find QB injuries
+    pos_cols = ['position', 'pos']
+    qb_injuries = pd.DataFrame()
+
+    for col in pos_cols:
+        if col in injuries.columns:
+            mask = injuries[col].str.upper() == 'QB'
+            if mask.any():
+                qb_injuries = injuries[mask]
+                break
+
+    if qb_injuries.empty:
+        return 0  # No QB on injury report
+
+    # Get worst status (backup playing = worst case)
+    status_cols = ['injury_status', 'report_status', 'status']
+    statuses = []
+
+    for _, row in qb_injuries.iterrows():
+        for col in status_cols:
+            if col in row.index and not pd.isna(row[col]):
+                statuses.append(str(row[col]).lower())
+                break
+
+    if not statuses:
+        return 0
+
+    # Check for out status (backup playing)
+    for status in statuses:
+        if 'out' in status or 'ir' in status:
+            return 3  # Backup QB playing
+
+    # Check for doubtful
+    for status in statuses:
+        if 'doubtful' in status:
+            return 2
+
+    # Check for questionable
+    for status in statuses:
+        if 'question' in status:
+            return 1
+
+    return 0
+
+
+def _check_wr1_out(injuries: pd.DataFrame, team: str, season: int) -> int:
+    """
+    Check if team's WR1 is out.
+
+    Uses depth charts to identify WR1, then checks injury status.
+
+    Returns:
+        1 if WR1 is out, 0 otherwise
+    """
+    if injuries.empty:
+        return 0
+
+    try:
+        # Load depth charts to identify WR1
+        dc_file = Path("data/nflverse/depth_charts.parquet")
+        if not dc_file.exists():
+            return 0
+
+        depth_charts = pd.read_parquet(dc_file)
+
+        # Filter to current season and team
+        team_dc = depth_charts[
+            (depth_charts['season'] == season) &
+            (depth_charts['club_code'] == team) &
+            (depth_charts['position'] == 'WR')
+        ]
+
+        if team_dc.empty:
+            return 0
+
+        # Get most recent depth chart
+        team_dc = team_dc.sort_values('week', ascending=False)
+
+        # WR1 is typically depth_team 1
+        wr1_rows = team_dc[team_dc['depth_team'] == 1]
+        if wr1_rows.empty:
+            return 0
+
+        wr1_name = wr1_rows.iloc[0]['full_name']
+
+        # Check if WR1 is out
+        name_cols = ['player_name', 'full_name', 'name']
+        for col in name_cols:
+            if col in injuries.columns:
+                mask = injuries[col].str.contains(wr1_name, case=False, na=False)
+                if mask.any():
+                    wr1_injury = injuries[mask].iloc[0]
+                    status_cols = ['injury_status', 'report_status', 'status']
+                    for scol in status_cols:
+                        if scol in wr1_injury.index:
+                            status = str(wr1_injury[scol]).lower()
+                            if 'out' in status or 'ir' in status:
+                                return 1
+                    break
+
+    except Exception as e:
+        logger.debug(f"Error checking WR1 status: {e}")
+
+    return 0
+
+
+def _check_rb1_out(injuries: pd.DataFrame, team: str, season: int) -> int:
+    """
+    Check if team's RB1 is out.
+
+    Uses depth charts to identify RB1, then checks injury status.
+
+    Returns:
+        1 if RB1 is out, 0 otherwise
+    """
+    if injuries.empty:
+        return 0
+
+    try:
+        # Load depth charts to identify RB1
+        dc_file = Path("data/nflverse/depth_charts.parquet")
+        if not dc_file.exists():
+            return 0
+
+        depth_charts = pd.read_parquet(dc_file)
+
+        # Filter to current season and team
+        team_dc = depth_charts[
+            (depth_charts['season'] == season) &
+            (depth_charts['club_code'] == team) &
+            (depth_charts['position'] == 'RB')
+        ]
+
+        if team_dc.empty:
+            return 0
+
+        # Get most recent depth chart
+        team_dc = team_dc.sort_values('week', ascending=False)
+
+        # RB1 is typically depth_team 1
+        rb1_rows = team_dc[team_dc['depth_team'] == 1]
+        if rb1_rows.empty:
+            return 0
+
+        rb1_name = rb1_rows.iloc[0]['full_name']
+
+        # Check if RB1 is out
+        name_cols = ['player_name', 'full_name', 'name']
+        for col in name_cols:
+            if col in injuries.columns:
+                mask = injuries[col].str.contains(rb1_name, case=False, na=False)
+                if mask.any():
+                    rb1_injury = injuries[mask].iloc[0]
+                    status_cols = ['injury_status', 'report_status', 'status']
+                    for scol in status_cols:
+                        if scol in rb1_injury.index:
+                            status = str(rb1_injury[scol]).lower()
+                            if 'out' in status or 'ir' in status:
+                                return 1
+                    break
+
+    except Exception as e:
+        logger.debug(f"Error checking RB1 status: {e}")
+
+    return 0
+
 

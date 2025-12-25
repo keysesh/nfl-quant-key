@@ -114,7 +114,8 @@
     "_comment": "When enabled, pulls probabilities toward 50%"
   },
   "trials": {
-    "default_trials": 50000,
+    "_comment": "PERFORMANCE NOTE (Dec 14, 2025): Reduced from 50,000 to 30,000 trials. Monte Carlo error decreases as 1/√n: 50k trials: SE=σ/224, 30k trials: SE=σ/173 (only 23% less accurate, but 40% faster). For betting probabilities, 30k provides <0.5% difference vs 50k which is well within input data noise. Use NFL_QUANT_SIMULATIONS env var to override.",
+    "default_trials": 30000,
     "default_seed": 42
   },
   "league_defaults": {
@@ -343,8 +344,8 @@
     "_comment": "ADDED 2025-11-26 - Only bet when model agrees with market",
     "_rationale": "Backtest showed market is more accurate when we strongly disagree. Large 'edges' = model error.",
     "enabled": true,
-    "max_deviation_pct": 0.25,
-    "_max_deviation_note": "If |model_mean - line| / line > 25%, skip the bet",
+    "max_deviation_pct": 0.40,
+    "_max_deviation_note": "If |model_mean - line| / line > 40%, skip the bet (LOOSENED from 25%)",
     "min_deviation_for_edge": 0.03,
     "_min_deviation_note": "Must have at least 3% difference to have any edge"
   },
@@ -372,6 +373,51 @@
       "insight_2": "When model agrees with line, we can trust the line is correct",
       "insight_3": "Market has systematic OVER bias on receptions/passing",
       "insight_4": "Betting UNDER captures this bias without relying on model direction"
+    }
+  },
+  "game_line_betting": {
+    "_comment": "ADDED 2025-12-25 - Centralized game line betting parameters",
+    "shrinkage": {
+      "_comment": "All shrinkage values documented and unified",
+      "win_probability": 0.30,
+      "_win_probability_note": "30% shrinkage toward 50% for moneyline win probability. Lower shrinkage because we blend with Elo.",
+      "spread_cover_probability": 0.40,
+      "_spread_cover_note": "40% shrinkage for spread cover probability. Higher due to market efficiency.",
+      "total_over_probability": 0.40,
+      "_total_over_note": "40% shrinkage for total over probability. Matches spread shrinkage."
+    },
+    "blending_weights": {
+      "simulation_weight": 0.40,
+      "elo_weight": 0.40,
+      "record_weight": 0.20,
+      "_note": "Combines MC simulation (40%) + Elo model (40%) + record-based (20%)"
+    },
+    "spread_calculation": {
+      "spread_std_divisor": 1.414,
+      "_note": "sqrt(2) ≈ 1.414 - mathematically correct for converting total_std to spread_std"
+    },
+    "home_field_advantage": {
+      "epa_boost": 0.018,
+      "_note": "EPA boost for home team. Research shows ~54% home win rate = ~0.018 EPA/play"
+    },
+    "record_adjustment": {
+      "max_adjustment": 0.05,
+      "_note": "Maximum 5% probability adjustment from win% difference"
+    },
+    "minimum_edge_thresholds": {
+      "spread": 0.0,
+      "total": 0.0,
+      "moneyline": 2.0,
+      "_note": "Minimum edge % to recommend. Moneyline has higher threshold due to vig impact."
+    },
+    "confidence_tiers_post_shrinkage": {
+      "_comment": "Adjusted thresholds accounting for shrinkage reducing raw probabilities",
+      "elite_threshold": 0.62,
+      "_elite_note": "After 30-40% shrinkage, 75%+ raw becomes ~62%",
+      "high_threshold": 0.57,
+      "_high_note": "After shrinkage, 65%+ raw becomes ~57%",
+      "standard_threshold": 0.53,
+      "_standard_note": "After shrinkage, 55%+ raw becomes ~53%"
     }
   },
   "calibration_tiers": {

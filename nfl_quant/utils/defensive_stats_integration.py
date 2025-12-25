@@ -42,7 +42,14 @@ def get_defensive_epa_for_player(
         if season is None:
             from nfl_quant.utils.season_utils import get_current_season
             season = get_current_season()
-        pbp_path = Path(f'data/processed/pbp_{season}.parquet')
+        # Use fresh NFLverse PBP data (updated daily) instead of stale processed file
+        pbp_path = Path('data/nflverse/pbp.parquet')
+        if not pbp_path.exists():
+            # Fallback to season-specific file
+            pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+        if not pbp_path.exists():
+            # Last resort: processed file
+            pbp_path = Path(f'data/processed/pbp_{season}.parquet')
 
     if not pbp_path.exists():
         logger.warning(f"PBP file not found: {pbp_path}")
@@ -51,6 +58,10 @@ def get_defensive_epa_for_player(
     try:
         # Load PBP data
         pbp_df = pd.read_parquet(pbp_path)
+
+        # Filter to current season if multi-season file
+        if 'season' in pbp_df.columns and season is not None:
+            pbp_df = pbp_df[pbp_df['season'] == season]
 
         # Use trailing 4 weeks for defensive stats
         start_week = max(1, week - 4)
@@ -133,7 +144,14 @@ def get_defensive_stats_batch(
         if season is None:
             from nfl_quant.utils.season_utils import get_current_season
             season = get_current_season()
-        pbp_path = Path(f'data/processed/pbp_{season}.parquet')
+        # Use fresh NFLverse PBP data (updated daily) instead of stale processed file
+        pbp_path = Path('data/nflverse/pbp.parquet')
+        if not pbp_path.exists():
+            # Fallback to season-specific file
+            pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+        if not pbp_path.exists():
+            # Last resort: processed file
+            pbp_path = Path(f'data/processed/pbp_{season}.parquet')
 
     if not pbp_path.exists():
         logger.warning(f"PBP file not found: {pbp_path}")

@@ -18,6 +18,21 @@ Features fixed:
 11. man_coverage_adjustment - Coverage type adjustment
 12. lvt_x_defense - LVT * defense EPA interaction
 13. lvt_x_rest - LVT * rest days interaction
+
+NOTE ON ARCHITECTURE (V28):
+--------------------------
+This module provides VECTORIZED batch calculations for use in batch_extractor.py.
+For single-value lookups, use nfl_quant.features.core.FeatureEngine which provides:
+- get_adot() - Per-player aDOT lookup
+- get_pressure_rate() - Per-team pressure rate
+- get_ybc_proxy() - Yards before contact proxy (V28)
+
+Both implementations should produce consistent values, but this module is optimized
+for batch processing of training/inference data, while core.py is optimized for
+single-bet feature extraction.
+
+For situational features (rest_days, HFA), use:
+- nfl_quant.features.situational_features (V28)
 """
 
 import pandas as pd
@@ -301,7 +316,7 @@ def calculate_pressure_rates_cache(participation: pd.DataFrame) -> Tuple[pd.Data
                             'week': week,
                             'pressures_generated': pressures,
                             'opp_dropbacks': dropbacks,
-                            'opp_pressure_rate': pressures / dropbacks if dropbacks > 0 else 0.25
+                            'opp_pressure_rate': pressures / dropbacks if dropbacks > 0 else 0.154  # Actual avg 15.4%
                         })
 
         defense_pressure = pd.DataFrame(defense_rows)

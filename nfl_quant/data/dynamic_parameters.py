@@ -16,8 +16,11 @@ from functools import lru_cache
 from typing import Optional, Dict, Any, Tuple
 import warnings
 
-# Data directory
-DATA_DIR = Path(__file__).parent.parent.parent / "data" / "nflverse"
+# Use centralized path configuration
+from nfl_quant.config_paths import NFLVERSE_DIR
+
+# Data directory (from centralized config)
+DATA_DIR = NFLVERSE_DIR
 
 
 class DynamicParameterProvider:

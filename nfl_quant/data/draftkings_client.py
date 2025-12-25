@@ -1,6 +1,5 @@
 """
 DraftKings NFL Props Client - Odds API Integration
-API Key: 73ec9367021badb173a0b68c35af818f
 
 Integrated into NFL QUANT system for:
 1. Live odds fetching
@@ -8,21 +7,32 @@ Integrated into NFL QUANT system for:
 3. Edge detection against model predictions
 """
 
-import json
 import time
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass, asdict
-from typing import Optional, List, Dict
+from typing import List
 import requests
 import pandas as pd
 from scipy import stats
 
+# Use canonical odds utilities
+from nfl_quant.utils.odds import (
+    american_to_prob,
+    calculate_ev,
+    calculate_kelly as kelly,
+)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-API_KEY = "73ec9367021badb173a0b68c35af818f"
+import os
+from dotenv import load_dotenv
+load_dotenv()
+API_KEY = os.getenv('ODDS_API_KEY')
+if not API_KEY:
+    raise EnvironmentError("ODDS_API_KEY not set in environment. Add to .env file.")
 DRAFTKINGS = "draftkings"
 
 # Core markets we track
@@ -35,24 +45,6 @@ CORE_MARKETS = [
     'player_rush_attempts',
     'player_anytime_td',
 ]
-
-
-def american_to_prob(odds: int) -> float:
-    """Convert American odds to implied probability."""
-    return 100 / (odds + 100) if odds > 0 else abs(odds) / (abs(odds) + 100)
-
-
-def calculate_ev(prob: float, odds: int) -> float:
-    """Calculate expected value of a bet."""
-    decimal = (odds / 100) + 1 if odds > 0 else (100 / abs(odds)) + 1
-    return prob * (decimal - 1) - (1 - prob)
-
-
-def kelly(prob: float, odds: int, mult: float = 0.25) -> float:
-    """Calculate Kelly criterion bet size (quarter Kelly by default)."""
-    decimal = (odds / 100) + 1 if odds > 0 else (100 / abs(odds)) + 1
-    k = ((decimal - 1) * prob - (1 - prob)) / (decimal - 1)
-    return max(0, min(k * mult, 0.10))  # Cap at 10%
 
 
 @dataclass
@@ -104,8 +96,26 @@ class DKClient:
         self.remaining = None
         self.used = None
 
+    # Rate limiting thresholds
+    QUOTA_CRITICAL = 50   # Stop all requests below this
+    QUOTA_WARNING = 100   # Slow down below this
+    QUOTA_SLOW_DELAY = 2.0  # Delay when quota is low
+
     def _get(self, endpoint: str, params: dict) -> dict:
-        """Make API request with error handling."""
+        """Make API request with error handling and quota enforcement."""
+        # Check quota before making request
+        if self.remaining is not None:
+            try:
+                remaining = int(self.remaining)
+                if remaining < self.QUOTA_CRITICAL:
+                    logger.error(f"API quota critically low: {remaining} remaining. Stopping requests.")
+                    raise RuntimeError(f"API quota exhausted: only {remaining} requests remaining")
+                elif remaining < self.QUOTA_WARNING:
+                    logger.warning(f"API quota low: {remaining} remaining. Slowing down...")
+                    time.sleep(self.QUOTA_SLOW_DELAY)
+            except (ValueError, TypeError):
+                pass  # Couldn't parse remaining, continue
+
         params['apiKey'] = self.api_key
         try:
             r = requests.get(f"{self.BASE}/{endpoint}", params=params, timeout=30)
@@ -339,7 +349,8 @@ def save_current_odds(output_dir: Path = None) -> Path:
         Path to saved CSV file
     """
     if output_dir is None:
-        output_dir = Path(__file__).parent.parent.parent / 'data' / 'odds'
+        from nfl_quant.config_paths import DATA_DIR
+        output_dir = DATA_DIR / 'odds'
 
     output_dir.mkdir(parents=True, exist_ok=True)
 

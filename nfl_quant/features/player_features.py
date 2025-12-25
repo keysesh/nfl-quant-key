@@ -79,7 +79,7 @@ class PlayerFeatureEngineer:
 
         # Flatten column names
         qb_stats.columns = ['_'.join(col).strip('_') for col in qb_stats.columns.values]
-        qb_stats.rename(columns={'passer_player_id': 'player_id'}, inplace=True)
+        qb_stats = qb_stats.rename(columns={'passer_player_id': 'player_id'})
 
         # Add position
         qb_stats['position'] = 'QB'
@@ -107,7 +107,7 @@ class PlayerFeatureEngineer:
         }).reset_index()
 
         rush_stats.columns = ['_'.join(col).strip('_') for col in rush_stats.columns.values]
-        rush_stats.rename(columns={'rusher_player_id': 'player_id'}, inplace=True)
+        rush_stats = rush_stats.rename(columns={'rusher_player_id': 'player_id'})
 
         # Receiving (RBs also catch passes)
         pass_plays = pbp[pbp['play_type'] == 'pass'].copy()
@@ -120,7 +120,7 @@ class PlayerFeatureEngineer:
         }).reset_index()
 
         rec_stats.columns = ['_'.join(col).strip('_') for col in rec_stats.columns.values]
-        rec_stats.rename(columns={'receiver_player_id': 'player_id'}, inplace=True)
+        rec_stats = rec_stats.rename(columns={'receiver_player_id': 'player_id'})
 
         # Merge rushing and receiving
         rb_stats = rush_stats.merge(rec_stats, on='player_id', how='outer', suffixes=('_rush', '_rec'))
@@ -152,7 +152,7 @@ class PlayerFeatureEngineer:
         }).reset_index()
 
         rec_stats.columns = ['_'.join(col).strip('_') for col in rec_stats.columns.values]
-        rec_stats.rename(columns={'receiver_player_id': 'player_id'}, inplace=True)
+        rec_stats = rec_stats.rename(columns={'receiver_player_id': 'player_id'})
 
         # Position will be determined from roster data
         rec_stats['position'] = 'WR'  # Default, will be updated with actual roster data

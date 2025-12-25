@@ -16,8 +16,8 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add project root to path (script is in scripts/_archive/backtest/)
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from nfl_quant.calibration.calibrator_loader import load_calibrator_for_market, clear_calibrator_cache
 from nfl_quant.calibration.bias_correction import apply_bias_correction, get_correction_factor
@@ -26,7 +26,7 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 # Data directories
-DATA_DIR = Path(__file__).parent.parent.parent / 'data'
+DATA_DIR = Path(__file__).parent.parent.parent.parent / 'data'
 NFLVERSE_DIR = DATA_DIR / 'nflverse'
 
 
@@ -87,6 +87,47 @@ def load_historical_props() -> pd.DataFrame:
             logger.info(f"  Loaded {len(df)} props from historical_player_props_converted.csv")
         except Exception as e:
             logger.warning(f"Could not load historical converted props: {e}")
+
+    # Load comprehensive historical props from backtest folder (weeks 1-11+)
+    all_historical_path = DATA_DIR / 'backtest' / 'all_historical_props_2025.csv'
+    if all_historical_path.exists():
+        try:
+            df = pd.read_csv(all_historical_path)
+            # Convert column names to match expected format
+            # market: player_pass_yds -> stat_type: passing_yards
+            market_to_stat = {
+                'player_pass_yds': 'passing_yards',
+                'player_rush_yds': 'rushing_yards',
+                'player_reception_yds': 'receiving_yards',
+                'player_receptions': 'receptions',
+            }
+            if 'market' in df.columns:
+                df['stat_type'] = df['market'].map(market_to_stat)
+                df = df[df['stat_type'].notna()].copy()
+
+            # Pivot over/under odds into separate columns
+            if 'prop_type' in df.columns and 'american_odds' in df.columns:
+                # Split into over and under rows
+                over_df = df[df['prop_type'] == 'over'].copy()
+                under_df = df[df['prop_type'] == 'under'].copy()
+
+                # Rename odds columns
+                over_df = over_df.rename(columns={'american_odds': 'over_odds'})
+                under_df = under_df.rename(columns={'american_odds': 'under_odds'})
+
+                # Merge on key columns
+                merge_cols = ['week', 'player', 'stat_type', 'line']
+                if all(col in over_df.columns for col in merge_cols):
+                    merged = over_df.merge(
+                        under_df[merge_cols + ['under_odds']],
+                        on=merge_cols,
+                        how='outer'
+                    )
+                    merged['source_file'] = 'all_historical_2025'
+                    all_props.append(merged)
+                    logger.info(f"  Loaded {len(merged)} props from all_historical_props_2025.csv")
+        except Exception as e:
+            logger.warning(f"Could not load all_historical_props_2025.csv: {e}")
 
     if not all_props:
         raise FileNotFoundError("No odds_player_props_*.csv files found. Cannot backtest without real prop data.")

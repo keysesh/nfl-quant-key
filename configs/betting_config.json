@@ -1,17 +1,25 @@
 {
+  "_note": "Updated Dec 2025: Realistic small-stakes betting ($2-$5 range, $100 bankroll)",
   "bankroll_management": {
-    "initial_bankroll": 10000,
+    "initial_bankroll": 100,
     "max_bet_pct": 0.05,
     "kelly_fraction": 0.25,
     "min_edge_required": 0.03,
-    "max_exposure_pct": 0.20
+    "max_exposure_pct": 0.10
   },
   "bet_sizing": {
-    "strategy": "fractional_kelly",
+    "strategy": "confidence_tiered",
     "kelly_fraction": 0.25,
-    "max_units": 5,
+    "max_units": 2,
     "min_units": 1,
-    "unit_size": 100
+    "unit_size": 2.50,
+    "min_bet": 2.00,
+    "max_bet": 5.00,
+    "confidence_tiers": {
+      "high": 5.00,
+      "medium": 3.50,
+      "low": 2.00
+    }
   },
   "risk_limits": {
     "max_daily_bets": 20,
@@ -20,9 +28,9 @@
     "stop_loss_trigger": 0.20
   },
   "model_deployment": {
-    "high_confidence_max_stake": 3,
-    "medium_confidence_max_stake": 2,
-    "low_confidence_max_stake": 1,
+    "high_confidence_max_stake": 5.00,
+    "medium_confidence_max_stake": 3.50,
+    "low_confidence_max_stake": 2.00,
     "paper_trade_min_bets": 50
   },
   "odds_requirements": {
@@ -30,6 +38,17 @@
     "max_vig_pct": 0.10,
     "preferred_books": ["DraftKings", "FanDuel", "BetMGM"],
     "line_shopping_enabled": true
+  },
+  "market_edge_thresholds": {
+    "_note": "Minimum edge required per market (higher for binary events)",
+    "player_reception_yds": 0.03,
+    "player_receptions": 0.03,
+    "player_rush_yds": 0.04,
+    "player_pass_yds": 0.05,
+    "player_pass_tds": 0.08,
+    "player_anytime_td": 0.08,
+    "player_rush_attempts": 0.03,
+    "default": 0.03
   },
   "markets": {
     "enabled": [
@@ -51,6 +70,7 @@
     "alert_on_losing_streak": 10,
     "recalibrate_after_bets": 100
   },
-  "version": "1.0",
-  "last_updated": "2025-11-16"
+  "version": "3.0",
+  "last_updated": "2025-12-21",
+  "changelog": "v3.0: Updated for small-stakes betting. $100 bankroll, $2-$5 bet range, confidence-tiered sizing"
 }

@@ -73,21 +73,9 @@ class FeatureAggregator:
         # Team location data for travel calculation
         self.team_locations = self._load_team_locations()
 
-        # Weather fetcher for real-time weather data
-        self._weather_fetcher = None
-        try:
-            from nfl_quant.data.weather_fetcher import create_weather_fetcher
-            import os
-            self._weather_fetcher = create_weather_fetcher()
-            # Set API key from environment variable (secure)
-            api_key = os.getenv('METEOSTAT_API_KEY', '')
-            if api_key:
-                self._weather_fetcher.api_key = api_key
-                logger.info("Weather fetcher initialized with API key from environment")
-            else:
-                logger.info("Weather fetcher initialized without API key (using seasonal forecasts)")
-        except Exception as e:
-            logger.warning(f"Could not initialize weather fetcher: {e}")
+        # Weather data now comes from NFLverse schedules (temp, wind, roof columns)
+        # No separate weather API needed
+        self._weather_fetcher = None  # Deprecated - kept for compatibility
 
         # Load all data sources
         self._load_all_data()
@@ -375,81 +363,34 @@ class FeatureAggregator:
             # No schedule data
             return features
 
-        # Try weather fetcher first (uses API or cached data)
-        weather_fetched = False
-        if self._weather_fetcher is not None:
-            try:
-                weather_data = self._weather_fetcher.get_game_weather(
-                    home_team=home_team,
-                    away_team=away_team,
-                    week=week,
-                    season=season
-                )
+        # Weather data from NFLverse schedules (temp, wind, roof columns)
+        # Check dome status first
+        if pd.notna(game.get('roof')):
+            roof = str(game['roof']).lower()
+            features.is_dome = roof in ['dome', 'closed']
+            is_retractable = roof == 'retractable'
+        else:
+            is_retractable = False
 
-                # CRITICAL: NO HARDCODED DEFAULTS - require actual data from weather fetcher
-                if 'temperature' in weather_data:
-                    features.temperature = weather_data['temperature']
-                    weather_fetched = True
-                if 'wind_speed' in weather_data:
-                    features.wind_speed = weather_data['wind_speed']
-                if 'is_dome' in weather_data:
-                    features.is_dome = weather_data['is_dome']
+        # Temperature from schedule
+        if pd.notna(game.get('temp')):
+            features.temperature = float(game['temp'])
+        elif features.is_dome:
+            features.temperature = 72.0  # Standard dome temperature
+        elif is_retractable:
+            features.temperature = 72.0  # Assume closed for retractable without data
+            logger.debug(f"No temp data for {away_team}@{home_team} (retractable roof), assuming 72F")
+        else:
+            logger.debug(f"No temp data for {away_team}@{home_team}, using neutral 70F")
 
-                # Log the source
-                source = weather_data.get('source', 'unknown')
-                logger.debug(f"Weather for {away_team}@{home_team}: {features.temperature}F, {features.wind_speed}mph wind (source: {source})")
-
-            except Exception as e:
-                logger.warning(f"Weather fetcher error: {e}")
-
-        # Fall back to schedule data if weather fetcher didn't provide data
-        if not weather_fetched:
-            # CRITICAL: NO HARDCODED DEFAULTS - use actual schedule data
-            if pd.notna(game.get('temp')):
-                features.temperature = float(game['temp'])
-            else:
-                # Check if dome - domes have controlled environment
-                if pd.notna(game.get('roof')):
-                    roof = str(game['roof']).lower()
-                    if roof in ['dome', 'closed']:
-                        features.temperature = 72.0  # Standard dome temperature (actual setting)
-                        features.is_dome = True
-                    elif roof == 'retractable':
-                        # For retractable roofs, we need actual weather data
-                        logger.warning(
-                            f"No temperature data for {away_team}@{home_team} week {week}. "
-                            f"Retractable roof - cannot determine if open/closed. Using neutral 72F."
-                        )
-                        features.temperature = 72.0
-                        features.is_dome = True
-                    else:
-                        logger.error(
-                            f"Missing temperature data for {away_team}@{home_team} week {week}. "
-                            f"NO HARDCODED DEFAULTS - update weather data or NFLverse schedules."
-                        )
-                        # Leave as default 70.0 but log error - this will impact predictions
-                else:
-                    logger.error(
-                        f"Missing temperature and roof data for {away_team}@{home_team} week {week}. "
-                        f"NO HARDCODED DEFAULTS - update weather data or NFLverse schedules."
-                    )
-
-            if pd.notna(game.get('wind')):
-                features.wind_speed = float(game['wind'])
-            elif features.is_dome:
-                # Domes have no wind - this is actual (not a hardcoded default)
-                features.wind_speed = 0.0
-            else:
-                logger.warning(
-                    f"Missing wind data for {away_team}@{home_team} week {week}. "
-                    f"NO HARDCODED DEFAULTS - using 0.0 but this may affect predictions."
-                )
-                # Note: 0.0 wind is a reasonable conservative assumption for outdoor games
-                # but should be logged as potentially inaccurate
-
-            if pd.notna(game.get('roof')):
-                roof = str(game['roof']).lower()
-                features.is_dome = roof in ['dome', 'closed', 'retractable']
+        # Wind from schedule
+        if pd.notna(game.get('wind')):
+            features.wind_speed = float(game['wind'])
+        elif features.is_dome or is_retractable:
+            features.wind_speed = 0.0  # No wind indoors
+        else:
+            features.wind_speed = 0.0  # Conservative default
+            logger.debug(f"No wind data for {away_team}@{home_team}, using 0 mph")
 
         # Calculate wind bucket and multipliers based on final values
         wind = features.wind_speed

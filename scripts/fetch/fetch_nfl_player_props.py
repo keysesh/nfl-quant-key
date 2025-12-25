@@ -2,18 +2,78 @@
 """
 Fetch NFL player props from The Odds API using the event-specific endpoint.
 Uses the correct API structure: /v4/sports/{sport}/events/{eventId}/odds
+
+Auto-archives previous props before overwriting to preserve pre-kickoff data.
 """
 
 import os
 import sys
+import shutil
 import requests
 import json
+import time
 import pandas as pd
 from datetime import datetime
+from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+
+# Project paths
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+ARCHIVE_DIR = DATA_DIR / "archive" / "props"
+
+
+def archive_existing_props():
+    """
+    Archive the current props file before fetching new data.
+    This preserves pre-kickoff props for tracking purposes.
+    """
+    props_file = DATA_DIR / "nfl_player_props_draftkings.csv"
+
+    if not props_file.exists():
+        print("ℹ️  No existing props file to archive")
+        return None
+
+    # Create archive directory if needed
+    ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Get modification time of existing file
+    mod_time = datetime.fromtimestamp(props_file.stat().st_mtime)
+    timestamp = mod_time.strftime("%Y%m%d_%H%M%S")
+
+    # Create archive filename
+    archive_name = f"props_{timestamp}.csv"
+    archive_path = ARCHIVE_DIR / archive_name
+
+    # Don't archive if we already have this exact timestamp
+    if archive_path.exists():
+        print(f"ℹ️  Archive already exists: {archive_name}")
+        return archive_path
+
+    # Copy to archive
+    shutil.copy2(props_file, archive_path)
+    print(f"📦 Archived existing props to: {archive_name}")
+
+    # Clean up old archives (keep last 50)
+    cleanup_old_archives(max_files=50)
+
+    return archive_path
+
+
+def cleanup_old_archives(max_files=50):
+    """Remove old archive files, keeping the most recent ones."""
+    if not ARCHIVE_DIR.exists():
+        return
+
+    archives = sorted(ARCHIVE_DIR.glob("props_*.csv"), key=lambda p: p.stat().st_mtime, reverse=True)
+
+    if len(archives) > max_files:
+        for old_file in archives[max_files:]:
+            old_file.unlink()
+            print(f"🗑️  Removed old archive: {old_file.name}")
 
 def fetch_nfl_events(api_key):
     """
@@ -72,6 +132,10 @@ def main():
     print("=" * 80)
     print("NFL PLAYER PROPS FETCHER")
     print("=" * 80)
+
+    # Archive existing props before fetching new ones
+    print("\n📦 Checking for existing props to archive...")
+    archive_existing_props()
 
     # Define ALL available player prop markets (comprehensive list)
     prop_markets = [
@@ -147,6 +211,9 @@ def main():
         print(f"Commence: {commence_time}")
 
         data, status_code, error_msg = fetch_event_player_props(event_id, api_key, prop_markets)
+
+        # Rate limiting - delay between requests to avoid quota exhaustion
+        time.sleep(0.5)
 
         if status_code != 200:
             error_info = {

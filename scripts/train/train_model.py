@@ -42,6 +42,8 @@ from configs.model_config import (
     MODEL_PARAMS,
     get_active_model_path,
     get_versioned_model_path,
+    EWMA_SPAN,
+    get_market_features,  # V26: Market-specific feature selection
 )
 
 from nfl_quant.features.batch_extractor import extract_features_batch, clear_caches
@@ -71,6 +73,12 @@ def load_data():
 
     odds = pd.read_csv(odds_path)
     odds['player_norm'] = odds['player'].apply(normalize_player_name)
+
+    # V26: Exclude 2023 data - missing vegas_spread/vegas_total fields (0% trainable)
+    rows_before = len(odds)
+    odds = odds[odds['season'] >= 2024]
+    rows_removed = rows_before - len(odds)
+    logger.info(f"  Excluded 2023 data: {rows_removed:,} rows removed (missing vegas context)")
 
     # Deduplicate (keep primary line)
     odds['group_key'] = odds['player_norm'] + '_' + odds['season'].astype(str) + '_' + odds['week'].astype(str) + '_' + odds['market']
@@ -131,7 +139,7 @@ def prepare_data_with_trailing(odds: pd.DataFrame, stats: pd.DataFrame) -> pd.Da
     for col in stat_cols:
         if col in stats.columns:
             stats[f'trailing_{col}'] = stats.groupby('player_norm')[col].transform(
-                lambda x: x.shift(1).ewm(span=4, min_periods=1).mean()
+                lambda x: x.shift(1).ewm(span=EWMA_SPAN, min_periods=1).mean()
             )
 
     # Merge trailing stats AND player context to odds
@@ -176,6 +184,10 @@ def train_market(
     logger.info(f"Training {MODEL_VERSION_FULL}: {market}")
     logger.info(f"{'='*60}")
     start = time.time()
+
+    # V26: Get market-specific features (excludes irrelevant features)
+    market_features = get_market_features(market)
+    logger.info(f"  Using {len(market_features)} market-specific features (excluded {len(FEATURES) - len(market_features)})")
 
     # Map market to stat column (expanded for additional markets)
     stat_col_map = {
@@ -230,22 +242,25 @@ def train_market(
             continue
 
         # Vectorized feature extraction
+        # FIXED: Use same historical cutoff for both train and test
+        # to prevent test features from seeing extra week of data
+        historical_cutoff = test_week - 1
         train_features = extract_features_batch(
             train_data,
-            market_data[market_data['global_week'] < test_week - 1],
+            market_data[market_data['global_week'] < historical_cutoff],
             market
         )
         test_features = extract_features_batch(
             test_data,
-            market_data[market_data['global_week'] < test_week],
+            market_data[market_data['global_week'] < historical_cutoff],
             market
         )
 
         if len(train_features) == 0 or len(test_features) == 0:
             continue
 
-        # Get available features from config
-        available_features = [f for f in FEATURES if f in train_features.columns and f in test_features.columns]
+        # V26: Get available features from market-specific list
+        available_features = [f for f in market_features if f in train_features.columns and f in test_features.columns]
 
         if len(available_features) < 5:
             continue
@@ -302,7 +317,8 @@ def train_market(
     logger.info(f"\n  Training final production model...")
 
     final_features = extract_features_batch(market_data, market_data, market)
-    available_features = [f for f in FEATURES if f in final_features.columns]
+    # V26: Use market-specific features
+    available_features = [f for f in market_features if f in final_features.columns]
     X_final = safe_fillna(final_features[available_features])
     y_final = final_features['under_hit']
 
@@ -322,6 +338,13 @@ def train_market(
     importances = dict(zip(available_features, final_model.feature_importances_))
     for feat, imp in sorted(importances.items(), key=lambda x: -x[1])[:8]:
         logger.info(f"    {feat}: {imp:.1%}")
+
+    # V26: Log zero-importance features (should be 0 with market-specific selection)
+    zero_imp_features = [f for f, imp in importances.items() if imp == 0]
+    if zero_imp_features:
+        logger.warning(f"  WARNING: {len(zero_imp_features)} features with 0% importance: {zero_imp_features[:5]}...")
+    else:
+        logger.info(f"  ✓ No zero-importance features (good!)")
 
     elapsed = time.time() - start
     logger.info(f"\n  Completed {market} in {elapsed:.1f}s")

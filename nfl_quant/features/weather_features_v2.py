@@ -64,9 +64,11 @@ class TemperatureBucket:
 class PrecipitationLevel:
     """Precipitation level with impacts."""
     name: str
+    passing_epa_multiplier: float  # NEW: direct impact on passing volume/efficiency
     completion_pct_adjustment: float
     fumble_rate_multiplier: float
     deep_target_multiplier: float
+    rush_boost: float  # NEW: teams run more in bad weather
 
 
 class WeatherAdjusterV2:
@@ -160,31 +162,75 @@ class WeatherAdjusterV2:
         ),
     ]
 
-    # Precipitation levels
+    # Precipitation levels - RAIN
     PRECIP_LEVELS = {
         'none': PrecipitationLevel(
             name='none',
+            passing_epa_multiplier=1.00,
             completion_pct_adjustment=0.0,
             fumble_rate_multiplier=1.00,
-            deep_target_multiplier=1.00
+            deep_target_multiplier=1.00,
+            rush_boost=0.00
         ),
         'light': PrecipitationLevel(
             name='light',
+            passing_epa_multiplier=0.97,  # -3% passing
             completion_pct_adjustment=-2.0,
-            fumble_rate_multiplier=1.02,
-            deep_target_multiplier=0.95
+            fumble_rate_multiplier=1.03,
+            deep_target_multiplier=0.95,
+            rush_boost=0.02  # +2% rush rate
         ),
         'moderate': PrecipitationLevel(
             name='moderate',
+            passing_epa_multiplier=0.94,  # -6% passing
             completion_pct_adjustment=-5.0,
-            fumble_rate_multiplier=1.04,
-            deep_target_multiplier=0.90
+            fumble_rate_multiplier=1.05,
+            deep_target_multiplier=0.85,
+            rush_boost=0.05  # +5% rush rate
         ),
         'heavy': PrecipitationLevel(
             name='heavy',
+            passing_epa_multiplier=0.90,  # -10% passing
             completion_pct_adjustment=-8.0,
-            fumble_rate_multiplier=1.06,
-            deep_target_multiplier=0.80
+            fumble_rate_multiplier=1.08,
+            deep_target_multiplier=0.75,
+            rush_boost=0.08  # +8% rush rate
+        ),
+    }
+
+    # Precipitation levels - SNOW (worse than rain - visibility, grip, footing)
+    SNOW_LEVELS = {
+        'none': PrecipitationLevel(
+            name='none',
+            passing_epa_multiplier=1.00,
+            completion_pct_adjustment=0.0,
+            fumble_rate_multiplier=1.00,
+            deep_target_multiplier=1.00,
+            rush_boost=0.00
+        ),
+        'light': PrecipitationLevel(
+            name='light_snow',
+            passing_epa_multiplier=0.94,  # -6% passing (worse than light rain)
+            completion_pct_adjustment=-3.0,
+            fumble_rate_multiplier=1.04,
+            deep_target_multiplier=0.90,
+            rush_boost=0.04  # +4% rush rate
+        ),
+        'moderate': PrecipitationLevel(
+            name='moderate_snow',
+            passing_epa_multiplier=0.88,  # -12% passing
+            completion_pct_adjustment=-7.0,
+            fumble_rate_multiplier=1.08,
+            deep_target_multiplier=0.75,
+            rush_boost=0.08  # +8% rush rate
+        ),
+        'heavy': PrecipitationLevel(
+            name='heavy_snow',
+            passing_epa_multiplier=0.80,  # -20% passing (major impact)
+            completion_pct_adjustment=-12.0,
+            fumble_rate_multiplier=1.12,
+            deep_target_multiplier=0.60,
+            rush_boost=0.12  # +12% rush rate
         ),
     }
 
@@ -273,7 +319,8 @@ class WeatherAdjusterV2:
     def get_precipitation_level(
         self,
         precip_prob: float,
-        precip_intensity: Optional[str] = None
+        precip_intensity: Optional[str] = None,
+        precip_type: Optional[str] = None
     ) -> PrecipitationLevel:
         """
         Get precipitation level.
@@ -281,6 +328,7 @@ class WeatherAdjusterV2:
         Args:
             precip_prob: Probability of precipitation (0-1)
             precip_intensity: Optional intensity ('light', 'moderate', 'heavy')
+            precip_type: Optional type ('rain', 'snow', None)
 
         Returns:
             PrecipitationLevel object
@@ -288,16 +336,20 @@ class WeatherAdjusterV2:
         if precip_prob < 0.20:
             return self.PRECIP_LEVELS['none']
 
+        # Choose the right table (snow is worse than rain)
+        is_snow = precip_type and 'snow' in precip_type.lower()
+        precip_table = self.SNOW_LEVELS if is_snow else self.PRECIP_LEVELS
+
         if precip_intensity:
-            return self.PRECIP_LEVELS.get(precip_intensity, self.PRECIP_LEVELS['light'])
+            return precip_table.get(precip_intensity, precip_table['light'])
 
         # Infer from probability
         if precip_prob < 0.50:
-            return self.PRECIP_LEVELS['light']
+            return precip_table['light']
         elif precip_prob < 0.75:
-            return self.PRECIP_LEVELS['moderate']
+            return precip_table['moderate']
         else:
-            return self.PRECIP_LEVELS['heavy']
+            return precip_table['heavy']
 
     def calculate_weather_adjustments(
         self,
@@ -306,6 +358,7 @@ class WeatherAdjusterV2:
         temp_f: float = 65.0,
         precip_prob: float = 0.0,
         precip_intensity: Optional[str] = None,
+        precip_type: Optional[str] = None,
         is_dome: Optional[bool] = None
     ) -> Dict[str, float]:
         """
@@ -316,7 +369,8 @@ class WeatherAdjusterV2:
             wind_mph: Wind speed in mph
             temp_f: Temperature in Fahrenheit
             precip_prob: Precipitation probability (0-1)
-            precip_intensity: Optional precipitation intensity
+            precip_intensity: Optional precipitation intensity ('light', 'moderate', 'heavy')
+            precip_type: Optional precipitation type ('rain', 'snow')
             is_dome: Override for dome status (None = use stadium data)
 
         Returns:
@@ -346,7 +400,8 @@ class WeatherAdjusterV2:
                 'fumble_rate_multiplier': 1.00,
                 'is_dome': True,
                 'wind_bucket': 'dome',
-                'temp_bucket': 'comfortable'
+                'temp_bucket': 'comfortable',
+                'precip_level': 'none'
             }
 
         # Get wind bucket
@@ -355,11 +410,15 @@ class WeatherAdjusterV2:
         # Get temperature bucket
         temp_bucket = self.get_temperature_bucket(temp_f)
 
-        # Get precipitation level
-        precip_level = self.get_precipitation_level(precip_prob, precip_intensity)
+        # Get precipitation level (snow vs rain matters now!)
+        precip_level = self.get_precipitation_level(precip_prob, precip_intensity, precip_type)
 
-        # Base adjustments
-        passing_epa_mult = wind_bucket.passing_epa_multiplier * temp_bucket.passing_epa_multiplier
+        # Base adjustments - NOW INCLUDES PRECIPITATION EPA IMPACT
+        passing_epa_mult = (
+            wind_bucket.passing_epa_multiplier *
+            temp_bucket.passing_epa_multiplier *
+            precip_level.passing_epa_multiplier  # NEW: precip directly impacts passing
+        )
         completion_pct_adj = (
             wind_bucket.completion_pct_adjustment +
             temp_bucket.completion_pct_adjustment +
@@ -369,7 +428,8 @@ class WeatherAdjusterV2:
             wind_bucket.deep_target_share_multiplier *
             precip_level.deep_target_multiplier
         )
-        rush_rate_boost = wind_bucket.rush_rate_boost
+        # Combine wind and precip rush boosts
+        rush_rate_boost = wind_bucket.rush_rate_boost + precip_level.rush_boost
 
         # Interaction effect: Wind + Cold (stacks)
         if wind_mph >= 15.0 and temp_f < 25.0:
@@ -380,6 +440,12 @@ class WeatherAdjusterV2:
         if wind_mph >= 15.0 and precip_prob > 0.5:
             passing_epa_mult *= 0.97  # Additional -3%
             deep_target_mult *= 0.90  # Additional -10% deep targets
+
+        # Interaction effect: Snow + Cold (extra brutal)
+        is_snow = precip_type and 'snow' in precip_type.lower()
+        if is_snow and temp_f < 25.0 and precip_prob > 0.5:
+            passing_epa_mult *= 0.95  # Additional -5% for snow + extreme cold
+            rush_rate_boost += 0.05  # +5% more rushing
 
         # Yards per attempt adjustment (derived from EPA and completion%)
         # Simplified: EPA impact translates roughly 1:1 to yards/attempt

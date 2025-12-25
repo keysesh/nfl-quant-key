@@ -15,6 +15,18 @@ from nfl_quant.utils.player_names import normalize_player_name
 
 logger = logging.getLogger(__name__)
 
+# Module-level cache for depth charts (avoid repeated file reads)
+_DEPTH_CHART_CACHE = None
+_INJURY_DATA_CACHE = {}
+
+
+def clear_contextual_caches():
+    """Clear all module-level caches. Call between runs if data may have changed."""
+    global _DEPTH_CHART_CACHE, _INJURY_DATA_CACHE
+    _DEPTH_CHART_CACHE = None
+    _INJURY_DATA_CACHE = {}
+    logger.debug("Cleared contextual integration caches")
+
 
 def enhance_player_input_with_context(
     player_input: PlayerPropInput,
@@ -43,7 +55,14 @@ def enhance_player_input_with_context(
 
     # Try to load PBP data if not provided
     if pbp_df is None:
-        pbp_path = Path(f'data/processed/pbp_{season}.parquet')
+        # Use fresh NFLverse PBP data (updated daily) instead of stale processed file
+        pbp_path = Path('data/nflverse/pbp.parquet')
+        if not pbp_path.exists():
+            # Fallback to season-specific file
+            pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+        if not pbp_path.exists():
+            # Last resort: processed file
+            pbp_path = Path(f'data/processed/pbp_{season}.parquet')
         if pbp_path.exists():
             try:
                 pbp_df = pd.read_parquet(pbp_path)
@@ -128,12 +147,20 @@ def load_injury_data(week: int) -> Dict[str, Dict[str, Any]]:
     Tracks injury status for ALL key positions (WR1/2/3, RB1/2, TE1, QB)
     to enable proper target/carry redistribution.
 
+    Uses module-level cache to avoid repeated file reads within same run.
+
     Args:
         week: Week number
 
     Returns:
         Dictionary mapping team to comprehensive injury data
     """
+    global _INJURY_DATA_CACHE
+
+    # Return cached result if available for this week
+    if week in _INJURY_DATA_CACHE:
+        return _INJURY_DATA_CACHE[week]
+
     injury_data = {}
 
     # Try to load from injury files (priority order)
@@ -369,6 +396,8 @@ def load_injury_data(week: int) -> Dict[str, Dict[str, Any]]:
     else:
         logger.warning("   ⚠️  No injury data files found")
 
+    # Cache before returning
+    _INJURY_DATA_CACHE[week] = injury_data
     return injury_data
 
 
@@ -379,9 +408,17 @@ def _load_team_depth_charts() -> Dict[str, Dict[str, str]]:
     PRIORITY: Use official NFLverse depth chart data (pos_rank = actual depth chart position).
     This is the most accurate source, updated weekly.
 
+    Uses module-level cache to avoid repeated file reads.
+
     Returns:
         Dictionary mapping team to position depth chart
     """
+    global _DEPTH_CHART_CACHE
+
+    # Return cached result if available
+    if _DEPTH_CHART_CACHE is not None:
+        return _DEPTH_CHART_CACHE
+
     depth_charts = {}
 
     # FIRST: Try to load official NFLverse depth chart data (MOST ACCURATE)
@@ -434,6 +471,7 @@ def _load_team_depth_charts() -> Dict[str, Dict[str, str]]:
                 depth_charts[team] = team_dc
 
             logger.info(f"Loaded official depth charts for {len(depth_charts)} teams")
+            _DEPTH_CHART_CACHE = depth_charts
             return depth_charts
         except Exception as e:
             logger.warning(f"Could not load official depth charts: {e}")
@@ -498,6 +536,8 @@ def _load_team_depth_charts() -> Dict[str, Dict[str, str]]:
         except Exception as e:
             logger.warning(f"Could not load depth charts from rosters: {e}")
 
+    # Cache before returning
+    _DEPTH_CHART_CACHE = depth_charts
     return depth_charts
 
 

@@ -1,0 +1,103 @@
+{
+  "version": "edge_v1",
+  "trained_date": "2025-12-21T23:05:22.597104",
+  "validation_results": {
+    "player_receptions": {
+      "BOTH": {
+        "n": 770,
+        "hits": 574,
+        "hit_rate": 0.7454545454545455,
+        "roi": 42.30727272727274
+      },
+      "LVT_ONLY": {
+        "n": 1993,
+        "hits": 963,
+        "hit_rate": 0.48319116909182136,
+        "roi": -7.7588058203713
+      },
+      "PLAYER_BIAS_ONLY": {
+        "n": 333,
+        "hits": 233,
+        "hit_rate": 0.6996996996996997,
+        "roi": 33.572672672672674
+      }
+    },
+    "player_rush_yds": {
+      "BOTH": {
+        "n": 6,
+        "hits": 5,
+        "hit_rate": 0.8333333333333334,
+        "roi": 59.08333333333334
+      },
+      "LVT_ONLY": {
+        "n": 37,
+        "hits": 31,
+        "hit_rate": 0.8378378378378378,
+        "roi": 59.94324324324325
+      },
+      "PLAYER_BIAS_ONLY": {
+        "n": 408,
+        "hits": 344,
+        "hit_rate": 0.8431372549019608,
+        "roi": 60.95490196078431
+      }
+    },
+    "player_reception_yds": {
+      "PLAYER_BIAS_ONLY": {
+        "n": 194,
+        "hits": 162,
+        "hit_rate": 0.8350515463917526,
+        "roi": 59.41134020618557
+      }
+    },
+    "player_rush_attempts": {},
+    "player_pass_attempts": {
+      "BOTH": {
+        "n": 31,
+        "hits": 28,
+        "hit_rate": 0.9032258064516129,
+        "roi": 72.4258064516129
+      },
+      "LVT_ONLY": {
+        "n": 144,
+        "hits": 87,
+        "hit_rate": 0.6041666666666666,
+        "roi": 15.335416666666656
+      },
+      "PLAYER_BIAS_ONLY": {
+        "n": 7,
+        "hits": 6,
+        "hit_rate": 0.8571428571428571,
+        "roi": 63.628571428571426
+      }
+    },
+    "player_pass_completions": {
+      "BOTH": {
+        "n": 107,
+        "hits": 104,
+        "hit_rate": 0.9719626168224299,
+        "roi": 85.54766355140188
+      },
+      "LVT_ONLY": {
+        "n": 310,
+        "hits": 149,
+        "hit_rate": 0.4806451612903226,
+        "roi": -8.24483870967741
+      },
+      "PLAYER_BIAS_ONLY": {
+        "n": 48,
+        "hits": 47,
+        "hit_rate": 0.9791666666666666,
+        "roi": 86.92291666666667
+      }
+    }
+  },
+  "markets": [
+    "player_receptions",
+    "player_rush_yds",
+    "player_reception_yds",
+    "player_rush_attempts",
+    "player_pass_attempts",
+    "player_pass_completions"
+  ]
+}

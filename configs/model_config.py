@@ -25,7 +25,7 @@ import numpy as np
 # =============================================================================
 # VERSION CONFIGURATION - THE ONLY PLACE VERSION IS DEFINED
 # =============================================================================
-MODEL_VERSION = "24"  # V24: Added position-specific defensive matchup features (WR1/WR2/WR3, slot detection, coverage tendencies)
+MODEL_VERSION = "29"  # V29: Added vegas_agreement + lvt_direction features (Week 16 analysis)
 
 # Derived version strings (DO NOT hardcode elsewhere)
 MODEL_VERSION_FULL = f"V{MODEL_VERSION}"  # "V19"
@@ -114,25 +114,117 @@ FEATURES = [
     'has_position_context',  # Flag: 1 if position data available, 0 if missing
 
     # -------------------------------------------------------------------------
-    # V25 Features (8 features) - Team Health Synergy
-    # Models compound effects of multiple players returning simultaneously.
-    # Key insight: Evans + Godwin together ≠ Evans alone + Godwin alone
+    # V25 Features REMOVED (8 features) - Team Health Synergy
+    # REMOVED in V26: All 8 features had 0% importance across all markets
+    # Original features: team_synergy_multiplier, oline_health_score_v25,
+    # wr_corps_health, has_synergy_bonus, cascade_efficiency_boost,
+    # wr_coverage_reduction, returning_player_count, has_synergy_context
     # -------------------------------------------------------------------------
-    'team_synergy_multiplier',  # Overall team health synergy (1.0 = neutral)
-    'oline_health_score_v25',  # O-line cohesion score (weighted by position importance)
-    'wr_corps_health',  # WR corps depth health (WR1+WR2+WR3)
-    'has_synergy_bonus',  # Flag: 1 if any positive synergy condition active
-    'cascade_efficiency_boost',  # Efficiency boost from teammate returning (coverage reduction)
-    'wr_coverage_reduction',  # How much coverage reduced due to healthy corps
-    'returning_player_count',  # Number of key players returning this week
-    'has_synergy_context',  # Flag: 1 if synergy data available, 0 if missing
+
+    # -------------------------------------------------------------------------
+    # V28 Features (6 features) - Elo & Situational (Tier 3-4 Blueprint)
+    # Implements NFL Edge Betting Blueprint requirements:
+    # - Tier 3: Elo ratings for team power rankings
+    # - Tier 4: Rest days, home field advantage adjustments
+    # -------------------------------------------------------------------------
+    'elo_rating_home',                  # Home team Elo rating (1350-1700 range)
+    'elo_rating_away',                  # Away team Elo rating
+    'elo_diff',                         # Home Elo - Away Elo (with HFA)
+    'ybc_proxy',                        # Yards Before Contact proxy (air_yards for receivers)
+    'rest_days',                        # Days since last game (4-14 range)
+    'hfa_adjustment',                   # Team-specific home field advantage factor
+
+    # -------------------------------------------------------------------------
+    # V28.1 Features (3 features) - Player Injury Data (Tier 4 Blueprint)
+    # Uses NFLverse injury data for backtesting compatibility
+    # -------------------------------------------------------------------------
+    'injury_status_encoded',            # 0=None/Probable, 1=Questionable, 2=Doubtful, 3=Out
+    'practice_status_encoded',          # 0=Full, 1=Limited, 2=DNP
+    'has_injury_designation',           # Binary flag if player has any injury status
+
+    # -------------------------------------------------------------------------
+    # V29 Features (2 features) - Vegas Agreement Signal
+    # Analysis showed: WITH Vegas = 67% win rate, AGAINST = 27%
+    # Let ML learn when to fight Vegas instead of hard filter
+    # -------------------------------------------------------------------------
+    'vegas_agreement',                  # 1 if betting WITH Vegas direction, 0 if AGAINST
+    'lvt_direction',                    # Sign of LVT: +1 if line > trailing, -1 if line < trailing
 ]
 
 # Current feature count for validation
-FEATURE_COUNT = len(FEATURES)  # 54 (46 V24 + 8 synergy)
+FEATURE_COUNT = len(FEATURES)  # 57 (V29: added vegas_agreement, lvt_direction)
 
 # Alias for current features (use FEATURES directly when possible)
 CURRENT_FEATURE_COLS = FEATURES
+
+
+# =============================================================================
+# MARKET-SPECIFIC FEATURE SELECTION (V26)
+# =============================================================================
+# Features to EXCLUDE for each market type. These features had 0% importance
+# in holdout analysis for the specific market (e.g., receiving features don't
+# help predict rushing yards).
+
+# Features only relevant to RECEIVING markets (receptions, reception_yds)
+_RECEIVING_ONLY_FEATURES = {
+    'avg_separation',           # NGS receiving metric
+    'avg_cushion',              # NGS receiving metric
+    'trailing_catch_rate',      # Receiving efficiency
+    'target_share',             # Receiving volume
+    'target_share_trailing',    # 4-week rolling target share
+    'opp_wr1_receptions_allowed',  # WR1 coverage metric
+    'adot',                     # Average depth of target
+    'is_slot_receiver',         # Slot alignment
+    'slot_alignment_pct',       # Slot snap percentage
+    'slot_funnel_score',        # Slot vulnerability
+}
+
+# Features only relevant to RUSHING markets (rush_yds, rush_attempts)
+_RUSHING_ONLY_FEATURES = {
+    'oline_health_score',       # O-line health (rush blocking)
+    'box_count_expected',       # Defenders in the box
+}
+
+# Features only relevant to PASSING markets (pass_yds, pass_attempts)
+_PASSING_ONLY_FEATURES = {
+    'pressure_rate',            # QB pressure
+    'opp_pressure_rate',        # Opponent pressure generated
+}
+
+# Define which features to EXCLUDE for each market
+MARKET_FEATURE_EXCLUSIONS: dict = {
+    # Receiving markets - exclude rushing features
+    'player_receptions': _RUSHING_ONLY_FEATURES,
+    'player_reception_yds': _RUSHING_ONLY_FEATURES,
+
+    # Rushing markets - exclude receiving features
+    'player_rush_yds': _RECEIVING_ONLY_FEATURES,
+    'player_rush_attempts': _RECEIVING_ONLY_FEATURES,
+
+    # Passing markets - exclude receiving and rushing specific features
+    'player_pass_yds': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES,
+    'player_pass_completions': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES,
+    'player_pass_attempts': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES,
+}
+
+
+def get_market_features(market: str) -> list:
+    """
+    Get the feature list for a specific market, excluding irrelevant features.
+
+    Args:
+        market: Market name (e.g., 'player_rush_yds')
+
+    Returns:
+        List of features to use for this market
+    """
+    exclusions = MARKET_FEATURE_EXCLUSIONS.get(market, set())
+    return [f for f in FEATURES if f not in exclusions]
+
+
+def get_market_feature_count(market: str) -> int:
+    """Get the number of features for a specific market."""
+    return len(get_market_features(market))
 
 
 # =============================================================================
@@ -163,7 +255,7 @@ class SweetSpotConfig:
 
 SWEET_SPOT_PARAMS: Dict[str, SweetSpotConfig] = {
     # Core volume markets
-    'player_receptions': SweetSpotConfig(center=4.5, width=2.0),
+    'player_receptions': SweetSpotConfig(center=5.5, width=2.5),  # V27: Recalibrated for actual sweet spot (5.5-6.5 rec)
     'player_rush_yds': SweetSpotConfig(center=55.0, width=25.0),
     'player_reception_yds': SweetSpotConfig(center=55.0, width=25.0),
     'player_pass_yds': SweetSpotConfig(center=250.0, width=50.0),
@@ -175,6 +267,38 @@ SWEET_SPOT_PARAMS: Dict[str, SweetSpotConfig] = {
 }
 
 DEFAULT_SWEET_SPOT = SweetSpotConfig(center=5.0, width=2.5)
+
+
+# =============================================================================
+# TRAILING STAT DEFLATION - Regression to Mean Adjustment
+# =============================================================================
+# Trailing stats (EWMA) systematically overshoot actuals due to:
+# 1. Players getting props are typically top performers on hot streaks
+# 2. Regression to mean is not applied
+# 3. EWMA span=4 overweights recent performances
+#
+# These factors deflate trailing stats toward realistic expectations.
+# Based on Week 12-14 2025 holdout analysis:
+#   - player_reception_yds: +75% overshoot → 0.83 deflation
+#   - player_rush_yds: +59% overshoot → 0.95 deflation
+#   - player_receptions: +36% overshoot → 0.92 deflation
+#   - player_pass_yds: +49% overshoot → 1.02 (slight under)
+TRAILING_DEFLATION_FACTORS: Dict[str, float] = {
+    'player_receptions': 0.92,
+    'player_reception_yds': 0.83,
+    'player_rush_yds': 0.95,
+    'player_pass_yds': 1.02,
+    # Conservative defaults for other markets
+    'player_rush_attempts': 0.95,
+    'player_pass_completions': 0.95,
+    'player_pass_attempts': 0.95,
+    'player_pass_tds': 1.0,  # TD props are different
+}
+
+DEFAULT_TRAILING_DEFLATION = 0.90  # Overall median deflation
+
+# EWMA span for trailing stats (increased from 4 to 6 for stability)
+EWMA_SPAN = 6
 
 
 def smooth_sweet_spot(line: float, market: str = None, center: float = None, width: float = None) -> float:
@@ -221,7 +345,43 @@ SUPPORTED_MARKETS = [
     'player_pass_completions',
     'player_pass_attempts',
     'player_pass_tds',
+    # TD Props - YES only bets (OVER_ONLY constraint)
+    'player_anytime_td',
+    'player_1st_td',
 ]
+
+# =============================================================================
+# MARKET-SPECIFIC FILTERS (V27) - Game Context Filters
+# =============================================================================
+# These filters exclude low-value bets based on game context
+# E.g., receptions bets in blowouts have high variance
+
+@dataclass
+class MarketFilter:
+    """Filter configuration for a specific market."""
+    max_spread: Optional[float] = None    # Skip games with |spread| > this
+    min_snap_share: Optional[float] = None  # Only established players
+    exclude_positions: Optional[List[str]] = None  # Positions to exclude
+
+
+MARKET_FILTERS: Dict[str, MarketFilter] = {
+    # Receptions: TEs have no edge (50% win rate), skip lopsided games
+    'player_receptions': MarketFilter(
+        max_spread=7.0,           # V27: Skip blowouts where game script kills targets
+        min_snap_share=0.40,      # V27: Only established players
+        exclude_positions=['TE'],  # V27: TEs have 50% edge (no value)
+    ),
+    # Pass yds: Only bet close games (existing logic)
+    'player_pass_yds': MarketFilter(
+        max_spread=3.0,           # Existing: close games only
+    ),
+}
+
+
+def get_market_filter(market: str) -> Optional[MarketFilter]:
+    """Get filter configuration for a market."""
+    return MARKET_FILTERS.get(market)
+
 
 # Markets for XGBoost classifier training (volume-based only, no TD props)
 # TD props are binary and need different modeling (Poisson/logistic)
@@ -229,12 +389,42 @@ CLASSIFIER_MARKETS = [
     'player_receptions',
     'player_rush_yds',
     'player_reception_yds',
-    'player_pass_yds',
     'player_rush_attempts',
-    # player_pass_completions excluded: model has ~0 correlation with actuals
-    # player_pass_attempts excluded: same starter/backup issue
+    'player_pass_attempts',      # Re-enabled Dec 2025: Adding full edge support
+    'player_pass_completions',   # Re-enabled Dec 2025: Adding full edge support
+    # player_pass_yds excluded: -15.8% ROI in holdout, failing both directions (Dec 14 2025)
     # player_pass_tds excluded: -18.2% ROI, binary distribution wrong for XGBoost
 ]
+
+# =============================================================================
+# MARKET DIRECTION CONSTRAINTS - Market-Specific (Dec 20, 2025 Backtest)
+# =============================================================================
+# Direction constraints are now MARKET-SPECIFIC based on historical data:
+#
+# UNDER markets (line typically set too high):
+#   - player_receptions: 58% UNDER rate
+#   - player_reception_yds: 55% UNDER rate
+#   - player_pass_attempts: 58% UNDER rate
+#   - player_pass_completions: 55% UNDER rate
+#   - player_rush_attempts: 53% UNDER rate
+#
+# OVER markets (line typically set too low):
+#   - player_rush_yds: 87% OVER rate (lines consistently under-estimate)
+#
+# Valid values: 'UNDER_ONLY', 'OVER_ONLY', 'BOTH'
+# FIXED Dec 2025: Changed to BOTH for markets where constraint was suppressing wins
+# Previous UNDER_ONLY on pass_attempts, pass_completions, rush_attempts was wrong
+MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = {
+    'player_receptions': 'UNDER_ONLY',       # Validated: 56.8% UNDER in true OOS
+    'player_reception_yds': 'UNDER_ONLY',    # Validated: 52.5% UNDER in true OOS
+    'player_rush_yds': 'BOTH',               # Changed: Let model decide direction
+    'player_rush_attempts': 'BOTH',          # FIXED: Was UNDER_ONLY (wrong)
+    'player_pass_attempts': 'BOTH',          # FIXED: Was UNDER_ONLY (wrong)
+    'player_pass_completions': 'BOTH',       # FIXED: Was UNDER_ONLY (wrong)
+    # TD props - can only bet YES (player scores), never NO
+    'player_anytime_td': 'OVER_ONLY',        # Anytime TD = YES only
+    'player_1st_td': 'OVER_ONLY',            # First TD = YES only
+}
 
 # Markets for Monte Carlo simulation (all markets)
 SIMULATOR_MARKETS = SUPPORTED_MARKETS
@@ -252,6 +442,9 @@ MARKET_TO_STAT = {
     'player_pass_attempts': 'attempts',
     'player_pass_tds': 'passing_tds',
     'player_pass_completions': 'completions',
+    # TD Props (anytime = rushing_tds + receiving_tds)
+    'player_anytime_td': 'total_tds',  # Combined TDs
+    'player_1st_td': 'total_tds',
 }
 
 MARKET_TO_PREDICTION_COLS = {
@@ -264,6 +457,9 @@ MARKET_TO_PREDICTION_COLS = {
     'player_pass_completions': ('passing_completions_mean', 'passing_completions_std'),
     'player_pass_attempts': ('passing_attempts_mean', 'passing_attempts_std'),
     'player_pass_tds': ('passing_tds_mean', 'passing_tds_std'),
+    # TD Props - use Poisson model (mean = expected TDs)
+    'player_anytime_td': ('total_tds_mean', 'total_tds_std'),
+    'player_1st_td': ('total_tds_mean', 'total_tds_std'),
 }
 
 
@@ -365,9 +561,9 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         line_increment=0.5,
         snr_pct=20.8,
         tier='HIGH',
-        min_edge_pct=10.0,       # LOOSENED: 10% of std
-        confidence_threshold=0.52,  # LOOSENED from 0.60
-        min_line_deviation=0.0,  # LOOSENED from 0.5
+        min_edge_pct=5.0,        # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.58
+        min_line_deviation=0.0,
     ),
 
     'player_rush_attempts': MarketSNRConfig(
@@ -375,9 +571,9 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         line_increment=0.5,
         snr_pct=12.5,
         tier='HIGH',
-        min_edge_pct=10.0,  # LOOSENED from 15
-        confidence_threshold=0.52,  # LOOSENED from 0.60
-        min_line_deviation=0.0,  # LOOSENED from 1.0
+        min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5)
+        min_line_deviation=0.0,
     ),
 
     'player_pass_completions': MarketSNRConfig(
@@ -385,11 +581,10 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         line_increment=0.5,
         snr_pct=10.0,
         tier='HIGH',
-        min_edge_pct=15.0,
-        confidence_threshold=0.62,
-        min_line_deviation=1.5,
-        enabled=False,
-        reason_disabled="Model correlation with actuals is ~0 (no predictive power for QB completions)",
+        min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.60
+        min_line_deviation=0.0,  # V30: Removed - not validated
+        enabled=True,
     ),
 
     'player_pass_attempts': MarketSNRConfig(
@@ -397,49 +592,46 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         line_increment=0.5,
         snr_pct=8.3,
         tier='HIGH',
-        min_edge_pct=15.0,
-        confidence_threshold=0.62,
-        min_line_deviation=2.0,
-        enabled=False,
-        reason_disabled="Model cannot distinguish starters from backups; low correlation with actuals",
+        min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.70
+        min_line_deviation=0.0,  # V30: Removed - not validated
+        enabled=True,
     ),
 
     # =========================================================================
     # MEDIUM SNR - Yards markets with higher variance
+    # V30: Holdout analysis shows confidence thresholds don't predict wins
+    # Key signal is LVT direction (WITH Vegas = 58.7% vs AGAINST = 51.2%)
     # =========================================================================
     'player_rush_yds': MarketSNRConfig(
         typical_std=35.5,
         line_increment=0.5,
         snr_pct=1.4,
-        tier='HIGH',  # UPGRADED from MEDIUM
-        min_edge_pct=12.0,  # LOOSENED from 20
-        confidence_threshold=0.54,  # LOOSENED from 0.68
-        min_line_deviation=0.0,  # LOOSENED from 5.0
+        tier='HIGH',
+        min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.54
+        min_line_deviation=0.0,
     ),
 
-    # =========================================================================
-    # LOW SNR - High variance yards markets, rarely profitable
-    # =========================================================================
     'player_reception_yds': MarketSNRConfig(
         typical_std=34.2,
         line_increment=0.5,
         snr_pct=1.5,
-        tier='MEDIUM',  # UPGRADED from LOW
-        min_edge_pct=15.0,  # LOOSENED from 25
-        confidence_threshold=0.55,  # LOOSENED from 0.72
-        min_line_deviation=0.0,  # LOOSENED from 8.0
+        tier='HIGH',  # V30: Upgraded - holdout shows 51.6% but confidence filter was limiting volume
+        min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.55
+        min_line_deviation=0.0,
     ),
 
     'player_pass_yds': MarketSNRConfig(
         typical_std=82.8,
         line_increment=0.5,
         snr_pct=0.6,
-        tier='MEDIUM',  # Upgraded from LOW - production model shows 78%+ hit rate
-        min_edge_pct=20.0,       # 20% of std = ~17 yards
-        confidence_threshold=0.60,  # Lowered from 0.75 - strong signal at 60%+ threshold
-        min_line_deviation=10.0,
+        tier='MEDIUM',
+        min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
+        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.60
+        min_line_deviation=0.0,  # V30: Removed - not validated
         enabled=True,
-        reason_disabled="",  # Re-enabled Dec 2025: Production model 78% hit rate on confident picks
     ),
 
     # =========================================================================
@@ -451,7 +643,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         line_increment=0.5,
         snr_pct=100.0,           # N/A for binary
         tier='MEDIUM',
-        min_edge_pct=10.0,
+        min_edge_pct=5.0,        # Lowered from 10% - TD lines are efficient
         confidence_threshold=0.65,
         min_line_deviation=0.0,  # No line deviation for binary
     ),

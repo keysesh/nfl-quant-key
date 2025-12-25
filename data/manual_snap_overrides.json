@@ -1,0 +1,26 @@
+{
+  "mike evans_tb_15_2025": {
+    "player_name": "Mike Evans",
+    "team": "TB",
+    "week": 15,
+    "season": 2025,
+    "snap_factor": 0.45,
+    "reason": "First game back from collarbone (missed wks 8-14). Pitch count ~40-50% snaps. Pre-injury: 8-11 tgt, 72-83% snaps."
+  },
+  "chris godwin jr._tb_15_2025": {
+    "player_name": "Chris Godwin Jr.",
+    "team": "TB",
+    "week": 15,
+    "season": 2025,
+    "snap_factor": 0.90,
+    "reason": "4th game back. Snaps: 36%->66%->69%. Targets: 4->5->8. Week 14 had 28.6% target share (near pre-injury 25.6%). Trending to ~75% snaps but production ramping faster."
+  },
+  "emeka egbuka_tb_15_2025": {
+    "player_name": "Emeka Egbuka",
+    "team": "TB",
+    "week": 15,
+    "season": 2025,
+    "snap_factor": 0.95,
+    "reason": "Data shows Egbuka maintained 8+ targets regardless of Evans/Godwin availability (22-30% target share). Minimal reduction expected - he's the WR1 now."
+  }
+}

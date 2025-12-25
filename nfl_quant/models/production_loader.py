@@ -7,6 +7,12 @@ Load trained models for live prediction.
 import joblib
 import lightgbm as lgb
 from pathlib import Path
+import logging
+
+from nfl_quant.features.feature_defaults import safe_fillna, FEATURE_DEFAULTS
+from nfl_quant.validation.input_validation import validate_and_log
+
+logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
@@ -57,7 +63,16 @@ def predict_prop(model_name: str, features: dict, over_odds: int = -110, under_o
 
     # Prepare features
     import pandas as pd
-    X = pd.DataFrame([features])[config['feature_names']].fillna(0).astype(float)
+    X = pd.DataFrame([features])[config['feature_names']]
+
+    # Apply semantic defaults instead of blanket 0-fill
+    X = safe_fillna(X, FEATURE_DEFAULTS)
+
+    # Validate before prediction
+    if not validate_and_log(X, context="production prediction"):
+        logger.warning("Proceeding with prediction despite validation issues")
+
+    X = X.astype(float)
 
     # Predict
     raw_prob = model.predict(X)[0]

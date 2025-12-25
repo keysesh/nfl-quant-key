@@ -46,6 +46,7 @@ class SimulationConfig:
     calibration_dampening: Dict[str, Any] = field(default_factory=dict)
     trials: Dict[str, Any] = field(default_factory=dict)
     league_defaults: Dict[str, Any] = field(default_factory=dict)
+    game_line_betting: Dict[str, Any] = field(default_factory=dict)  # Added for game line recommendations
 
 
 @dataclass
@@ -171,6 +172,7 @@ class EnhancedConfig:
             calibration_dampening=data.get('calibration_dampening', {}),
             trials=data.get('trials', {}),
             league_defaults=data.get('league_defaults', {}),
+            game_line_betting=data.get('game_line_betting', {}),
         )
 
     def _load_model_hyperparams(self) -> ModelHyperparamsConfig:

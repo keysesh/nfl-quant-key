@@ -17,6 +17,8 @@ from typing import List, Tuple, Iterator, Optional, Dict
 from dataclasses import dataclass
 import logging
 
+from nfl_quant.features.feature_defaults import safe_fillna, FEATURE_DEFAULTS
+
 logger = logging.getLogger(__name__)
 
 
@@ -207,12 +209,12 @@ class TemporalHyperparameterTuner:
 
             # Train model
             model = model_class(**params)
-            X_train = train_data[X_cols].fillna(0)
+            X_train = safe_fillna(train_data[X_cols], FEATURE_DEFAULTS)
             y_train = train_data[y_col]
             model.fit(X_train, y_train)
 
             # Evaluate
-            X_test = test_data[X_cols].fillna(0)
+            X_test = safe_fillna(test_data[X_cols], FEATURE_DEFAULTS)
             y_test = test_data[y_col]
             y_pred = model.predict(X_test)
 
@@ -279,12 +281,12 @@ def evaluate_model_temporal(
         test_data = df[df[week_col] == fold.test_week]
 
         # Train
-        X_train = train_data[X_cols].fillna(0)
+        X_train = safe_fillna(train_data[X_cols], FEATURE_DEFAULTS)
         y_train = train_data[y_col]
         model.fit(X_train, y_train)
 
         # Predict
-        X_test = test_data[X_cols].fillna(0)
+        X_test = safe_fillna(test_data[X_cols], FEATURE_DEFAULTS)
         y_test = test_data[y_col]
         y_pred = model.predict(X_test)
 
@@ -361,11 +363,11 @@ def get_optimal_window_size(
             test_data = df[df[week_col] == fold.test_week]
 
             model = model_class()
-            X_train = train_data[X_cols].fillna(0)
+            X_train = safe_fillna(train_data[X_cols], FEATURE_DEFAULTS)
             y_train = train_data[y_col]
             model.fit(X_train, y_train)
 
-            X_test = test_data[X_cols].fillna(0)
+            X_test = safe_fillna(test_data[X_cols], FEATURE_DEFAULTS)
             y_test = test_data[y_col]
             y_pred = model.predict(X_test)
 

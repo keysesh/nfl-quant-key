@@ -23,7 +23,6 @@ def fetch_nfl_odds_draftkings(week: int = None):
         week: NFL week number (optional, for filename)
     """
     print("🏈 Fetching NFL odds from DraftKings...")
-    print(f"API Key: {API_KEY[:8]}...")
     
     # The Odds API endpoint for NFL
     url = "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds"

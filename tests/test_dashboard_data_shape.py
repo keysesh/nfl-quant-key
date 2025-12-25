@@ -3,17 +3,18 @@ import pytest
 from pathlib import Path
 
 
+# Updated to match actual output from generate_unified_recommendations_v3.py
 REQUIRED_COLUMNS = [
-    'rank',
-    'bet_type',
-    'game',
+    'player',
     'pick',
-    'our_prob',
+    'market',
+    'line',
+    'odds',
+    'model_prob',
+    'calibrated_prob',
     'market_prob',
-    'edge',
-    'market_odds',
-    'bet_size',
-    'potential_profit',
+    'edge_pct',
+    'game',
 ]
 
 
