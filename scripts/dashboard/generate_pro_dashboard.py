@@ -2766,212 +2766,288 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
     '''
 
 
-def generate_game_lines_table_row(row: pd.Series, away_team: str, home_team: str) -> str:
-    """Generate a BettingPros-style game lines table row.
+def generate_game_lines_card(game_data: dict, away_team: str, home_team: str, game_time: str) -> str:
+    """Generate a BettingPros-style game card with two team rows.
 
     Args:
-        row: DataFrame row with bet data
+        game_data: Dict with spread_row and total_row data
         away_team: Away team name
         home_team: Home team name
+        game_time: Formatted game time string
 
     Returns:
-        HTML string for the table row
+        HTML string for the game card
     """
-    import hashlib
-    from datetime import datetime as dt
+    # NFL team abbreviations
+    TEAM_ABBREVS = {
+        'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL',
+        'Buffalo Bills': 'BUF', 'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI',
+        'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE', 'Dallas Cowboys': 'DAL',
+        'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',
+        'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX',
+        'Kansas City Chiefs': 'KC', 'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC',
+        'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA', 'Minnesota Vikings': 'MIN',
+        'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',
+        'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT',
+        'San Francisco 49ers': 'SF', 'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB',
+        'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS'
+    }
 
-    game = row.get('game', '')
+    def get_abbrev(team):
+        return TEAM_ABBREVS.get(team, team[:3].upper())
 
-    # Parse game time from commence_time
-    commence_time = row.get('commence_time', '')
-    game_time_display = ''
-    if commence_time:
-        try:
-            if isinstance(commence_time, str):
-                # Parse ISO format
-                ct = pd.to_datetime(commence_time)
-            else:
-                ct = commence_time
-            # Format as "Sun 1:00 PM"
-            game_time_display = ct.strftime('%a %I:%M %p').replace(' 0', ' ')
-        except:
-            game_time_display = ''
-    bet_type_raw = str(row.get('bet_type', '')).lower()
-    pick = str(row.get('pick', '')).upper()
-    line = row.get('market_line', row.get('line', 0))
-    model_prob = row.get('model_prob', 0.5)
-    edge = row.get('edge_pct', 0)
-    confidence_tier = row.get('confidence_tier', 'STANDARD')
+    away_abbrev = get_abbrev(away_team)
+    home_abbrev = get_abbrev(home_team)
 
-    # Determine bet type and format pick display
-    if 'spread' in bet_type_raw:
-        bet_type = 'Spread'
-        # Pick is the team name for spread
-        if pick == home_team.upper() or pick == home_team:
-            pick_display = f"{home_team} {line:+.1f}"
-            pick_team = home_team
-        else:
-            pick_display = f"{away_team} {line:+.1f}"
-            pick_team = away_team
-        bet_type_class = 'spread'
-    elif 'total' in bet_type_raw:
-        bet_type = 'Total'
-        if 'over' in pick.lower():
-            pick_display = f"Over {line}"
-            pick_class_dir = 'over'
-        else:
-            pick_display = f"Under {line}"
-            pick_class_dir = 'under'
-        pick_team = ''
-        bet_type_class = 'total'
-    else:
-        bet_type = bet_type_raw.title() if bet_type_raw else 'Other'
-        pick_display = f"{pick} {line}"
-        pick_team = ''
-        bet_type_class = 'other'
+    spread_row = game_data.get('spread')
+    total_row = game_data.get('total')
 
-    # Calculate values
-    conf_pct = model_prob * 100 if model_prob <= 1 else model_prob
-    edge_val = edge if not pd.isna(edge) else 0
+    # Get spread data
+    spread_html = ''
+    if spread_row is not None:
+        spread_line = spread_row.get('market_line', spread_row.get('line', 0))
+        spread_pick = str(spread_row.get('pick', '')).upper()
+        spread_prob = spread_row.get('model_prob', 0.5)
+        spread_edge = spread_row.get('edge_pct', 0)
+        spread_tier = spread_row.get('confidence_tier', 'STANDARD')
 
-    # Generate star rating (1-5 stars based on confidence)
-    star_count = round(conf_pct / 20)
-    stars_html = ''.join('<span class="star filled">★</span>' for _ in range(star_count))
-    stars_html += ''.join('<span class="star">★</span>' for _ in range(5 - star_count))
+        spread_conf = spread_prob * 100 if spread_prob <= 1 else spread_prob
+        spread_edge_val = spread_edge if not pd.isna(spread_edge) else 0
 
-    # EV class
-    ev_class = 'positive' if edge_val >= 0 else 'negative'
+        # Determine which team is picked
+        away_spread_class = 'picked' if spread_pick in away_team.upper() or away_abbrev in spread_pick else ''
+        home_spread_class = 'picked' if spread_pick in home_team.upper() or home_abbrev in spread_pick else ''
 
-    # Tier class for badge
-    tier_class = confidence_tier.lower() if confidence_tier else 'standard'
+        # Star rating
+        spread_stars = round(spread_conf / 20)
+        spread_stars_html = ''.join('<span class="star filled">★</span>' for _ in range(spread_stars))
+        spread_stars_html += ''.join('<span class="star">★</span>' for _ in range(5 - spread_stars))
 
-    # Create bet ID
-    bet_id = hashlib.md5(f"{game}_{bet_type_raw}_{line}_{pick}".encode()).hexdigest()[:12]
+        spread_html = f'''
+        <div class="bp-game-row" data-bet-type="spread" data-tier="{spread_tier.lower()}">
+            <div class="bp-bet-label">SPREAD</div>
+            <div class="bp-team-row away {away_spread_class}">
+                <span class="bp-team-abbrev">{away_abbrev}</span>
+                <span class="bp-spread-line">{spread_line:+.1f}</span>
+                <span class="bp-odds">(-110)</span>
+            </div>
+            <div class="bp-team-row home {home_spread_class}">
+                <span class="bp-team-abbrev">{home_abbrev}</span>
+                <span class="bp-spread-line">{-spread_line:+.1f}</span>
+                <span class="bp-odds">(-110)</span>
+            </div>
+            <div class="bp-model-pick">
+                <span class="bp-pick-chip spread">{spread_pick} {spread_line:+.1f}</span>
+            </div>
+            <div class="bp-cover-prob">
+                <span class="bp-prob-value">{spread_conf:.0f}%</span>
+                <div class="bp-prob-bar"><div class="bp-prob-fill" style="width: {spread_conf}%"></div></div>
+            </div>
+            <div class="bp-edge ev-{'positive' if spread_edge_val >= 0 else 'negative'}">{spread_edge_val:+.1f}%</div>
+            <div class="bp-rating">{spread_stars_html}</div>
+        </div>
+        '''
 
-    # Get team initials for avatars
-    away_initials = ''.join(word[0] for word in away_team.split()[:2]) if away_team else '??'
-    home_initials = ''.join(word[0] for word in home_team.split()[:2]) if home_team else '??'
+    # Get total data
+    total_html = ''
+    if total_row is not None:
+        total_line = total_row.get('market_line', total_row.get('line', 0))
+        total_pick = str(total_row.get('pick', '')).upper()
+        total_prob = total_row.get('model_prob', 0.5)
+        total_edge = total_row.get('edge_pct', 0)
+        total_tier = total_row.get('confidence_tier', 'STANDARD')
 
-    # Determine pick class for badge styling
-    if bet_type == 'Total':
-        badge_class = pick_class_dir
-    else:
-        badge_class = 'spread'
+        total_conf = total_prob * 100 if total_prob <= 1 else total_prob
+        total_edge_val = total_edge if not pd.isna(total_edge) else 0
+
+        is_over = 'OVER' in total_pick
+        over_class = 'picked' if is_over else ''
+        under_class = 'picked' if not is_over else ''
+
+        # Star rating
+        total_stars = round(total_conf / 20)
+        total_stars_html = ''.join('<span class="star filled">★</span>' for _ in range(total_stars))
+        total_stars_html += ''.join('<span class="star">★</span>' for _ in range(5 - total_stars))
+
+        total_html = f'''
+        <div class="bp-game-row" data-bet-type="total" data-tier="{total_tier.lower()}">
+            <div class="bp-bet-label">TOTAL</div>
+            <div class="bp-team-row {over_class}">
+                <span class="bp-total-label">Over</span>
+                <span class="bp-total-line">{total_line}</span>
+                <span class="bp-odds">(-110)</span>
+            </div>
+            <div class="bp-team-row {under_class}">
+                <span class="bp-total-label">Under</span>
+                <span class="bp-total-line">{total_line}</span>
+                <span class="bp-odds">(-110)</span>
+            </div>
+            <div class="bp-model-pick">
+                <span class="bp-pick-chip {'over' if is_over else 'under'}">{'O' if is_over else 'U'} {total_line}</span>
+            </div>
+            <div class="bp-cover-prob">
+                <span class="bp-prob-value">{total_conf:.0f}%</span>
+                <div class="bp-prob-bar"><div class="bp-prob-fill" style="width: {total_conf}%"></div></div>
+            </div>
+            <div class="bp-edge ev-{'positive' if total_edge_val >= 0 else 'negative'}">{total_edge_val:+.1f}%</div>
+            <div class="bp-rating">{total_stars_html}</div>
+        </div>
+        '''
+
+    # Determine card tier based on best bet
+    card_tier = ''
+    if spread_row is not None and spread_row.get('confidence_tier', '') == 'ELITE':
+        card_tier = 'elite'
+    elif total_row is not None and total_row.get('confidence_tier', '') == 'ELITE':
+        card_tier = 'elite'
+    elif spread_row is not None and spread_row.get('confidence_tier', '') == 'HIGH':
+        card_tier = 'high'
+    elif total_row is not None and total_row.get('confidence_tier', '') == 'HIGH':
+        card_tier = 'high'
 
     return f'''
-    <tr data-bet-type="{bet_type_class}" data-tier="{tier_class}" data-bet-id="{bet_id}">
-        <td>
-            <div class="gl-game-cell">
-                <div class="gl-team-avatars">
-                    <span class="gl-team-avatar away">{away_initials}</span>
-                    <span class="gl-vs">@</span>
-                    <span class="gl-team-avatar home">{home_initials}</span>
+    <div class="bp-game-card {card_tier}" data-game="{away_team} @ {home_team}">
+        <div class="bp-game-header">
+            <div class="bp-teams">
+                <div class="bp-team away">
+                    <div class="bp-team-logo">{away_abbrev}</div>
+                    <span class="bp-team-name">{away_team}</span>
                 </div>
-                <div class="gl-game-info">
-                    <span class="gl-game-name">{away_team} @ {home_team}</span>
+                <span class="bp-at">@</span>
+                <div class="bp-team home">
+                    <div class="bp-team-logo">{home_abbrev}</div>
+                    <span class="bp-team-name">{home_team}</span>
                 </div>
             </div>
-        </td>
-        <td class="gl-time-cell">{game_time_display if game_time_display else '—'}</td>
-        <td>
-            <span class="gl-bet-type {bet_type_class}">{bet_type}</span>
-        </td>
-        <td>
-            <span class="pick-badge {badge_class}">{pick_display}</span>
-        </td>
-        <td>
-            <div class="rating-stars">{stars_html}</div>
-        </td>
-        <td class="mono">{conf_pct:.1f}%</td>
-        <td class="ev-{ev_class}">{edge_val:+.1f}%</td>
-        <td>
-            <span class="gl-tier-badge {tier_class}">{confidence_tier}</span>
-        </td>
-    </tr>
+            <div class="bp-game-meta">
+                <span class="bp-game-time">{game_time}</span>
+                <a class="bp-view-matchup" href="#">View Matchup</a>
+            </div>
+        </div>
+        <div class="bp-game-bets">
+            <div class="bp-column-headers">
+                <div class="bp-col-label"></div>
+                <div class="bp-col-label">LINE</div>
+                <div class="bp-col-label"></div>
+                <div class="bp-col-label">MODEL PICK</div>
+                <div class="bp-col-label">COVER PROB.</div>
+                <div class="bp-col-label">EDGE</div>
+                <div class="bp-col-label">RATING</div>
+            </div>
+            {spread_html}
+            {total_html}
+        </div>
+    </div>
     '''
 
 
 def generate_game_lines_table_section(game_lines_df: pd.DataFrame, week: int) -> str:
-    """Generate the complete BettingPros-style Game Lines table section.
+    """Generate the complete BettingPros-style Game Lines section with game cards.
 
     Args:
         game_lines_df: DataFrame with all game line recommendations
         week: Current week number
 
     Returns:
-        HTML string for the game lines table section
+        HTML string for the game lines section
     """
     if game_lines_df is None or len(game_lines_df) == 0:
         return '''
         <div class="view-section" id="game-lines">
             <div class="table-section">
                 <div class="table-section-header">
-                    <h2>Game Lines</h2>
+                    <h2>NFL Betting Picks: Projected Lines</h2>
                     <p class="subtitle">No game line recommendations available</p>
                 </div>
             </div>
         </div>
         '''
 
-    # Generate all table rows
-    table_rows = ""
+    # Group bets by game
+    games_data = {}
     for _, row in game_lines_df.iterrows():
         game = row.get('game', '')
-        teams = game.split(' @ ')
-        away_team = teams[0].strip() if len(teams) > 1 else ''
-        home_team = teams[1].strip() if len(teams) > 1 else ''
-        table_rows += generate_game_lines_table_row(row, away_team, home_team)
+        if not game:
+            continue
 
-    # Count by tier
+        teams = game.split(' @ ')
+        if len(teams) != 2:
+            continue
+
+        away_team = teams[0].strip()
+        home_team = teams[1].strip()
+
+        if game not in games_data:
+            # Get game time
+            commence_time = row.get('commence_time', '')
+            game_time = ''
+            if commence_time:
+                try:
+                    ct = pd.to_datetime(commence_time)
+                    game_time = ct.strftime('%a %m/%d %I:%M %p').replace(' 0', ' ')
+                except:
+                    pass
+            games_data[game] = {
+                'away_team': away_team,
+                'home_team': home_team,
+                'game_time': game_time,
+                'spread': None,
+                'total': None
+            }
+
+        bet_type = str(row.get('bet_type', '')).lower()
+        if 'spread' in bet_type:
+            games_data[game]['spread'] = row.to_dict()
+        elif 'total' in bet_type:
+            games_data[game]['total'] = row.to_dict()
+
+    # Generate game cards
+    game_cards_html = ""
+    for game, data in games_data.items():
+        game_cards_html += generate_game_lines_card(
+            data,
+            data['away_team'],
+            data['home_team'],
+            data['game_time']
+        )
+
+    # Count statistics
     tier_counts = game_lines_df['confidence_tier'].value_counts().to_dict() if 'confidence_tier' in game_lines_df.columns else {}
     elite_count = tier_counts.get('ELITE', 0)
     high_count = tier_counts.get('HIGH', 0)
-    standard_count = tier_counts.get('STANDARD', 0)
 
-    # Count by bet type
     spread_count = len(game_lines_df[game_lines_df['bet_type'].str.contains('spread', case=False, na=False)]) if 'bet_type' in game_lines_df.columns else 0
     total_count = len(game_lines_df[game_lines_df['bet_type'].str.contains('total', case=False, na=False)]) if 'bet_type' in game_lines_df.columns else 0
 
     total_bets = len(game_lines_df)
+    num_games = len(games_data)
 
     return f'''
-        <!-- GAME LINES VIEW - BettingPros-style dense table -->
+        <!-- GAME LINES VIEW - BettingPros-style game cards -->
         <div class="view-section" id="game-lines">
             <div class="table-section">
                 <div class="table-section-header">
-                    <h2>Game Lines</h2>
-                    <p class="subtitle">Week {week} Spread & Total Recommendations · {total_bets} picks</p>
+                    <h2>NFL Betting Picks: Projected Lines</h2>
+                    <p class="subtitle">Week {week} · Our model creates expert lines for every NFL game to identify potential value</p>
                 </div>
 
-                <!-- Bet Type Filter Pills -->
+                <!-- Filter Pills -->
                 <div class="filter-bar" id="game-lines-filters">
-                    <button class="filter-pill active" data-filter="all" onclick="filterGameLines('all', this)">All<span class="filter-count">{total_bets}</span></button>
-                    <button class="filter-pill" data-filter="spread" onclick="filterGameLines('spread', this)">Spread<span class="filter-count">{spread_count}</span></button>
-                    <button class="filter-pill" data-filter="total" onclick="filterGameLines('total', this)">Totals<span class="filter-count">{total_count}</span></button>
+                    <button class="filter-pill active" data-filter="all" onclick="filterBPGameLines('all', this)">All<span class="filter-count">{total_bets}</span></button>
+                    <button class="filter-pill" data-filter="spread" onclick="filterBPGameLines('spread', this)">Spread<span class="filter-count">{spread_count}</span></button>
+                    <button class="filter-pill" data-filter="total" onclick="filterBPGameLines('total', this)">Totals<span class="filter-count">{total_count}</span></button>
                     <span style="margin-left: auto; color: var(--text-muted); font-size: 12px;">|</span>
-                    <button class="filter-pill" data-filter="ELITE" onclick="filterGameLinesTier('ELITE', this)">Elite<span class="filter-count">{elite_count}</span></button>
-                    <button class="filter-pill" data-filter="HIGH" onclick="filterGameLinesTier('HIGH', this)">High<span class="filter-count">{high_count}</span></button>
+                    <button class="filter-pill" data-filter="elite" onclick="filterBPGameLinesTier('elite', this)">Elite<span class="filter-count">{elite_count}</span></button>
+                    <button class="filter-pill" data-filter="high" onclick="filterBPGameLinesTier('high', this)">High<span class="filter-count">{high_count}</span></button>
                 </div>
 
-                <!-- Data Table -->
-                <div class="table-container">
-                    <table class="data-table" id="game-lines-table">
-                        <thead>
-                            <tr>
-                                <th data-sort="game" onclick="sortGameLines('game', this)">Game</th>
-                                <th data-sort="time" onclick="sortGameLines('time', this)">Time</th>
-                                <th data-sort="type" onclick="sortGameLines('type', this)">Type</th>
-                                <th data-sort="pick" class="no-sort">Pick</th>
-                                <th data-sort="rating" onclick="sortGameLines('confidence', this)">Rating</th>
-                                <th data-sort="confidence" class="sorted-desc" onclick="sortGameLines('confidence', this)">Conf %</th>
-                                <th data-sort="edge" onclick="sortGameLines('edge', this)">Edge</th>
-                                <th data-sort="tier" onclick="sortGameLines('tier', this)">Tier</th>
-                            </tr>
-                        </thead>
-                        <tbody id="game-lines-tbody">
-                            {table_rows}
-                        </tbody>
-                    </table>
+                <!-- BettingPros-style Game Cards -->
+                <div class="bp-games-container" id="bp-games-container">
+                    {game_cards_html}
+                </div>
+
+                <div class="bp-games-footer">
+                    <span class="bp-games-count">{num_games} Games · {total_bets} Picks</span>
                 </div>
             </div>
         </div>
@@ -11339,6 +11415,327 @@ def generate_css() -> str:
             }
         }
 
+        /* ========================================
+           BettingPros-Style Game Cards
+           ======================================== */
+
+        .bp-games-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px 0;
+        }
+
+        .bp-game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .bp-game-card:hover {
+            border-color: var(--border-muted);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .bp-game-card.elite {
+            border-color: rgba(245, 158, 11, 0.4);
+            box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.2);
+        }
+
+        .bp-game-card.high {
+            border-color: rgba(34, 197, 94, 0.3);
+            box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.15);
+        }
+
+        /* Game Header */
+        .bp-game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--surface-raised);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .bp-teams {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .bp-team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bp-team-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--surface-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: var(--text-primary);
+            border: 1px solid var(--border-muted);
+        }
+
+        .bp-team-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .bp-at {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .bp-game-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .bp-game-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .bp-view-matchup {
+            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .bp-view-matchup:hover {
+            text-decoration: underline;
+        }
+
+        /* Game Bets Container */
+        .bp-game-bets {
+            padding: 0;
+        }
+
+        .bp-column-headers {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr 140px 120px 80px 100px;
+            padding: 10px 20px;
+            background: var(--surface-raised);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .bp-col-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Game Row (Spread or Total) */
+        .bp-game-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr 140px 120px 80px 100px;
+            padding: 12px 20px;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .bp-game-row:last-child {
+            border-bottom: none;
+        }
+
+        .bp-game-row[data-tier="elite"] {
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        .bp-game-row[data-tier="high"] {
+            background: rgba(34, 197, 94, 0.06);
+        }
+
+        .bp-bet-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Team Row inside game row */
+        .bp-team-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .bp-team-row.picked {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .bp-team-abbrev {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-primary);
+            min-width: 36px;
+        }
+
+        .bp-spread-line, .bp-total-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .bp-total-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-width: 40px;
+        }
+
+        .bp-odds {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Model Pick Chip */
+        .bp-model-pick {
+            display: flex;
+            justify-content: center;
+        }
+
+        .bp-pick-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .bp-pick-chip.spread {
+            background: rgba(139, 92, 246, 0.2);
+            color: #A78BFA;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+
+        .bp-pick-chip.over {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+
+        .bp-pick-chip.under {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        /* Cover Probability */
+        .bp-cover-prob {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .bp-prob-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .bp-prob-bar {
+            width: 80px;
+            height: 4px;
+            background: var(--surface-elevated);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .bp-prob-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Edge */
+        .bp-edge {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Rating */
+        .bp-rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        /* Games Footer */
+        .bp-games-footer {
+            padding: 16px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .bp-column-headers,
+            .bp-game-row {
+                grid-template-columns: 60px 1fr 1fr 120px 100px 70px 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bp-game-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .bp-column-headers {
+                display: none;
+            }
+
+            .bp-game-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .bp-bet-label {
+                width: 100%;
+            }
+
+            .bp-team-row {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .bp-model-pick,
+            .bp-cover-prob,
+            .bp-edge,
+            .bp-rating {
+                flex: 1;
+            }
+        }
+
         /* Print styles */
         @media print {
             body::before {
@@ -13431,6 +13828,75 @@ def generate_javascript() -> str:
 
             // Re-append sorted rows
             rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // ============================================
+        // BETTINGPROS-STYLE GAME LINES - Filter Functions
+        // ============================================
+
+        let bpCurrentTypeFilter = 'all';
+        let bpCurrentTierFilter = 'all';
+
+        function filterBPGameLines(typeFilter, btn) {
+            bpCurrentTypeFilter = typeFilter;
+
+            // Update active pill state
+            const filterBar = document.getElementById('game-lines-filters');
+            filterBar.querySelectorAll('.filter-pill[data-filter="all"], .filter-pill[data-filter="spread"], .filter-pill[data-filter="total"]').forEach(p => {
+                p.classList.remove('active');
+            });
+            if (btn) btn.classList.add('active');
+
+            applyBPGameLinesFilters();
+        }
+
+        function filterBPGameLinesTier(tier, btn) {
+            // Toggle tier filter
+            if (bpCurrentTierFilter === tier) {
+                bpCurrentTierFilter = 'all';
+                btn.classList.remove('active');
+            } else {
+                bpCurrentTierFilter = tier;
+                // Deactivate other tier pills
+                document.querySelectorAll('#game-lines-filters .filter-pill[data-filter="elite"], #game-lines-filters .filter-pill[data-filter="high"]').forEach(p => {
+                    p.classList.remove('active');
+                });
+                btn.classList.add('active');
+            }
+
+            applyBPGameLinesFilters();
+        }
+
+        function applyBPGameLinesFilters() {
+            const cards = document.querySelectorAll('.bp-game-card');
+
+            cards.forEach(card => {
+                const rows = card.querySelectorAll('.bp-game-row');
+                let cardHasVisibleRow = false;
+
+                rows.forEach(row => {
+                    const betType = row.dataset.betType || '';
+                    const tier = (row.dataset.tier || '').toLowerCase();
+
+                    let show = true;
+
+                    // Type filter
+                    if (bpCurrentTypeFilter !== 'all' && betType !== bpCurrentTypeFilter) {
+                        show = false;
+                    }
+
+                    // Tier filter
+                    if (bpCurrentTierFilter !== 'all' && tier !== bpCurrentTierFilter) {
+                        show = false;
+                    }
+
+                    row.style.display = show ? '' : 'none';
+                    if (show) cardHasVisibleRow = true;
+                });
+
+                // Hide card if no rows are visible
+                card.style.display = cardHasVisibleRow ? '' : 'none';
+            });
         }
     '''
 
