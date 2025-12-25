@@ -2481,8 +2481,8 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
     stars_html = ''.join(f'<span class="star filled">★</span>' for _ in range(star_count))
     stars_html += ''.join(f'<span class="star">★</span>' for _ in range(5 - star_count))
 
-    # Diff class
-    diff_class = 'under' if diff < 0 else 'over'
+    # Diff class - use standard red/green (negative = red, positive = green)
+    diff_class = 'negative' if diff < 0 else 'positive'
 
     # EV class
     ev_class = 'positive' if edge_val >= 0 else 'negative'
@@ -2562,10 +2562,13 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
     # Tier-based row class for visual hierarchy
     tier = str(row.get('effective_tier', row.get('quality_tier', ''))).upper()
     tier_class = ''
+    tier_badge_html = ''
     if tier == 'ELITE':
         tier_class = 'tier-elite'
+        tier_badge_html = '<span class="tier-badge elite">ELITE</span>'
     elif tier == 'STRONG':
         tier_class = 'tier-strong'
+        tier_badge_html = '<span class="tier-badge strong">STRONG</span>'
 
     # Escape game for data attribute
     game_escaped = game.replace('"', '&quot;') if game else ''
@@ -2576,7 +2579,7 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
             <div class="player-cell">
                 <div class="player-avatar">{initials}</div>
                 <div class="player-info">
-                    <span class="player-name">{player}</span>
+                    <span class="player-name">{player}{tier_badge_html}</span>
                     <span class="player-meta">{position} · {game_short}</span>
                 </div>
             </div>
@@ -10820,18 +10823,50 @@ def generate_css() -> str:
 
         /* Tier-based row highlighting - Visual hierarchy */
         .data-table tr.tier-elite {
-            background: rgba(245, 158, 11, 0.08);
-            border-left: 3px solid #F59E0B;
+            background: rgba(245, 158, 11, 0.15) !important;
+            box-shadow: inset 4px 0 0 #F59E0B;
         }
         .data-table tr.tier-elite:hover {
-            background: rgba(245, 158, 11, 0.15);
+            background: rgba(245, 158, 11, 0.25) !important;
+        }
+        .data-table tr.tier-elite .player-avatar {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #fff;
+            font-weight: 800;
         }
         .data-table tr.tier-strong {
-            background: rgba(34, 197, 94, 0.06);
-            border-left: 3px solid #22C55E;
+            background: rgba(34, 197, 94, 0.12) !important;
+            box-shadow: inset 4px 0 0 #22C55E;
         }
         .data-table tr.tier-strong:hover {
-            background: rgba(34, 197, 94, 0.12);
+            background: rgba(34, 197, 94, 0.20) !important;
+        }
+        .data-table tr.tier-strong .player-avatar {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: #fff;
+            font-weight: 800;
+        }
+
+        /* Tier badge in player cell */
+        .tier-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .tier-badge.elite {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .tier-badge.strong {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.4);
         }
 
         /* Player cell component */
@@ -10927,8 +10962,8 @@ def generate_css() -> str:
             font-weight: 600;
         }
 
-        .diff-cell.under { color: var(--under); }
-        .diff-cell.over { color: var(--over); }
+        .diff-cell.negative { color: var(--negative); }
+        .diff-cell.positive { color: var(--positive); }
 
         .mono {
             font-family: 'JetBrains Mono', monospace;
