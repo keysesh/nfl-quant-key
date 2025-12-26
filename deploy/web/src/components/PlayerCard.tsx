@@ -10,6 +10,22 @@ function getTeamLogoUrl(team: string): string {
   return `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr}.png`;
 }
 
+// Generate star rating
+function StarRating({ stars, maxStars = 5 }: { stars: number; maxStars?: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: maxStars }).map((_, i) => (
+        <span
+          key={i}
+          className={`text-xs ${i < stars ? 'text-yellow-400' : 'text-zinc-700'}`}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
 interface PlayerCardProps {
   pick: Pick;
   isSelected?: boolean;
@@ -20,6 +36,7 @@ interface PlayerCardProps {
 export default function PlayerCard({ pick, isSelected = false, onSelect, onAnalyze }: PlayerCardProps) {
   const [logoError, setLogoError] = useState(false);
   const isOver = pick.pick === 'OVER';
+  const edgeSign = pick.edge >= 0 ? '+' : '';
 
   // Confidence-based border color
   const confidenceBorder = pick.confidence >= 0.7
@@ -47,6 +64,45 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
     },
   }[pick.tier] || { badge: 'bg-zinc-700/50 text-zinc-300', text: 'text-zinc-400' };
 
+  // Shared avatar component
+  const Avatar = ({ size = 'normal' }: { size?: 'normal' | 'small' }) => {
+    const dims = size === 'small' ? 'w-10 h-10' : 'w-12 h-12';
+    const logoDims = size === 'small' ? 'w-4 h-4' : 'w-5 h-5';
+
+    return (
+      <div className="relative flex-shrink-0">
+        <div className={`${dims} rounded-full bg-zinc-800 overflow-hidden ring-2 ring-zinc-700/50`}>
+          {pick.headshot_url ? (
+            <Image
+              src={pick.headshot_url}
+              alt={pick.player}
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-zinc-500 font-semibold text-sm bg-gradient-to-br from-zinc-700 to-zinc-800">
+              {pick.player.split(' ').map(n => n[0]).join('')}
+            </div>
+          )}
+        </div>
+        <div className={`absolute -bottom-0.5 -right-0.5 ${logoDims} rounded-full bg-zinc-900 ring-1 ring-zinc-700 overflow-hidden shadow-sm`}>
+          {logoError ? (
+            <span className="w-full h-full flex items-center justify-center text-[6px] font-bold text-zinc-600 bg-zinc-200">{pick.team}</span>
+          ) : (
+            <img
+              src={getTeamLogoUrl(pick.team)}
+              alt={pick.team}
+              className="w-full h-full object-contain"
+              onError={() => setLogoError(true)}
+            />
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className={`relative bg-zinc-900/80 rounded-xl border transition-all cursor-pointer hover:bg-zinc-900 ${
@@ -65,40 +121,109 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
         </div>
       )}
 
-      <div className="p-4">
-        {/* Top section */}
-        <div className="flex items-start gap-3">
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <div className="w-12 h-12 rounded-full bg-zinc-800 overflow-hidden ring-2 ring-zinc-700/50">
-              {pick.headshot_url ? (
-                <Image
-                  src={pick.headshot_url}
-                  alt={pick.player}
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-cover"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-500 font-semibold text-sm bg-gradient-to-br from-zinc-700 to-zinc-800">
-                  {pick.player.split(' ').map(n => n[0]).join('')}
-                </div>
-              )}
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-zinc-900 ring-1 ring-zinc-700 overflow-hidden shadow-sm">
-              {logoError ? (
-                <span className="w-full h-full flex items-center justify-center text-[8px] font-bold text-zinc-600 bg-zinc-200">{pick.team}</span>
-              ) : (
-                <img
-                  src={getTeamLogoUrl(pick.team)}
-                  alt={pick.team}
-                  className="w-full h-full object-contain"
-                  onError={() => setLogoError(true)}
-                />
-              )}
+      {/* ========== MOBILE LAYOUT ========== */}
+      <div className="md:hidden p-3">
+        {/* Row 1: Avatar + Player info + Chart button */}
+        <div className="flex items-center gap-2.5">
+          <Avatar size="small" />
+
+          <div className="flex-1 min-w-0">
+            {/* Player vs Opponent */}
+            <h3 className="font-semibold text-white text-sm truncate">
+              {pick.player} <span className="text-zinc-500 font-normal">vs {pick.opponent}</span>
+            </h3>
+            {/* Line + Market */}
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className={`text-xs font-semibold ${isOver ? 'text-emerald-400' : 'text-blue-400'}`}>
+                {isOver ? 'o' : 'u'}{pick.line}
+              </span>
+              <span className="text-xs text-zinc-500">{pick.market_display}</span>
             </div>
           </div>
+
+          {/* Chart/Analyze button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onAnalyze?.(pick); }}
+            className="flex-shrink-0 w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Row 2: Projection + Edge + Stars */}
+        <div className="flex items-center justify-between mt-2.5 px-1">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-400 text-xs">Proj.</span>
+            <span className={`text-sm font-bold ${isOver ? 'text-emerald-400' : 'text-blue-400'}`}>
+              {pick.projection.toFixed(1)}
+            </span>
+            <span className={`text-xs font-medium ${pick.edge >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              ({edgeSign}{pick.edge.toFixed(1)})
+            </span>
+          </div>
+          <StarRating stars={pick.stars} />
+        </div>
+
+        {/* Row 3: Stats pills */}
+        <div className="flex items-center gap-1.5 mt-2.5">
+          {/* OPP Rank - defense vs position */}
+          {pick.opp_def_rank && (
+            <span className={`text-[10px] font-semibold px-2 py-1 rounded ${
+              pick.opp_def_rank <= 8 ? 'bg-emerald-500/20 text-emerald-400' :
+              pick.opp_def_rank >= 25 ? 'bg-red-500/20 text-red-400' :
+              'bg-zinc-800 text-zinc-300'
+            }`}>
+              {pick.opp_def_rank}{pick.opp_def_rank === 1 ? 'st' : pick.opp_def_rank === 2 ? 'nd' : pick.opp_def_rank === 3 ? 'rd' : 'th'} OPP
+            </span>
+          )}
+
+          {/* L5 Rate */}
+          {pick.l5_rate !== undefined && (
+            <span className={`text-[10px] font-semibold px-2 py-1 rounded ${
+              pick.l5_rate >= 60 ? 'bg-emerald-500/20 text-emerald-400' :
+              pick.l5_rate >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
+              'bg-red-500/20 text-red-400'
+            }`}>
+              {pick.l5_rate}% L-5
+            </span>
+          )}
+
+          {/* Depth position */}
+          {pick.depth_position && (
+            <span className="text-[10px] font-semibold px-2 py-1 rounded bg-zinc-800 text-zinc-400">
+              {pick.depth_position}
+            </span>
+          )}
+
+          {/* Add to slip button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onSelect?.(pick); }}
+            className={`ml-auto flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+              isSelected
+                ? 'bg-emerald-500 text-black'
+                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+            }`}
+          >
+            {isSelected ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* ========== DESKTOP LAYOUT ========== */}
+      <div className="hidden md:block p-4">
+        {/* Top section */}
+        <div className="flex items-start gap-3">
+          <Avatar />
 
           {/* Info */}
           <div className="flex-1 min-w-0">
@@ -109,7 +234,7 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
               </span>
             </div>
             <p className="text-xs text-zinc-500 mt-0.5">
-              {pick.position} • {pick.team} vs {pick.opponent}
+              {pick.position}{pick.depth_position ? ` (${pick.depth_position})` : ''} • {pick.team} vs {pick.opponent}
             </p>
           </div>
 
@@ -189,13 +314,13 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
               {pick.l5_rate}% L5
             </span>
           )}
-          {pick.opp_rank && (
+          {pick.opp_def_rank && (
             <span className={`text-xs font-medium px-2 py-1 rounded ${
-              pick.opp_rank <= 10 ? 'bg-red-500/15 text-red-400' :
-              pick.opp_rank >= 23 ? 'bg-emerald-500/15 text-emerald-400' :
+              pick.opp_def_rank <= 8 ? 'bg-emerald-500/15 text-emerald-400' :
+              pick.opp_def_rank >= 25 ? 'bg-red-500/15 text-red-400' :
               'bg-zinc-700 text-zinc-300'
             }`}>
-              #{pick.opp_rank} DEF
+              #{pick.opp_def_rank} vs {pick.position}
             </span>
           )}
           {pick.ev > 0 && (
