@@ -243,7 +243,11 @@ export default function PickModal({ pick, onClose, onAddToSlip }: PickModalProps
             {/* Info */}
             <div className="flex-1">
               <h2 className="text-xl font-bold text-white">{pick.player}</h2>
-              <p className="text-slate-400">{pick.position} · {pick.team} vs {pick.opponent}</p>
+              <p className="text-slate-400">
+                {pick.position}
+                {pick.depth_position && <span className="text-slate-500"> ({pick.depth_position})</span>}
+                {' · '}{pick.team} vs {pick.opponent}
+              </p>
               <p className="text-sm text-slate-500 mt-1">{pick.game}</p>
             </div>
 
@@ -300,6 +304,56 @@ export default function PickModal({ pick, onClose, onAddToSlip }: PickModalProps
               <StarRating stars={pick.stars} />
             </div>
           </div>
+
+          {/* Matchup Context - Defense vs Position */}
+          {(pick.opp_def_allowed || pick.depth_position) && (
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <h3 className="text-sm font-semibold text-slate-300 mb-3">Matchup Context</h3>
+              <div className="space-y-3">
+                {/* Depth Position */}
+                {pick.depth_position && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-400">Depth Chart</span>
+                    <span className="text-sm font-semibold text-white bg-slate-700 px-2 py-0.5 rounded">
+                      {pick.depth_position}
+                    </span>
+                  </div>
+                )}
+
+                {/* Defense vs Position */}
+                {pick.opp_def_allowed && pick.opp_def_rank && (
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-slate-400">{pick.opponent} vs {pick.position}s</span>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                        pick.opp_def_rank <= 8 ? 'bg-emerald-500/20 text-emerald-400' :
+                        pick.opp_def_rank >= 25 ? 'bg-red-500/20 text-red-400' :
+                        'bg-slate-700 text-slate-300'
+                      }`}>
+                        #{pick.opp_def_rank} {pick.opp_def_rank <= 8 ? '(Soft)' : pick.opp_def_rank >= 25 ? '(Tough)' : ''}
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-white">{pick.opp_def_allowed.toFixed(1)}</span>
+                      <span className="text-sm text-slate-400">
+                        {pick.market.includes('pass') ? 'pass yds' :
+                         pick.market.includes('rush') ? 'rush yds' :
+                         pick.market.includes('rec') ? 'rec yds' : 'yards'}/game allowed
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {pick.opp_def_rank <= 8
+                        ? `${pick.opponent} is a favorable matchup for ${pick.position}s`
+                        : pick.opp_def_rank >= 25
+                        ? `${pick.opponent} is a tough matchup for ${pick.position}s`
+                        : `${pick.opponent} is average against ${pick.position}s`
+                      }
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Game History Chart */}
           <div className="bg-slate-800/50 rounded-xl p-4">
