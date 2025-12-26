@@ -17295,8 +17295,8 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
                     # Single-position markets: player_pass_yds_1
                     depth_market_key = f"{defense_market_key}_{player_depth_rank}"
 
-            for week in recent_weeks:
-                week_data = defense_weekly[current_opponent].get(week, {})
+            for def_week in recent_weeks:
+                week_data = defense_weekly[current_opponent].get(def_week, {})
                 # Try depth-specific first, then fall back to general
                 if depth_market_key and depth_market_key in week_data:
                     defense_trend.append(week_data[depth_market_key])

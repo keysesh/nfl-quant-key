@@ -26,7 +26,7 @@ function StarRating({ stars, maxStars = 5 }: { stars: number; maxStars?: number 
   );
 }
 
-// Game context badges - shows vegas lines and weather factors
+// Game context badges - shows vegas lines and weather factors (inline)
 function GameContextBadges({ pick }: { pick: Pick }) {
   const badges: React.ReactNode[] = [];
   const { vegas_total, vegas_spread, roof, temp, wind, market } = pick;
@@ -37,10 +37,9 @@ function GameContextBadges({ pick }: { pick: Pick }) {
   // High scoring game indicator
   if (vegas_total && vegas_total >= 47) {
     badges.push(
-      <div key="total" className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Total</span>
-        <span className="text-xs font-bold text-emerald-400">{vegas_total}</span>
-      </div>
+      <span key="total" className="text-xs font-medium px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+        O/U {vegas_total}
+      </span>
     );
   }
 
@@ -49,52 +48,39 @@ function GameContextBadges({ pick }: { pick: Pick }) {
     const isFavored = vegas_spread < 0;
     const isBlowout = Math.abs(vegas_spread) >= 7;
     badges.push(
-      <div key="spread" className={`flex items-center gap-1.5 px-2 py-1 rounded-md border ${
+      <span key="spread" className={`text-xs font-medium px-2 py-1 rounded-md border ${
         isBlowout
           ? isFavored
-            ? 'bg-emerald-500/10 border-emerald-500/20'
-            : 'bg-orange-500/10 border-orange-500/20'
-          : 'bg-zinc-500/10 border-zinc-500/20'
+            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+            : 'bg-orange-500/10 border-orange-500/20 text-orange-400'
+          : 'bg-zinc-500/10 border-zinc-500/20 text-zinc-400'
       }`}>
-        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Line</span>
-        <span className={`text-xs font-bold ${
-          isBlowout
-            ? isFavored ? 'text-emerald-400' : 'text-orange-400'
-            : 'text-zinc-400'
-        }`}>
-          {vegas_spread > 0 ? '+' : ''}{vegas_spread.toFixed(1)}
-        </span>
-      </div>
+        {isFavored ? 'FAV' : 'DOG'} {vegas_spread > 0 ? '+' : ''}{vegas_spread.toFixed(1)}
+      </span>
     );
   }
 
   // Wind warning for passing games
   if (isOutdoor && wind && wind >= 15 && isPassingMarket) {
     badges.push(
-      <div key="wind" className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20">
-        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Wind</span>
-        <span className="text-xs font-bold text-amber-400">{wind}mph</span>
-      </div>
+      <span key="wind" className="text-xs font-medium px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400">
+        {wind}mph wind
+      </span>
     );
   }
 
   // Cold weather
   if (isOutdoor && temp !== null && temp !== undefined && temp <= 35) {
     badges.push(
-      <div key="temp" className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-sky-500/10 border border-sky-500/20">
-        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Temp</span>
-        <span className="text-xs font-bold text-sky-400">{temp}°F</span>
-      </div>
+      <span key="temp" className="text-xs font-medium px-2 py-1 rounded-md bg-sky-500/10 border border-sky-500/20 text-sky-400">
+        {temp}°F
+      </span>
     );
   }
 
   if (badges.length === 0) return null;
 
-  return (
-    <div className="flex flex-wrap gap-1.5 mt-2">
-      {badges}
-    </div>
-  );
+  return <>{badges}</>;
 }
 
 interface PlayerCardProps {
@@ -269,6 +255,9 @@ export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
                 {pick.l5_rate}% L5
               </span>
             )}
+
+            {/* Game context badges inline */}
+            <GameContextBadges pick={pick} />
           </div>
 
           {/* Right: Stars + Chart button */}
@@ -284,9 +273,6 @@ export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
             </button>
           </div>
         </div>
-
-        {/* Row 4: Game Context - Vegas lines & weather */}
-        <GameContextBadges pick={pick} />
       </div>
 
       {/* ========== DESKTOP LAYOUT ========== */}
@@ -386,13 +372,13 @@ export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
             </span>
           )}
 
+          {/* Game context badges inline */}
+          <GameContextBadges pick={pick} />
+
           <span className="text-xs text-zinc-500 ml-auto">
             {pick.hist_count} games
           </span>
         </div>
-
-        {/* Game Context - Vegas lines & weather */}
-        <GameContextBadges pick={pick} />
       </div>
     </div>
   );
