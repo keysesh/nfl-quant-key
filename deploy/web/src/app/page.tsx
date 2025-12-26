@@ -5,8 +5,9 @@ import Header from '@/components/Header';
 import PlayerCard from '@/components/PlayerCard';
 import PickModal from '@/components/PickModal';
 import BetSlip from '@/components/BetSlip';
-import BottomNav from '@/components/BottomNav';
+import BottomNav, { NavItem } from '@/components/BottomNav';
 import FilterBar from '@/components/FilterBar';
+import StatsPanel from '@/components/StatsPanel';
 import picksData from '@/data/picks.json';
 import { Pick, DashboardData } from '@/lib/types';
 
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [selectedPicks, setSelectedPicks] = useState<Pick[]>([]);
   const [modalPick, setModalPick] = useState<Pick | null>(null);
   const [betSlipOpen, setBetSlipOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<NavItem>('picks');
   const [searchQuery, setSearchQuery] = useState('');
   const [tierFilter, setTierFilter] = useState<string>('all');
   const [marketFilter, setMarketFilter] = useState<string>('all');
@@ -120,7 +122,8 @@ export default function Dashboard() {
       <div className="max-w-[1800px] mx-auto flex">
         {/* Main Content */}
         <main className="flex-1 min-w-0">
-          {/* Filter Bar */}
+          {/* Filter Bar - hidden on mobile when stats tab active */}
+          <div className={mobileTab === 'stats' ? 'hidden lg:block' : ''}>
           <FilterBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -136,9 +139,15 @@ export default function Dashboard() {
             onSortChange={setSortBy}
             totalPicks={filteredPicks.length}
           />
+          </div>
+
+          {/* Mobile Stats Panel (shown when stats tab active) */}
+          <div className={`lg:hidden ${mobileTab === 'stats' ? 'block' : 'hidden'}`}>
+            <StatsPanel stats={stats} picks={picks} />
+          </div>
 
           {/* Cards Grid - 3 cols on xl, 2 cols on lg, 1 on mobile */}
-          <div className="px-4 lg:px-6 py-4 pb-24 lg:pb-8">
+          <div className={`px-4 lg:px-6 py-4 pb-24 lg:pb-8 ${mobileTab === 'stats' ? 'hidden lg:block' : ''}`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               {filteredPicks.map((pick, index) => (
                 <div
@@ -263,6 +272,8 @@ export default function Dashboard() {
       {/* Bottom Navigation - Mobile only */}
       <div className="lg:hidden">
         <BottomNav
+          activeTab={mobileTab}
+          onTabChange={setMobileTab}
           slipCount={selectedPicks.length}
           onOpenSlip={() => setBetSlipOpen(true)}
         />
