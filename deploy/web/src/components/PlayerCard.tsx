@@ -168,14 +168,15 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
 
         {/* Row 3: Stats pills */}
         <div className="flex items-center gap-1.5 mt-2.5">
-          {/* OPP Rank - defense vs position */}
+          {/* OPP Defense - what they allow to this position */}
           {pick.opp_def_rank && (
             <span className={`text-[10px] font-semibold px-2 py-1 rounded ${
               pick.opp_def_rank <= 8 ? 'bg-emerald-500/20 text-emerald-400' :
               pick.opp_def_rank >= 25 ? 'bg-red-500/20 text-red-400' :
               'bg-zinc-800 text-zinc-300'
             }`}>
-              {pick.opp_def_rank}{pick.opp_def_rank === 1 ? 'st' : pick.opp_def_rank === 2 ? 'nd' : pick.opp_def_rank === 3 ? 'rd' : 'th'} OPP
+              {pick.opp_def_allowed ? `${pick.opp_def_allowed.toFixed(1)} ` : ''}
+              #{pick.opp_def_rank}
             </span>
           )}
 
@@ -320,7 +321,8 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
               pick.opp_def_rank >= 25 ? 'bg-red-500/15 text-red-400' :
               'bg-zinc-700 text-zinc-300'
             }`}>
-              #{pick.opp_def_rank} vs {pick.position}
+              {pick.opp_def_allowed ? `${pick.opp_def_allowed.toFixed(1)} ` : ''}
+              (#{pick.opp_def_rank} vs {pick.position})
             </span>
           )}
           {pick.ev > 0 && (
