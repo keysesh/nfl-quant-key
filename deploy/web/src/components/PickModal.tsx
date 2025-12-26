@@ -191,28 +191,29 @@ function GameHistoryChart({ pick }: { pick: Pick }) {
 }
 
 export default function PickModal({ pick, onClose }: PickModalProps) {
-  if (!pick) return null;
-
-  const isOver = pick.pick === 'OVER';
-  const edgeColor = pick.edge > 0 ? 'text-emerald-400' : 'text-red-400';
-  const edgeSign = pick.edge > 0 ? '+' : '';
-
-  // Handle escape key and lock body scroll
+  // Handle escape key and lock body scroll - must be before conditional return
   useEffect(() => {
+    if (!pick) return;
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
 
     // Lock body scroll when modal is open
-    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     window.addEventListener('keydown', handleEscape);
     return () => {
       window.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = '';
     };
-  }, [onClose]);
+  }, [pick, onClose]);
+
+  if (!pick) return null;
+
+  const isOver = pick.pick === 'OVER';
+  const edgeColor = pick.edge > 0 ? 'text-emerald-400' : 'text-red-400';
+  const edgeSign = pick.edge > 0 ? '+' : '';
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">

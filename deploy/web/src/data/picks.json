@@ -1,6 +1,6 @@
 {
   "week": 16,
-  "generated_at": "2025-12-26T17:15:23.077957",
+  "generated_at": "2025-12-26T17:52:46.474236",
   "stats": {
     "total_picks": 110,
     "avg_edge": 7.2,
@@ -302,7 +302,12 @@
           "ATL",
           "CAR"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": -6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-17",
@@ -451,7 +456,12 @@
           "HOU",
           "ATL"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": 7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-46",
@@ -600,7 +610,12 @@
           "SEA",
           "SF"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": 6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-98",
@@ -749,7 +764,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-113",
@@ -898,7 +918,12 @@
           "CLE",
           "GB"
         ]
-      }
+      },
+      "vegas_total": 52.5,
+      "vegas_spread": 3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-82",
@@ -1047,7 +1072,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-73",
@@ -1196,7 +1226,12 @@
           "SF",
           "KC"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-86",
@@ -1345,7 +1380,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-83",
@@ -1494,7 +1534,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-85",
@@ -1643,7 +1688,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-114",
@@ -1792,7 +1842,12 @@
           "CLE",
           "GB"
         ]
-      }
+      },
+      "vegas_total": 52.5,
+      "vegas_spread": 3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-119",
@@ -1941,7 +1996,12 @@
           "CLE",
           "GB"
         ]
-      }
+      },
+      "vegas_total": 52.5,
+      "vegas_spread": 3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-1",
@@ -2090,7 +2150,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-61",
@@ -2239,7 +2304,12 @@
           "PIT",
           "CIN"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": 6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-129",
@@ -2388,7 +2458,12 @@
           "DET",
           "SEA"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": -7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-56",
@@ -2537,7 +2612,12 @@
           "NYJ",
           "DEN"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": -6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-58",
@@ -2686,7 +2766,12 @@
           "NYJ",
           "DEN"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": -6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-84",
@@ -2835,7 +2920,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-99",
@@ -2984,7 +3074,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-130",
@@ -3133,7 +3228,12 @@
           "TB",
           "ARI"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": 7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-41",
@@ -3282,7 +3382,12 @@
           "MIA",
           "DET"
         ]
-      }
+      },
+      "vegas_total": 34.5,
+      "vegas_spread": -3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-101",
@@ -3431,7 +3536,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-133",
@@ -3580,7 +3690,12 @@
           "TB",
           "ARI"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": 7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-5",
@@ -3729,7 +3844,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-45",
@@ -3878,7 +3998,12 @@
           "MIA",
           "DET"
         ]
-      }
+      },
+      "vegas_total": 34.5,
+      "vegas_spread": -3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-74",
@@ -4027,7 +4152,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-94",
@@ -4176,7 +4306,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-110",
@@ -4325,7 +4460,12 @@
           "NE",
           "CLE"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": -1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-126",
@@ -4474,7 +4614,12 @@
           "DET",
           "SEA"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": -7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-3",
@@ -4623,7 +4768,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-7",
@@ -4772,7 +4922,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-14",
@@ -4921,7 +5076,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-22",
@@ -5070,7 +5230,12 @@
           "BAL",
           "MIA"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": -7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-32",
@@ -5219,7 +5384,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-40",
@@ -5368,7 +5538,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-75",
@@ -5517,7 +5692,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-81",
@@ -5666,7 +5846,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-89",
@@ -5815,7 +6000,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-95",
@@ -5964,7 +6154,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-96",
@@ -6113,7 +6308,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-103",
@@ -6262,7 +6462,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-4",
@@ -6411,7 +6616,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-10",
@@ -6560,7 +6770,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-11",
@@ -6709,7 +6924,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-16",
@@ -6858,7 +7078,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-27",
@@ -7007,7 +7232,12 @@
           "BAL",
           "MIA"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": -7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-28",
@@ -7156,7 +7386,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-38",
@@ -7305,7 +7540,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-65",
@@ -7454,7 +7694,12 @@
           "ATL",
           "CAR"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": -6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-70",
@@ -7603,7 +7848,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-77",
@@ -7752,7 +8002,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-93",
@@ -7901,7 +8156,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-97",
@@ -8050,7 +8310,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-120",
@@ -8199,7 +8464,12 @@
           "TEN",
           "IND"
         ]
-      }
+      },
+      "vegas_total": 52.5,
+      "vegas_spread": -3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-15",
@@ -8348,7 +8618,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-30",
@@ -8497,7 +8772,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-35",
@@ -8646,7 +8926,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-62",
@@ -8795,7 +9080,12 @@
           "PIT",
           "CIN"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": 6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-63",
@@ -8944,7 +9234,12 @@
           "PIT",
           "CIN"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": 6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-79",
@@ -9093,7 +9388,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-87",
@@ -9242,7 +9542,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-90",
@@ -9391,7 +9696,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-107",
@@ -9540,7 +9850,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-112",
@@ -9689,7 +10004,12 @@
           "NE",
           "CLE"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": -1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-127",
@@ -9838,7 +10158,12 @@
           "DET",
           "SEA"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": -7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-132",
@@ -9987,7 +10312,12 @@
           "DET",
           "SEA"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": -7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-24",
@@ -10136,7 +10466,12 @@
           "BAL",
           "MIA"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": -7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-33",
@@ -10285,7 +10620,12 @@
           "IND",
           "LA"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-51",
@@ -10434,7 +10774,12 @@
           "SEA",
           "SF"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": 6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-64",
@@ -10583,7 +10928,12 @@
           "ATL",
           "CAR"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": -6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-66",
@@ -10732,7 +11082,12 @@
           "ATL",
           "CAR"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": -6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-105",
@@ -10881,7 +11236,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-111",
@@ -11030,7 +11390,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-118",
@@ -11179,7 +11544,12 @@
           "TEN",
           "IND"
         ]
-      }
+      },
+      "vegas_total": 52.5,
+      "vegas_spread": -3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-0",
@@ -11328,7 +11698,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-2",
@@ -11477,7 +11852,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-6",
@@ -11626,7 +12006,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-8",
@@ -11775,7 +12160,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-13",
@@ -11924,7 +12314,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-23",
@@ -12073,7 +12468,12 @@
           "BAL",
           "MIA"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": -7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-26",
@@ -12222,7 +12622,12 @@
           "BAL",
           "MIA"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": -7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-34",
@@ -12371,7 +12776,12 @@
           "NO",
           "TB"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": 7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-39",
@@ -12520,7 +12930,12 @@
           "NO",
           "TB"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": 7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-44",
@@ -12669,7 +13084,12 @@
           "MIA",
           "DET"
         ]
-      }
+      },
+      "vegas_total": 34.5,
+      "vegas_spread": -3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-52",
@@ -12734,7 +13154,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-54",
@@ -12883,7 +13308,12 @@
           "SEA",
           "SF"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": 6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-55",
@@ -13032,7 +13462,12 @@
           "SEA",
           "SF"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": 6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-72",
@@ -13181,7 +13616,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-78",
@@ -13330,7 +13770,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-80",
@@ -13479,7 +13924,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-88",
@@ -13628,7 +14078,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-91",
@@ -13777,7 +14232,12 @@
           "PHI",
           "HOU"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-104",
@@ -13926,7 +14386,12 @@
           "NE",
           "CLE"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": -1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-121",
@@ -14075,7 +14540,12 @@
           "CLE",
           "GB"
         ]
-      }
+      },
+      "vegas_total": 52.5,
+      "vegas_spread": 3.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-9",
@@ -14224,7 +14694,12 @@
           "KC",
           "DAL"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-12",
@@ -14373,7 +14848,12 @@
           "ARI",
           "LV"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": 1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-25",
@@ -14522,7 +15002,12 @@
           "BAL",
           "MIA"
         ]
-      }
+      },
+      "vegas_total": 53.5,
+      "vegas_spread": -7.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-37",
@@ -14671,7 +15156,12 @@
           "NO",
           "TB"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": 7.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-53",
@@ -14820,7 +15310,12 @@
           "SEA",
           "SF"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": 6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-57",
@@ -14969,7 +15464,12 @@
           "SEA",
           "SF"
         ]
-      }
+      },
+      "vegas_total": 48.5,
+      "vegas_spread": 6.0,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-68",
@@ -15118,7 +15618,12 @@
           "BUF",
           "BAL"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": -13.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-76",
@@ -15267,7 +15772,12 @@
           "CAR",
           "NYJ"
         ]
-      }
+      },
+      "vegas_total": 39.5,
+      "vegas_spread": -2.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-108",
@@ -15416,7 +15926,12 @@
           "NE",
           "CLE"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": -1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-59",
@@ -15565,7 +16080,12 @@
           "PIT",
           "CIN"
         ]
-      }
+      },
+      "vegas_total": 45.5,
+      "vegas_spread": 6.0,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-67",
@@ -15714,7 +16234,12 @@
           "JAX",
           "NO"
         ]
-      }
+      },
+      "vegas_total": 42.5,
+      "vegas_spread": 13.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-92",
@@ -15863,7 +16388,12 @@
           "WAS",
           "MIN"
         ]
-      }
+      },
+      "vegas_total": 41.5,
+      "vegas_spread": -1.5,
+      "roof": "dome",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-106",
@@ -16012,7 +16542,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-109",
@@ -16161,7 +16696,12 @@
           "LV",
           "WAS"
         ]
-      }
+      },
+      "vegas_total": 43.5,
+      "vegas_spread": 1.5,
+      "roof": "outdoors",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-128",
@@ -16310,7 +16850,12 @@
           "DET",
           "SEA"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": -7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     },
     {
       "id": "pick-131",
@@ -16459,7 +17004,12 @@
           "TB",
           "ARI"
         ]
-      }
+      },
+      "vegas_total": 49.5,
+      "vegas_spread": 7.5,
+      "roof": "closed",
+      "temp": null,
+      "wind": null
     }
   ]
 }
