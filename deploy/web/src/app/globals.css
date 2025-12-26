@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #0d0d0f;
+  --bg-card: #18181b;
+  --bg-elevated: #27272a;
+  --accent: #22c55e;
+  --accent-blue: #3b82f6;
+  --gold: #eab308;
+  --cyan: #06b6d4;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --border: rgba(255, 255, 255, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Premium Cards */
+.card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* Tier Badges - Solid Premium */
+.badge-elite {
+  background: var(--gold);
+  color: #000;
+  font-weight: 700;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-strong {
+  background: var(--cyan);
+  color: #000;
+  font-weight: 700;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-moderate {
+  background: #3f3f46;
+  color: #a1a1aa;
+  font-weight: 600;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Pick Badges - Bold */
+.pick-over {
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+}
+
+.pick-under {
+  background: var(--accent-blue);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Stars */
+.star-filled { color: var(--gold); }
+.star-empty { color: #3f3f46; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+  opacity: 0;
+}
+
+/* Glass Nav */
+.glass-nav {
+  background: rgba(13, 13, 15, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Safe area */
+.pb-safe {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* Scrollbar - minimal */
+::-webkit-scrollbar { width: 0; height: 0; }

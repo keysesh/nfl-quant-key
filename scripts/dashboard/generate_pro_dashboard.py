@@ -18,6 +18,7 @@ Features:
 import pandas as pd
 import numpy as np
 import re
+import json
 from datetime import datetime
 from pathlib import Path
 import hashlib
@@ -2412,11 +2413,177 @@ def generate_featured_pick_table_row(row: pd.Series, format_prop_fn) -> str:
     </tr>'''
 
 
-def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
+def generate_featured_prop_card(row: pd.Series, format_prop_fn, headshot_lookup: dict = None) -> str:
+    """Generate a premium featured prop card (similar to Game Lines cards).
+
+    Used for top 6-8 picks in the hybrid Cheat Sheet layout.
+
+    Args:
+        row: DataFrame row with pick data
+        format_prop_fn: Function to format prop display names
+        headshot_lookup: Dict mapping player names to headshot URLs
+    """
+    import hashlib
+
+    headshot_lookup = headshot_lookup or {}
+
+    player = row.get('player', 'Unknown')
+    position = row.get('position', '?')
+    team = safe_str(row.get('team', ''), '')
+    pick = str(row.get('pick', '')).upper()
+    # Convert YES/NO to OVER/UNDER for TD props
+    if pick == 'YES':
+        pick = 'OVER'
+    elif pick == 'NO':
+        pick = 'UNDER'
+    market = safe_str(row.get('market', ''), '')
+    market_display = row.get('market_display', format_prop_fn(market))
+    line = row.get('line', 0)
+    confidence = row.get('model_prob', 0.5)
+    edge = row.get('edge_pct', 0)
+    projection = get_projection(row, market)
+    game = safe_str(row.get('game', ''), '')
+
+    # Calculate values
+    conf_pct = confidence * 100 if confidence <= 1 else confidence
+    edge_val = edge if not pd.isna(edge) else 0
+    diff = projection - float(line) if line else 0
+
+    # Generate player initials (fallback)
+    initials = ''.join(word[0] for word in player.split()[:2]) if player else '??'
+
+    # Get headshot URL
+    headshot_url = headshot_lookup.get(player, '')
+
+    # Determine tier based on confidence
+    if conf_pct >= 70:
+        tier = 'elite'
+        tier_text = 'ELITE'
+        tier_stars = '★★★★★'
+    elif conf_pct >= 60:
+        tier = 'high'
+        tier_text = 'HIGH'
+        tier_stars = '★★★★'
+    else:
+        tier = ''
+        tier_text = ''
+        tier_stars = '★★★'
+
+    # Pick styling
+    pick_lower = pick.lower()
+    pick_class = 'over' if pick_lower == 'over' else 'under'
+    pick_text = f"{'O' if pick_lower == 'over' else 'U'} {line}"
+
+    # Edge class
+    edge_class = 'positive' if edge_val >= 0 else 'negative'
+
+    # Team abbreviation mapping
+    TEAM_ABBREVS = {
+        'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL',
+        'Buffalo Bills': 'BUF', 'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI',
+        'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE', 'Dallas Cowboys': 'DAL',
+        'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',
+        'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX',
+        'Kansas City Chiefs': 'KC', 'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC',
+        'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA', 'Minnesota Vikings': 'MIN',
+        'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',
+        'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT',
+        'San Francisco 49ers': 'SF', 'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB',
+        'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS',
+        # Common abbreviations
+        'ARI': 'ARI', 'ATL': 'ATL', 'BAL': 'BAL', 'BUF': 'BUF', 'CAR': 'CAR', 'CHI': 'CHI',
+        'CIN': 'CIN', 'CLE': 'CLE', 'DAL': 'DAL', 'DEN': 'DEN', 'DET': 'DET', 'GB': 'GB',
+        'HOU': 'HOU', 'IND': 'IND', 'JAX': 'JAX', 'KC': 'KC', 'LV': 'LV', 'LAC': 'LAC',
+        'LAR': 'LAR', 'MIA': 'MIA', 'MIN': 'MIN', 'NE': 'NE', 'NO': 'NO', 'NYG': 'NYG',
+        'NYJ': 'NYJ', 'PHI': 'PHI', 'PIT': 'PIT', 'SF': 'SF', 'SEA': 'SEA', 'TB': 'TB',
+        'TEN': 'TEN', 'WAS': 'WAS'
+    }
+
+    # Get team abbreviation
+    team_abbrev = TEAM_ABBREVS.get(team, team[:3].upper() if team else 'NFL')
+
+    # Team logo URL (ESPN CDN)
+    team_logo_url = f"https://a.espncdn.com/i/teamlogos/nfl/500/{team_abbrev.lower()}.png"
+
+    # Get game abbreviation
+    game_abbrev = game
+    try:
+        parts = game.split(' @ ')
+        if len(parts) == 2:
+            away = parts[0].split()[-1][:3].upper()
+            home = parts[1].split()[-1][:3].upper()
+            game_abbrev = f"{away}@{home}"
+    except:
+        pass
+
+    # Tier badge
+    tier_badge = ''
+    if tier == 'elite':
+        tier_badge = '<span class="fp-card-tier elite">ELITE</span>'
+    elif tier == 'high':
+        tier_badge = '<span class="fp-card-tier high">HIGH</span>'
+
+    # Diff styling
+    diff_class = 'positive' if diff > 0 else 'negative' if diff < 0 else ''
+    diff_text = f"{diff:+.1f}" if diff != 0 else "0.0"
+
+    # Avatar HTML - use headshot image with initials fallback, plus team logo overlay
+    if headshot_url:
+        avatar_html = f'''<div class="fp-card-avatar-wrapper">
+                    <div class="fp-card-avatar has-image">
+                        <img src="{headshot_url}" alt="{player}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <span class="avatar-fallback">{initials}</span>
+                    </div>
+                    <div class="fp-card-team-logo">
+                        <img src="{team_logo_url}" alt="{team_abbrev}" loading="lazy">
+                    </div>
+                </div>'''
+    else:
+        avatar_html = f'''<div class="fp-card-avatar-wrapper">
+                    <div class="fp-card-avatar">{initials}</div>
+                    <div class="fp-card-team-logo">
+                        <img src="{team_logo_url}" alt="{team_abbrev}" loading="lazy">
+                    </div>
+                </div>'''
+
+    return f'''
+    <div class="fp-card {tier}">
+        <div class="fp-card-header">
+            <div class="fp-card-player">
+                {avatar_html}
+                <div class="fp-card-info">
+                    <span class="fp-card-name">{player}</span>
+                    <span class="fp-card-meta">{position} · {team_abbrev}</span>
+                </div>
+            </div>
+            {tier_badge}
+        </div>
+        <div class="fp-card-body">
+            <div class="fp-card-prop">
+                <span class="fp-card-market">{market_display}</span>
+                <span class="fp-card-game">{game_abbrev}</span>
+            </div>
+            <div class="fp-card-line">
+                <span class="fp-card-line-val">{line}</span>
+                <span class="fp-card-proj">Proj: <span class="{diff_class}">{projection:.1f}</span></span>
+            </div>
+        </div>
+        <div class="fp-card-footer">
+            <span class="fp-card-pick {pick_class}">{pick_text}</span>
+            <div class="fp-card-stats">
+                <span class="fp-card-conf">{conf_pct:.0f}%</span>
+                <span class="fp-card-edge {edge_class}">{edge_val:+.1f}%</span>
+            </div>
+        </div>
+    </div>
+    '''
+
+
+def generate_cheat_sheet_row(row: pd.Series, format_prop_fn, headshot_lookup: dict = None) -> str:
     """Generate a BettingPros-style cheat sheet table row.
 
     Features:
-    - Player avatar with initials
+    - Player avatar with headshot + team logo
     - Prop line and market type
     - Model projection
     - Projection diff (color-coded)
@@ -2428,6 +2595,8 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
     import json
     import urllib.parse
     import hashlib
+
+    headshot_lookup = headshot_lookup or {}
 
     player = row.get('player', 'Unknown')
     position = row.get('position', '?')
@@ -2475,6 +2644,34 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
 
     # Generate player initials
     initials = ''.join(word[0] for word in player.split()[:2]) if player else '??'
+
+    # Get headshot URL
+    headshot_url = headshot_lookup.get(player, '')
+
+    # Team abbreviation mapping
+    TEAM_ABBREVS = {
+        'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL',
+        'Buffalo Bills': 'BUF', 'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI',
+        'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE', 'Dallas Cowboys': 'DAL',
+        'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',
+        'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX',
+        'Kansas City Chiefs': 'KC', 'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC',
+        'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA', 'Minnesota Vikings': 'MIN',
+        'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',
+        'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT',
+        'San Francisco 49ers': 'SF', 'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB',
+        'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS',
+        'ARI': 'ARI', 'ATL': 'ATL', 'BAL': 'BAL', 'BUF': 'BUF', 'CAR': 'CAR', 'CHI': 'CHI',
+        'CIN': 'CIN', 'CLE': 'CLE', 'DAL': 'DAL', 'DEN': 'DEN', 'DET': 'DET', 'GB': 'GB',
+        'HOU': 'HOU', 'IND': 'IND', 'JAX': 'JAX', 'KC': 'KC', 'LV': 'LV', 'LAC': 'LAC',
+        'LAR': 'LAR', 'MIA': 'MIA', 'MIN': 'MIN', 'NE': 'NE', 'NO': 'NO', 'NYG': 'NYG',
+        'NYJ': 'NYJ', 'PHI': 'PHI', 'PIT': 'PIT', 'SF': 'SF', 'SEA': 'SEA', 'TB': 'TB',
+        'TEN': 'TEN', 'WAS': 'WAS'
+    }
+
+    # Get team abbreviation and logo
+    team_abbrev = TEAM_ABBREVS.get(team, team[:3].upper() if team else 'NFL')
+    team_logo_url = f"https://a.espncdn.com/i/teamlogos/nfl/500/{team_abbrev.lower()}.png"
 
     # Generate star rating (1-5 stars based on confidence)
     star_count = round(conf_pct / 20)
@@ -2573,14 +2770,28 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
     # Escape game for data attribute
     game_escaped = game.replace('"', '&quot;') if game else ''
 
+    # Build avatar HTML with headshot or initials fallback
+    if headshot_url:
+        avatar_html = f'''<div class="player-avatar has-image">
+                        <img src="{headshot_url}" alt="{player}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <span class="avatar-fallback">{initials}</span>
+                    </div>'''
+    else:
+        avatar_html = f'<div class="player-avatar">{initials}</div>'
+
     return f'''
     <tr class="{tier_class}" data-market="{market}" data-direction="{pick_dir}" data-position="{position}" data-confidence="{conf_pct:.1f}" data-tier="{tier.lower()}" data-game="{game_escaped}" data-bet-id="{bet_id}">
         <td>
             <div class="player-cell">
-                <div class="player-avatar">{initials}</div>
+                <div class="player-avatar-wrapper">
+                    {avatar_html}
+                    <div class="player-team-logo">
+                        <img src="{team_logo_url}" alt="{team_abbrev}" loading="lazy">
+                    </div>
+                </div>
                 <div class="player-info">
-                    <span class="player-name">{player}{tier_badge_html}</span>
-                    <span class="player-meta">{position} · {game_short}</span>
+                    <span class="player-name">{player}</span>
+                    <span class="player-meta">{position} · {team_abbrev} vs {opponent if opponent else 'TBD'} {tier_badge_html}</span>
                 </div>
             </div>
         </td>
@@ -2607,10 +2818,10 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
             '''}
         </td>
         <td>
-            <span class="pick-badge {pick_dir}">{'O' if pick_dir == 'over' else 'U'} {line}</span>
+            <span class="pick-badge {pick_dir} {tier.lower() if tier else ''}">{'O' if pick_dir == 'over' else 'U'} {line}</span>
         </td>
         <td>
-            <button class="analyze-btn" onclick="openPickModal('{pick_data_encoded}')">📊</button>
+            <button class="analyze-btn" onclick="openPickModal('{pick_data_encoded}')" title="View Details">📊</button>
         </td>
     </tr>
     '''
@@ -2618,6 +2829,8 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn) -> str:
 
 def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: int) -> str:
     """Generate the complete BettingPros-style Cheat Sheet section.
+
+    Hybrid layout: Featured cards for top picks + full data table below.
 
     Args:
         recs_df: DataFrame with all pick recommendations
@@ -2627,13 +2840,42 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
     Returns:
         HTML string for the cheat sheet section
     """
+    # Load player headshots from rosters
+    headshot_lookup = {}
+    try:
+        roster_path = PROJECT_ROOT / "data" / "nflverse" / "rosters.parquet"
+        if roster_path.exists():
+            roster_df = pd.read_parquet(roster_path)
+            # Get most recent season's roster
+            if 'season' in roster_df.columns:
+                roster_df = roster_df[roster_df['season'] == roster_df['season'].max()]
+            # Create lookup by full_name
+            for _, row in roster_df.iterrows():
+                name = row.get('full_name', '')
+                url = row.get('headshot_url', '')
+                if name and url and pd.notna(url):
+                    headshot_lookup[name] = url
+            print(f"  Loaded {len(headshot_lookup)} player headshots")
+    except Exception as e:
+        print(f"  Warning: Could not load headshots: {e}")
+
     # Sort by confidence (highest first)
     sorted_df = recs_df.sort_values('model_prob', ascending=False)
+
+    # Generate featured cards for top 8 picks
+    featured_cards_html = ""
+    top_picks = sorted_df.head(8)
+    for _, row in top_picks.iterrows():
+        featured_cards_html += generate_featured_prop_card(row, format_prop_fn, headshot_lookup)
+
+    # Count featured tiers
+    featured_elite = len(top_picks[top_picks['model_prob'] >= 0.70])
+    featured_high = len(top_picks[(top_picks['model_prob'] >= 0.60) & (top_picks['model_prob'] < 0.70)])
 
     # Generate all table rows
     table_rows = ""
     for _, row in sorted_df.iterrows():
-        table_rows += generate_cheat_sheet_row(row, format_prop_fn)
+        table_rows += generate_cheat_sheet_row(row, format_prop_fn, headshot_lookup)
 
     # Get unique markets for filter pills
     markets = sorted_df['market'].unique() if 'market' in sorted_df.columns else []
@@ -2682,62 +2924,84 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
                 return abbrev
         return team_name[:3].upper()
 
-    # Get unique games for filter dropdown
+    # Get unique games for filter pills with team logos
     games = sorted_df['game'].dropna().unique() if 'game' in sorted_df.columns else []
-    game_options_html = ""
+    game_pills_html = '<button class="filter-pill small active" data-filter="all" onclick="filterCheatSheetGame(\'all\', this)">All Games</button>\n'
     for game in sorted(games):
         if game:
-            # Shorten game name for dropdown (e.g., "Chicago Bears @ San Francisco 49ers" -> "CHI @ SF")
             game_short = game
+            away_abbrev = ''
+            home_abbrev = ''
             try:
                 parts = game.split(' @ ')
                 if len(parts) == 2:
-                    away = get_team_abbrev(parts[0].strip())
-                    home = get_team_abbrev(parts[1].strip())
-                    game_short = f"{away} @ {home}"
+                    away_abbrev = get_team_abbrev(parts[0].strip())
+                    home_abbrev = get_team_abbrev(parts[1].strip())
+                    game_short = f"{away_abbrev}@{home_abbrev}"
             except:
                 pass
             game_escaped = game.replace("'", "\\'")
-            game_options_html += f'<option value="{game_escaped}">{game_short}</option>\n'
+            # Add team logos to pill
+            away_logo = f"https://a.espncdn.com/i/teamlogos/nfl/500/{away_abbrev.lower()}.png" if away_abbrev else ''
+            home_logo = f"https://a.espncdn.com/i/teamlogos/nfl/500/{home_abbrev.lower()}.png" if home_abbrev else ''
+            if away_logo and home_logo:
+                game_pills_html += f'''<button class="filter-pill game-pill" data-filter="{game_escaped}" onclick="filterCheatSheetGame('{game_escaped}', this)">
+                    <img src="{away_logo}" alt="{away_abbrev}" class="pill-logo">
+                    <span class="pill-at">@</span>
+                    <img src="{home_logo}" alt="{home_abbrev}" class="pill-logo">
+                </button>\n'''
+            else:
+                game_pills_html += f'<button class="filter-pill small" data-filter="{game_escaped}" onclick="filterCheatSheetGame(\'{game_escaped}\', this)">{game_short}</button>\n'
 
     total_picks = len(sorted_df)
 
     return f'''
-        <!-- PICKS VIEW - BettingPros-style dense table (DEFAULT ACTIVE) -->
+        <!-- PICKS VIEW - Hybrid layout: Featured cards + Data table -->
         <div class="view-section active" id="cheat-sheet">
+            <!-- Featured Picks Section -->
+            <div class="featured-picks-section">
+                <div class="featured-picks-header">
+                    <h2>🔥 Top Picks This Week</h2>
+                    <p class="subtitle">Highest confidence props for Week {week}</p>
+                </div>
+                <div class="featured-picks-grid">
+                    {featured_cards_html}
+                </div>
+            </div>
+
+            <!-- Section Divider -->
+            <div class="section-divider">
+                <span class="divider-text">All {total_picks} Picks</span>
+            </div>
+
+            <!-- Full Data Table Section -->
             <div class="table-section">
                 <div class="table-section-header">
                     <h2>Prop Bet Cheat Sheet</h2>
-                    <p class="subtitle">Best NFL Props for Week {week} · {total_picks} picks · Compare projections, ratings, and hit rates</p>
+                    <p class="subtitle">Complete list · sortable · filterable</p>
                 </div>
 
-                <!-- Market Filter Pills -->
+                <!-- Primary Filter Row: Market + Direction + Position -->
                 <div class="filter-bar" id="cheat-sheet-filters">
                     {filter_pills_html}
-                    <span style="margin-left: auto; color: var(--text-muted); font-size: 12px;">|</span>
+                    <span class="filter-divider">|</span>
                     <button class="filter-pill" data-filter="over" onclick="filterCheatSheetDirection('over', this)">OVER</button>
                     <button class="filter-pill" data-filter="under" onclick="filterCheatSheetDirection('under', this)">UNDER</button>
+                    <span class="filter-divider">|</span>
+                    <button class="filter-pill active" data-filter="all" onclick="filterCheatSheetPosition('all', this)">All Pos</button>
+                    <button class="filter-pill" data-filter="QB" onclick="filterCheatSheetPosition('QB', this)">QB</button>
+                    <button class="filter-pill" data-filter="RB" onclick="filterCheatSheetPosition('RB', this)">RB</button>
+                    <button class="filter-pill" data-filter="WR" onclick="filterCheatSheetPosition('WR', this)">WR</button>
+                    <button class="filter-pill" data-filter="TE" onclick="filterCheatSheetPosition('TE', this)">TE</button>
                 </div>
 
-                <!-- Secondary Filters -->
-                <div class="filter-bar secondary">
-                    <select class="filter-dropdown" id="cs-game-filter" onchange="filterCheatSheetGame(this.value)">
-                        <option value="all">All Games</option>
-                        {game_options_html}
-                    </select>
-                    <select class="filter-dropdown" id="cs-position-filter" onchange="filterCheatSheetPosition(this.value)">
-                        <option value="all">All Positions</option>
-                        <option value="QB">QB</option>
-                        <option value="RB">RB</option>
-                        <option value="WR">WR</option>
-                        <option value="TE">TE</option>
-                    </select>
-                    <select class="filter-dropdown" id="cs-tier-filter" onchange="filterCheatSheetTier(this.value)">
-                        <option value="all">All Tiers</option>
-                        <option value="elite">Elite Only (65%+)</option>
-                        <option value="strong">Strong+ (60%+)</option>
-                    </select>
-                    <span class="cs-results-count" id="cs-results-count" style="margin-left: auto; color: var(--text-muted); font-size: 12px;">{total_picks} picks</span>
+                <!-- Game Filter Row (scrollable pills) -->
+                <div class="filter-bar games-row" id="game-filters">
+                    <span class="filter-label">Game:</span>
+                    <div class="filter-pills-scroll">
+                        {game_pills_html}
+                    </div>
+                    <span class="cs-results-count" id="cs-results-count">{total_picks} picks</span>
                 </div>
 
                 <!-- Data Table -->
@@ -2766,176 +3030,236 @@ def generate_cheat_sheet_section(recs_df: pd.DataFrame, format_prop_fn, week: in
     '''
 
 
-def generate_game_lines_card(game_data: dict, away_team: str, home_team: str, game_time: str) -> str:
-    """Generate a BettingPros-style game card with two team rows.
+def generate_game_lines_card(game_data: dict, away_team: str, home_team: str, game_time: str, weather: dict = None) -> str:
+    """Generate a compact BettingPros-style game card.
 
     Args:
         game_data: Dict with spread_row and total_row data
         away_team: Away team name
         home_team: Home team name
         game_time: Formatted game time string
+        weather: Dict with temperature, wind_speed, is_dome, conditions
 
     Returns:
-        HTML string for the game card
+        HTML string for the compact game card
     """
-    # NFL team abbreviations
-    TEAM_ABBREVS = {
-        'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL',
-        'Buffalo Bills': 'BUF', 'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI',
-        'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE', 'Dallas Cowboys': 'DAL',
-        'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',
-        'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX',
-        'Kansas City Chiefs': 'KC', 'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC',
-        'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA', 'Minnesota Vikings': 'MIN',
-        'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',
-        'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT',
-        'San Francisco 49ers': 'SF', 'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB',
-        'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS'
+    weather = weather or {}
+
+    # NFL team abbreviations and colors
+    NFL_TEAMS = {
+        'Arizona Cardinals': {'abbrev': 'ARI', 'primary': '#97233F', 'secondary': '#000000'},
+        'Atlanta Falcons': {'abbrev': 'ATL', 'primary': '#A71930', 'secondary': '#000000'},
+        'Baltimore Ravens': {'abbrev': 'BAL', 'primary': '#241773', 'secondary': '#9E7C0C'},
+        'Buffalo Bills': {'abbrev': 'BUF', 'primary': '#00338D', 'secondary': '#C60C30'},
+        'Carolina Panthers': {'abbrev': 'CAR', 'primary': '#0085CA', 'secondary': '#101820'},
+        'Chicago Bears': {'abbrev': 'CHI', 'primary': '#0B162A', 'secondary': '#C83803'},
+        'Cincinnati Bengals': {'abbrev': 'CIN', 'primary': '#FB4F14', 'secondary': '#000000'},
+        'Cleveland Browns': {'abbrev': 'CLE', 'primary': '#311D00', 'secondary': '#FF3C00'},
+        'Dallas Cowboys': {'abbrev': 'DAL', 'primary': '#003594', 'secondary': '#869397'},
+        'Denver Broncos': {'abbrev': 'DEN', 'primary': '#FB4F14', 'secondary': '#002244'},
+        'Detroit Lions': {'abbrev': 'DET', 'primary': '#0076B6', 'secondary': '#B0B7BC'},
+        'Green Bay Packers': {'abbrev': 'GB', 'primary': '#203731', 'secondary': '#FFB612'},
+        'Houston Texans': {'abbrev': 'HOU', 'primary': '#03202F', 'secondary': '#A71930'},
+        'Indianapolis Colts': {'abbrev': 'IND', 'primary': '#002C5F', 'secondary': '#A2AAAD'},
+        'Jacksonville Jaguars': {'abbrev': 'JAX', 'primary': '#006778', 'secondary': '#D7A22A'},
+        'Kansas City Chiefs': {'abbrev': 'KC', 'primary': '#E31837', 'secondary': '#FFB81C'},
+        'Las Vegas Raiders': {'abbrev': 'LV', 'primary': '#000000', 'secondary': '#A5ACAF'},
+        'Los Angeles Chargers': {'abbrev': 'LAC', 'primary': '#0080C6', 'secondary': '#FFC20E'},
+        'Los Angeles Rams': {'abbrev': 'LAR', 'primary': '#003594', 'secondary': '#FFA300'},
+        'Miami Dolphins': {'abbrev': 'MIA', 'primary': '#008E97', 'secondary': '#FC4C02'},
+        'Minnesota Vikings': {'abbrev': 'MIN', 'primary': '#4F2683', 'secondary': '#FFC62F'},
+        'New England Patriots': {'abbrev': 'NE', 'primary': '#002244', 'secondary': '#C60C30'},
+        'New Orleans Saints': {'abbrev': 'NO', 'primary': '#D3BC8D', 'secondary': '#101820'},
+        'New York Giants': {'abbrev': 'NYG', 'primary': '#0B2265', 'secondary': '#A71930'},
+        'New York Jets': {'abbrev': 'NYJ', 'primary': '#125740', 'secondary': '#000000'},
+        'Philadelphia Eagles': {'abbrev': 'PHI', 'primary': '#004C54', 'secondary': '#A5ACAF'},
+        'Pittsburgh Steelers': {'abbrev': 'PIT', 'primary': '#FFB612', 'secondary': '#101820'},
+        'San Francisco 49ers': {'abbrev': 'SF', 'primary': '#AA0000', 'secondary': '#B3995D'},
+        'Seattle Seahawks': {'abbrev': 'SEA', 'primary': '#002244', 'secondary': '#69BE28'},
+        'Tampa Bay Buccaneers': {'abbrev': 'TB', 'primary': '#D50A0A', 'secondary': '#FF7900'},
+        'Tennessee Titans': {'abbrev': 'TEN', 'primary': '#0C2340', 'secondary': '#4B92DB'},
+        'Washington Commanders': {'abbrev': 'WAS', 'primary': '#5A1414', 'secondary': '#FFB612'}
     }
 
-    def get_abbrev(team):
-        return TEAM_ABBREVS.get(team, team[:3].upper())
+    # Reverse lookup: abbreviation -> team data
+    ABBREV_TO_TEAM = {}
+    for team_name, data in NFL_TEAMS.items():
+        ABBREV_TO_TEAM[data['abbrev']] = {'name': team_name, **data}
 
-    away_abbrev = get_abbrev(away_team)
-    home_abbrev = get_abbrev(home_team)
+    def get_team_info(team):
+        """Get team info from full name or abbreviation."""
+        if team in NFL_TEAMS:
+            return NFL_TEAMS[team]
+        if team.upper() in ABBREV_TO_TEAM:
+            return ABBREV_TO_TEAM[team.upper()]
+        for full_name, data in NFL_TEAMS.items():
+            if team in full_name or full_name in team:
+                return data
+        return {'abbrev': team[:3].upper(), 'primary': '#374151', 'secondary': '#1f2937'}
+
+    def extract_picked_team(pick_str):
+        """Extract just the team abbrev from a pick like 'KC +13.5'."""
+        if not pick_str:
+            return ''
+        parts = pick_str.strip().split()
+        if parts:
+            return parts[0].upper()
+        return pick_str.upper()
+
+    # Get team info
+    away_info = get_team_info(away_team)
+    home_info = get_team_info(home_team)
+    away_abbrev = away_info['abbrev']
+    home_abbrev = home_info['abbrev']
+
+    # Get team logo URLs (ESPN CDN)
+    away_logo_url = TEAM_LOGOS.get(away_abbrev, f'https://a.espncdn.com/i/teamlogos/nfl/500/{away_abbrev.lower()}.png')
+    home_logo_url = TEAM_LOGOS.get(home_abbrev, f'https://a.espncdn.com/i/teamlogos/nfl/500/{home_abbrev.lower()}.png')
 
     spread_row = game_data.get('spread')
     total_row = game_data.get('total')
 
-    # Get spread data
-    spread_html = ''
+    # Build weather display (compact) - always show when data exists
+    weather_html = ''
+    if weather:
+        is_dome = weather.get('is_dome', False)
+        temp = weather.get('temperature')
+        wind = weather.get('wind_speed')
+        conditions = weather.get('conditions', '')
+
+        if is_dome:
+            weather_html = '<span class="compact-weather">🏟️ Dome</span>'
+        elif temp is not None and not pd.isna(temp):
+            temp_val = float(temp)
+            wind_val = float(wind) if wind and not pd.isna(wind) else 0
+            weather_icon = '☀️'
+            if conditions:
+                cond_lower = conditions.lower()
+                if 'rain' in cond_lower or 'shower' in cond_lower:
+                    weather_icon = '🌧️'
+                elif 'snow' in cond_lower:
+                    weather_icon = '🌨️'
+                elif 'cloud' in cond_lower or 'overcast' in cond_lower:
+                    weather_icon = '☁️'
+                elif 'wind' in cond_lower and wind_val > 15:
+                    weather_icon = '💨'
+            # Show temp and wind if significant
+            wind_str = f' {wind_val:.0f}mph' if wind_val >= 10 else ''
+            weather_html = f'<span class="compact-weather">{weather_icon} {temp_val:.0f}°{wind_str}</span>'
+
+    # Determine card tier (highest of spread/total)
+    spread_tier = str(spread_row.get('confidence_tier', 'STANDARD')).upper() if spread_row else 'STANDARD'
+    total_tier = str(total_row.get('confidence_tier', 'STANDARD')).upper() if total_row else 'STANDARD'
+
+    card_tier = ''
+    tier_stars = ''
+    if spread_tier == 'ELITE' or total_tier == 'ELITE':
+        card_tier = 'elite'
+        tier_stars = '★★★★'
+    elif spread_tier == 'HIGH' or total_tier == 'HIGH':
+        card_tier = 'high'
+        tier_stars = '★★★'
+    else:
+        tier_stars = '★★'
+
+    # Game time - include date for clarity
+    game_time_short = ''
+    if game_time:
+        parts = game_time.split()
+        if len(parts) >= 3:
+            day = parts[0][:3]  # "Wed", "Sun", etc.
+            date = parts[1] if len(parts) > 1 else ''  # "12/25"
+            time_parts = ' '.join(parts[2:])
+            time_parts = time_parts.replace(':00', '').replace(' PM', 'p').replace(' AM', 'a').replace('PM', 'p').replace('AM', 'a')
+            # Show as "Thu 12/26 8:15p"
+            game_time_short = f"{day} {date} {time_parts}".strip()
+        else:
+            game_time_short = game_time
+    else:
+        game_time_short = ''
+
+    # Build spread row HTML
+    spread_row_html = ''
     if spread_row is not None:
         spread_line = spread_row.get('market_line', spread_row.get('line', 0))
-        spread_pick = str(spread_row.get('pick', '')).upper()
+        spread_pick_raw = str(spread_row.get('pick', '')).upper()
+        spread_picked_team = extract_picked_team(spread_pick_raw)
         spread_prob = spread_row.get('model_prob', 0.5)
-        spread_edge = spread_row.get('edge_pct', 0)
-        spread_tier = spread_row.get('confidence_tier', 'STANDARD')
-
         spread_conf = spread_prob * 100 if spread_prob <= 1 else spread_prob
+        spread_edge = spread_row.get('edge_pct', 0)
         spread_edge_val = spread_edge if not pd.isna(spread_edge) else 0
 
-        # Determine which team is picked
-        away_spread_class = 'picked' if spread_pick in away_team.upper() or away_abbrev in spread_pick else ''
-        home_spread_class = 'picked' if spread_pick in home_team.upper() or home_abbrev in spread_pick else ''
+        away_is_picked = spread_picked_team == away_abbrev or spread_picked_team in away_team.upper()
 
-        # Star rating
-        spread_stars = round(spread_conf / 20)
-        spread_stars_html = ''.join('<span class="star filled">★</span>' for _ in range(spread_stars))
-        spread_stars_html += ''.join('<span class="star">★</span>' for _ in range(5 - spread_stars))
+        if away_is_picked:
+            pick_text = f'{away_abbrev} {spread_line:+.1f}'
+        else:
+            pick_text = f'{home_abbrev} {-spread_line:+.1f}'
 
-        spread_html = f'''
-        <div class="bp-game-row" data-bet-type="spread" data-tier="{spread_tier.lower()}">
-            <div class="bp-bet-label">SPREAD</div>
-            <div class="bp-team-row away {away_spread_class}">
-                <span class="bp-team-abbrev">{away_abbrev}</span>
-                <span class="bp-spread-line">{spread_line:+.1f}</span>
-                <span class="bp-odds">(-110)</span>
+        edge_class = 'positive' if spread_edge_val >= 0 else 'negative'
+        spread_row_html = f'''
+            <div class="compact-bet" data-bet-type="spread">
+                <span class="compact-pick spread">{pick_text}</span>
+                <div class="compact-stats">
+                    <span class="compact-conf">{spread_conf:.0f}%</span>
+                    <span class="compact-edge {edge_class}">{spread_edge_val:+.1f}%</span>
+                </div>
             </div>
-            <div class="bp-team-row home {home_spread_class}">
-                <span class="bp-team-abbrev">{home_abbrev}</span>
-                <span class="bp-spread-line">{-spread_line:+.1f}</span>
-                <span class="bp-odds">(-110)</span>
-            </div>
-            <div class="bp-model-pick">
-                <span class="bp-pick-chip spread">{spread_pick} {spread_line:+.1f}</span>
-            </div>
-            <div class="bp-cover-prob">
-                <span class="bp-prob-value">{spread_conf:.0f}%</span>
-                <div class="bp-prob-bar"><div class="bp-prob-fill" style="width: {spread_conf}%"></div></div>
-            </div>
-            <div class="bp-edge ev-{'positive' if spread_edge_val >= 0 else 'negative'}">{spread_edge_val:+.1f}%</div>
-            <div class="bp-rating">{spread_stars_html}</div>
-        </div>
         '''
 
-    # Get total data
-    total_html = ''
+    # Build total row HTML
+    total_row_html = ''
     if total_row is not None:
         total_line = total_row.get('market_line', total_row.get('line', 0))
         total_pick = str(total_row.get('pick', '')).upper()
         total_prob = total_row.get('model_prob', 0.5)
-        total_edge = total_row.get('edge_pct', 0)
-        total_tier = total_row.get('confidence_tier', 'STANDARD')
-
         total_conf = total_prob * 100 if total_prob <= 1 else total_prob
+        total_edge = total_row.get('edge_pct', 0)
         total_edge_val = total_edge if not pd.isna(total_edge) else 0
 
         is_over = 'OVER' in total_pick
-        over_class = 'picked' if is_over else ''
-        under_class = 'picked' if not is_over else ''
+        pick_text = f"{'O' if is_over else 'U'} {total_line}"
+        pick_class = 'over' if is_over else 'under'
 
-        # Star rating
-        total_stars = round(total_conf / 20)
-        total_stars_html = ''.join('<span class="star filled">★</span>' for _ in range(total_stars))
-        total_stars_html += ''.join('<span class="star">★</span>' for _ in range(5 - total_stars))
-
-        total_html = f'''
-        <div class="bp-game-row" data-bet-type="total" data-tier="{total_tier.lower()}">
-            <div class="bp-bet-label">TOTAL</div>
-            <div class="bp-team-row {over_class}">
-                <span class="bp-total-label">Over</span>
-                <span class="bp-total-line">{total_line}</span>
-                <span class="bp-odds">(-110)</span>
+        edge_class = 'positive' if total_edge_val >= 0 else 'negative'
+        total_row_html = f'''
+            <div class="compact-bet" data-bet-type="total">
+                <span class="compact-pick {pick_class}">{pick_text}</span>
+                <div class="compact-stats">
+                    <span class="compact-conf">{total_conf:.0f}%</span>
+                    <span class="compact-edge {edge_class}">{total_edge_val:+.1f}%</span>
+                </div>
             </div>
-            <div class="bp-team-row {under_class}">
-                <span class="bp-total-label">Under</span>
-                <span class="bp-total-line">{total_line}</span>
-                <span class="bp-odds">(-110)</span>
-            </div>
-            <div class="bp-model-pick">
-                <span class="bp-pick-chip {'over' if is_over else 'under'}">{'O' if is_over else 'U'} {total_line}</span>
-            </div>
-            <div class="bp-cover-prob">
-                <span class="bp-prob-value">{total_conf:.0f}%</span>
-                <div class="bp-prob-bar"><div class="bp-prob-fill" style="width: {total_conf}%"></div></div>
-            </div>
-            <div class="bp-edge ev-{'positive' if total_edge_val >= 0 else 'negative'}">{total_edge_val:+.1f}%</div>
-            <div class="bp-rating">{total_stars_html}</div>
-        </div>
         '''
 
-    # Determine card tier based on best bet
-    card_tier = ''
-    if spread_row is not None and spread_row.get('confidence_tier', '') == 'ELITE':
-        card_tier = 'elite'
-    elif total_row is not None and total_row.get('confidence_tier', '') == 'ELITE':
-        card_tier = 'elite'
-    elif spread_row is not None and spread_row.get('confidence_tier', '') == 'HIGH':
-        card_tier = 'high'
-    elif total_row is not None and total_row.get('confidence_tier', '') == 'HIGH':
-        card_tier = 'high'
+    # Tier badge text
+    tier_badge = ''
+    if card_tier == 'elite':
+        tier_badge = '<span class="compact-tier elite">ELITE</span>'
+    elif card_tier == 'high':
+        tier_badge = '<span class="compact-tier high">HIGH</span>'
 
+    # Build compact card
     return f'''
-    <div class="bp-game-card {card_tier}" data-game="{away_team} @ {home_team}">
-        <div class="bp-game-header">
-            <div class="bp-teams">
-                <div class="bp-team away">
-                    <div class="bp-team-logo">{away_abbrev}</div>
-                    <span class="bp-team-name">{away_team}</span>
-                </div>
-                <span class="bp-at">@</span>
-                <div class="bp-team home">
-                    <div class="bp-team-logo">{home_abbrev}</div>
-                    <span class="bp-team-name">{home_team}</span>
-                </div>
+    <div class="compact-card {card_tier}" data-game="{away_abbrev} @ {home_abbrev}">
+        <div class="compact-header">
+            <div class="compact-team-logo" style="--team-primary: {away_info['primary']};">
+                <img src="{away_logo_url}" alt="{away_abbrev}" loading="lazy">
+                <span class="logo-fallback">{away_abbrev}</span>
             </div>
-            <div class="bp-game-meta">
-                <span class="bp-game-time">{game_time}</span>
-                <a class="bp-view-matchup" href="#">View Matchup</a>
+            <div class="compact-matchup">
+                <span class="compact-teams">{away_abbrev} @ {home_abbrev}</span>
+                <span class="compact-meta">{game_time_short}{weather_html}</span>
             </div>
+            <div class="compact-team-logo" style="--team-primary: {home_info['primary']};">
+                <img src="{home_logo_url}" alt="{home_abbrev}" loading="lazy">
+                <span class="logo-fallback">{home_abbrev}</span>
+            </div>
+            {tier_badge}
         </div>
-        <div class="bp-game-bets">
-            <div class="bp-column-headers">
-                <div class="bp-col-label"></div>
-                <div class="bp-col-label">LINE</div>
-                <div class="bp-col-label"></div>
-                <div class="bp-col-label">MODEL PICK</div>
-                <div class="bp-col-label">COVER PROB.</div>
-                <div class="bp-col-label">EDGE</div>
-                <div class="bp-col-label">RATING</div>
-            </div>
-            {spread_html}
-            {total_html}
+        <div class="compact-picks">
+            {spread_row_html}
+            {total_row_html}
         </div>
     </div>
     '''
@@ -2963,6 +3287,38 @@ def generate_game_lines_table_section(game_lines_df: pd.DataFrame, week: int) ->
         </div>
         '''
 
+    # Load schedule for game times
+    schedule_lookup = {}
+    try:
+        schedule_path = PROJECT_ROOT / "data" / "nflverse" / "schedules.parquet"
+        if schedule_path.exists():
+            schedule_df = pd.read_parquet(schedule_path)
+            week_games = schedule_df[(schedule_df['season'] == 2025) & (schedule_df['week'] == week)]
+            for _, sched_row in week_games.iterrows():
+                away = sched_row['away_team']
+                home = sched_row['home_team']
+                game_key = f"{away} @ {home}"
+                gameday = sched_row['gameday']
+                gametime = sched_row['gametime']
+                roof = sched_row.get('roof', '')
+                temp = sched_row.get('temp', None)
+                wind = sched_row.get('wind', None)
+                # Format: "Wed 12/25 1:00 PM"
+                try:
+                    dt = pd.to_datetime(f"{gameday} {gametime}")
+                    formatted = dt.strftime('%a %m/%d %I:%M %p').replace(' 0', ' ')
+                    schedule_lookup[game_key] = {
+                        'game_time': formatted,
+                        'game_datetime': dt,  # Store datetime for sorting
+                        'is_dome': roof in ['dome', 'closed'],
+                        'temperature': temp,
+                        'wind_speed': wind
+                    }
+                except:
+                    pass
+    except Exception as e:
+        print(f"  Warning: Could not load schedule: {e}")
+
     # Group bets by game
     games_data = {}
     for _, row in game_lines_df.iterrows():
@@ -2978,19 +3334,25 @@ def generate_game_lines_table_section(game_lines_df: pd.DataFrame, week: int) ->
         home_team = teams[1].strip()
 
         if game not in games_data:
-            # Get game time
-            commence_time = row.get('commence_time', '')
-            game_time = ''
-            if commence_time:
-                try:
-                    ct = pd.to_datetime(commence_time)
-                    game_time = ct.strftime('%a %m/%d %I:%M %p').replace(' 0', ' ')
-                except:
-                    pass
+            # Get game time from schedule lookup
+            sched_info = schedule_lookup.get(game, {})
+            game_time = sched_info.get('game_time', '')
+            game_datetime = sched_info.get('game_datetime', None)
+
+            # Extract weather data (prefer schedule, fallback to row)
+            weather_data = {
+                'temperature': sched_info.get('temperature') or row.get('temperature', row.get('weather_temp', None)),
+                'wind_speed': sched_info.get('wind_speed') or row.get('wind_speed', row.get('weather_wind', None)),
+                'is_dome': sched_info.get('is_dome', False) or row.get('is_dome', row.get('weather_is_dome', False)),
+                'conditions': row.get('conditions', row.get('weather_conditions', '')),
+            }
+
             games_data[game] = {
                 'away_team': away_team,
                 'home_team': home_team,
                 'game_time': game_time,
+                'game_datetime': game_datetime,  # For sorting
+                'weather': weather_data,
                 'spread': None,
                 'total': None
             }
@@ -3001,14 +3363,21 @@ def generate_game_lines_table_section(game_lines_df: pd.DataFrame, week: int) ->
         elif 'total' in bet_type:
             games_data[game]['total'] = row.to_dict()
 
+    # Sort games by kickoff time
+    sorted_games = sorted(
+        games_data.items(),
+        key=lambda x: (x[1]['game_datetime'] is None, x[1]['game_datetime'] or pd.Timestamp.max)
+    )
+
     # Generate game cards
     game_cards_html = ""
-    for game, data in games_data.items():
+    for game, data in sorted_games:
         game_cards_html += generate_game_lines_card(
             data,
             data['away_team'],
             data['home_team'],
-            data['game_time']
+            data['game_time'],
+            data.get('weather', {})
         )
 
     # Count statistics
@@ -3041,13 +3410,9 @@ def generate_game_lines_table_section(game_lines_df: pd.DataFrame, week: int) ->
                     <button class="filter-pill" data-filter="high" onclick="filterBPGameLinesTier('high', this)">High<span class="filter-count">{high_count}</span></button>
                 </div>
 
-                <!-- BettingPros-style Game Cards -->
-                <div class="bp-games-container" id="bp-games-container">
+                <!-- Game Cards -->
+                <div class="bp-games-container">
                     {game_cards_html}
-                </div>
-
-                <div class="bp-games-footer">
-                    <span class="bp-games-count">{num_games} Games · {total_bets} Picks</span>
                 </div>
             </div>
         </div>
@@ -5800,9 +6165,7 @@ def generate_css() -> str:
             display: none;
         }
 
-        .featured-picks-header {
-            display: none;
-        }
+        /* Legacy - removed display:none that was hiding featured cards */
 
         .picks-count {
             font-size: 10px;
@@ -10899,40 +11262,51 @@ def generate_css() -> str:
 
         /* Tier-based row highlighting - Visual hierarchy */
         .data-table tr.tier-elite {
-            background: rgba(245, 158, 11, 0.15) !important;
-            box-shadow: inset 4px 0 0 #F59E0B;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
+            box-shadow: inset 5px 0 0 #F59E0B;
         }
         .data-table tr.tier-elite:hover {
-            background: rgba(245, 158, 11, 0.25) !important;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.28) 0%, rgba(245, 158, 11, 0.08) 100%) !important;
         }
+        /* Gold border on avatar for ELITE (works with headshots) */
         .data-table tr.tier-elite .player-avatar {
+            border: 2px solid #F59E0B;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+        }
+        .data-table tr.tier-elite .player-avatar:not(.has-image) {
             background: linear-gradient(135deg, #F59E0B, #D97706);
             color: #fff;
             font-weight: 800;
         }
         .data-table tr.tier-strong {
-            background: rgba(34, 197, 94, 0.12) !important;
-            box-shadow: inset 4px 0 0 #22C55E;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.03) 100%) !important;
+            box-shadow: inset 5px 0 0 #22C55E;
         }
         .data-table tr.tier-strong:hover {
-            background: rgba(34, 197, 94, 0.20) !important;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.25) 0%, rgba(34, 197, 94, 0.06) 100%) !important;
         }
+        /* Green border on avatar for STRONG (works with headshots) */
         .data-table tr.tier-strong .player-avatar {
+            border: 2px solid #22C55E;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+        }
+        .data-table tr.tier-strong .player-avatar:not(.has-image) {
             background: linear-gradient(135deg, #22C55E, #16A34A);
             color: #fff;
             font-weight: 800;
         }
 
-        /* Tier badge in player cell */
+        /* Tier badge in player meta line */
         .tier-badge {
             display: inline-block;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-left: 6px;
+            margin-left: 4px;
             vertical-align: middle;
+            text-transform: uppercase;
         }
         .tier-badge.elite {
             background: rgba(245, 158, 11, 0.2);
@@ -10953,6 +11327,11 @@ def generate_css() -> str:
             min-width: 160px;
         }
 
+        .player-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
         .player-avatar {
             width: 32px;
             height: 32px;
@@ -10966,6 +11345,53 @@ def generate_css() -> str:
             color: var(--text-secondary);
             flex-shrink: 0;
             border: 1px solid var(--border-muted);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .player-avatar.has-image {
+            background: var(--bg-card);
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .player-avatar .avatar-fallback {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-elevated);
+            font-weight: 700;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .player-team-logo {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .player-team-logo img {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
         }
 
         .player-info {
@@ -11007,16 +11433,17 @@ def generate_css() -> str:
         /* Rating stars */
         .rating-stars {
             display: flex;
-            gap: 1px;
+            gap: 2px;
         }
 
         .star {
-            font-size: 12px;
-            color: var(--text-faint);
+            font-size: 14px;
+            color: rgba(100, 116, 139, 0.4);
         }
 
         .star.filled {
-            color: #F59E0B;
+            color: #FBBF24;
+            text-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
         }
 
         /* EV/Diff indicators */
@@ -11111,9 +11538,56 @@ def generate_css() -> str:
             align-items: center;
         }
 
-        .filter-bar.secondary {
+        .filter-bar.games-row {
+            padding: 10px 0;
+            gap: 10px;
             border-bottom: none;
-            padding-bottom: 16px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .filter-pills-scroll {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            flex: 1;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-muted) transparent;
+        }
+
+        .filter-pills-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .filter-pills-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .filter-pills-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-muted);
+            border-radius: 2px;
+        }
+
+        .filter-divider {
+            color: var(--border-muted);
+            font-size: 12px;
+            margin: 0 2px;
+        }
+
+        .cs-results-count {
+            font-size: 11px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .filter-pill {
@@ -11126,6 +11600,43 @@ def generate_css() -> str:
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-pill.small {
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: 12px;
+        }
+
+        /* Game pills with team logos */
+        .filter-pill.game-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 16px;
+        }
+
+        .pill-logo {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        .pill-at {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .filter-pill.game-pill.active {
+            background: var(--accent-muted);
+            border-color: var(--accent);
+        }
+
+        .filter-pill.game-pill.active .pill-at {
+            color: var(--accent);
         }
 
         .filter-pill:hover {
@@ -11137,22 +11648,6 @@ def generate_css() -> str:
             background: var(--accent-muted);
             border-color: var(--accent);
             color: var(--accent);
-        }
-
-        .filter-dropdown {
-            padding: 6px 12px;
-            border-radius: 8px;
-            background: var(--surface-raised);
-            border: 1px solid var(--border-muted);
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .filter-dropdown:focus {
-            outline: none;
-            border-color: var(--accent);
         }
 
         /* Empty state */
@@ -11422,196 +11917,1052 @@ def generate_css() -> str:
         .bp-games-container {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            padding: 16px 0;
+            gap: 20px;
+            padding: 20px 0;
         }
 
+        /* ===== GAME CARD ===== */
         .bp-game-card {
-            background: var(--bg-card);
+            background: linear-gradient(180deg, var(--bg-card) 0%, rgba(17, 24, 39, 0.95) 100%);
             border: 1px solid var(--border-default);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .bp-game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             border-color: var(--border-muted);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .bp-game-card.elite {
-            border-color: rgba(245, 158, 11, 0.4);
-            box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.6);
+            box-shadow: 0 4px 24px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(245, 158, 11, 0.3);
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 100%);
+        }
+
+        .bp-game-card.elite:hover {
+            box-shadow: 0 8px 40px rgba(245, 158, 11, 0.25);
         }
 
         .bp-game-card.high {
-            border-color: rgba(34, 197, 94, 0.3);
-            box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.5);
+            box-shadow: 0 4px 24px rgba(34, 197, 94, 0.1), inset 0 1px 0 rgba(34, 197, 94, 0.2);
+            background: linear-gradient(180deg, rgba(34, 197, 94, 0.05) 0%, var(--bg-card) 100%);
         }
 
-        /* Game Header */
-        .bp-game-header {
+        .bp-game-card.high:hover {
+            box-shadow: 0 8px 40px rgba(34, 197, 94, 0.2);
+        }
+
+        /* ===== CARD HEADER - Clean & Scannable ===== */
+        .bp-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
-            background: var(--surface-raised);
+            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 100%);
             border-bottom: 1px solid var(--border-subtle);
+            gap: 16px;
         }
 
-        .bp-teams {
+        .bp-matchup-row {
             display: flex;
             align-items: center;
             gap: 16px;
         }
 
-        .bp-team {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .bp-team-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--surface-elevated);
+        /* Team Logo with CSS fallback (no flash) */
+        .bp-team-logo-wrapper {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--team-primary, #374151), var(--team-secondary, #1f2937));
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .bp-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bp-logo-text {
+            position: absolute;
+            z-index: 1;
             font-weight: 800;
-            font-size: 12px;
-            color: var(--text-primary);
-            border: 1px solid var(--border-muted);
-        }
-
-        .bp-team-name {
-            font-weight: 600;
             font-size: 14px;
-            color: var(--text-primary);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
-        .bp-at {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .bp-game-meta {
+        .bp-matchup-center {
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .bp-team-names {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
         }
 
         .bp-game-time {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             font-weight: 500;
         }
 
-        .bp-view-matchup {
+        .bp-card-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .bp-weather-pill {
+            display: contents;
+        }
+
+        .bp-weather {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
             font-size: 12px;
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
         }
 
-        .bp-view-matchup:hover {
-            text-decoration: underline;
+        .bp-weather-icon {
+            font-size: 14px;
         }
 
-        /* Game Bets Container */
-        .bp-game-bets {
-            padding: 0;
-        }
-
-        .bp-column-headers {
-            display: grid;
-            grid-template-columns: 80px 1fr 1fr 140px 120px 80px 100px;
-            padding: 10px 20px;
-            background: var(--surface-raised);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .bp-col-label {
-            font-size: 10px;
+        .bp-weather-text {
             font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ===== PICKS CONTAINER ===== */
+        .bp-picks-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== PICK ROW - Hero Pick Layout ===== */
+        .bp-pick-row {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            align-items: center;
+            padding: 14px 20px;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.2s ease;
+        }
+
+        .bp-pick-row:last-child {
+            border-bottom: none;
+        }
+
+        .bp-pick-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Tier row styling */
+        .bp-pick-row.tier-elite-row {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.03) 100%);
+            border-left: 4px solid #F59E0B;
+        }
+
+        .bp-pick-row.tier-high-row {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.02) 100%);
+            border-left: 4px solid #22C55E;
+        }
+
+        /* Pick Type */
+        .bp-pick-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bp-type-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Tier Badge */
+        .bp-tier-badge {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 3px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .bp-tier-badge.elite {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #1F2937;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .bp-tier-badge.high {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: #1F2937;
+        }
+
+        /* Pick Hero - THE MAIN ATTRACTION */
+        .bp-pick-hero {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .bp-pick-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bp-pick-chip:hover {
+            transform: scale(1.02);
+        }
+
+        .bp-pick-arrow {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Spread picks - Purple */
+        .bp-pick-chip.spread {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%);
+            color: #C4B5FD;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Over picks - Green with UP arrow */
+        .bp-pick-chip.over {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(22, 163, 74, 0.2) 100%);
+            color: #86EFAC;
+            border: 2px solid rgba(34, 197, 94, 0.5);
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Under picks - Red with DOWN arrow */
+        .bp-pick-chip.under {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.2) 100%);
+            color: #FCA5A5;
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Pick Stats */
+        .bp-pick-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .bp-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+        }
+
+        .bp-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .bp-stat-label {
+            font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Game Row (Spread or Total) */
+        .bp-stat.positive .bp-stat-value {
+            color: #4ADE80;
+        }
+
+        .bp-stat.negative .bp-stat-value {
+            color: #F87171;
+        }
+
+        /* Card Tier Label */
+        .bp-card-tier-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .bp-card-tier-label.elite {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.3) 100%);
+            color: #FCD34D;
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
+            animation: eliteGlow 2s ease-in-out infinite;
+        }
+
+        .bp-card-tier-label.high {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(22, 163, 74, 0.25) 100%);
+            color: #4ADE80;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+        }
+
+        @keyframes eliteGlow {
+            0%, 100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.5); }
+        }
+
+        /* ============================================
+           GAME LINE CARDS - Premium Grid Layout
+           ============================================ */
+        .bp-games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+        }
+
+        .compact-card {
+            background: linear-gradient(180deg, var(--bg-card) 0%, rgba(17, 24, 39, 0.98) 100%);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .compact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            border-color: var(--border-muted);
+        }
+
+        /* ELITE cards - prominent gold styling */
+        .compact-card.elite {
+            border-color: rgba(245, 158, 11, 0.6);
+            border-left: 5px solid #F59E0B;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 50%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);
+        }
+
+        .compact-card.elite:hover {
+            box-shadow: 0 12px 40px rgba(245, 158, 11, 0.25);
+        }
+
+        /* HIGH cards - green accent */
+        .compact-card.high {
+            border-color: rgba(34, 197, 94, 0.5);
+            border-left: 5px solid #22C55E;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, var(--bg-card) 50%);
+        }
+
+        .compact-card.high:hover {
+            box-shadow: 0 12px 32px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Card Header - Clean with larger logos */
+        .compact-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .compact-team-logo {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--team-primary, #374151);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .compact-team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+        }
+
+        .compact-team-logo .logo-fallback {
+            position: absolute;
+            z-index: 1;
+            font-weight: 700;
+            font-size: 11px;
+            color: white;
+        }
+
+        .compact-matchup {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .compact-teams {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
+        }
+
+        .compact-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .compact-weather {
+            font-size: 11px;
+            margin-left: 6px;
+            opacity: 0.9;
+        }
+
+        /* Tier badge - smaller, doesn't compete */
+        .compact-tier {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .compact-tier.elite {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #1a1a1a;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .compact-tier.high {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: #1a1a1a;
+        }
+
+        /* Picks Container */
+        .compact-picks {
+            padding: 12px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .compact-bet {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Pick chips - larger, more prominent */
+        .compact-pick {
+            font-weight: 700;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            min-width: 85px;
+            text-align: center;
+        }
+
+        .compact-pick.spread {
+            background: rgba(139, 92, 246, 0.2);
+            color: #C4B5FD;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .compact-pick.over {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86EFAC;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .compact-pick.under {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FCA5A5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Stats - larger, closer to pick */
+        .compact-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .compact-conf {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .compact-edge {
+            font-weight: 700;
+        }
+
+        .compact-edge.positive {
+            color: #4ADE80;
+        }
+
+        .compact-edge.negative {
+            color: #F87171;
+        }
+
+        /* ============================================
+           FEATURED PROP CARDS - Hybrid Layout
+           ============================================ */
+
+        .featured-picks-section {
+            margin-bottom: 32px;
+        }
+
+        .featured-picks-header {
+            margin-bottom: 20px;
+        }
+
+        .featured-picks-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .featured-picks-header .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .featured-picks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        /* Featured Prop Card */
+        .fp-card {
+            background: linear-gradient(180deg, var(--bg-card) 0%, rgba(17, 24, 39, 0.98) 100%);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fp-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            border-color: var(--border-muted);
+        }
+
+        /* ELITE tier */
+        .fp-card.elite {
+            border-color: rgba(245, 158, 11, 0.6);
+            border-left: 5px solid #F59E0B;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 50%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);
+        }
+
+        .fp-card.elite:hover {
+            box-shadow: 0 12px 40px rgba(245, 158, 11, 0.25);
+        }
+
+        /* HIGH tier */
+        .fp-card.high {
+            border-color: rgba(34, 197, 94, 0.5);
+            border-left: 5px solid #22C55E;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, var(--bg-card) 50%);
+        }
+
+        .fp-card.high:hover {
+            box-shadow: 0 12px 32px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Card Header */
+        .fp-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .fp-card-player {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .fp-card-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .fp-card-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--border-default);
+        }
+
+        .fp-card-avatar.has-image {
+            background: var(--bg-card);
+        }
+
+        .fp-card-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .fp-card-avatar .avatar-fallback {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .fp-card-team-logo {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .fp-card-team-logo img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        .fp-card-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fp-card-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .fp-card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .fp-card-tier {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .fp-card-tier.elite {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #000;
+        }
+
+        .fp-card-tier.high {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+
+        /* Card Body */
+        .fp-card-body {
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fp-card-prop {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .fp-card-market {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .fp-card-game {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .fp-card-line {
+            text-align: right;
+        }
+
+        .fp-card-line-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .fp-card-proj {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .fp-card-proj .positive {
+            color: #4ADE80;
+        }
+
+        .fp-card-proj .negative {
+            color: #F87171;
+        }
+
+        /* Card Footer */
+        .fp-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .fp-card-pick {
+            font-weight: 700;
+            font-size: 14px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .fp-card-pick.over {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ADE80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .fp-card-pick.under {
+            background: rgba(239, 68, 68, 0.15);
+            color: #F87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .fp-card-stats {
+            display: flex;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .fp-card-conf {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .fp-card-edge {
+            font-weight: 700;
+        }
+
+        .fp-card-edge.positive {
+            color: #4ADE80;
+        }
+
+        .fp-card-edge.negative {
+            color: #F87171;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 32px 0 24px 0;
+            gap: 16px;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+        }
+
+        .divider-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        /* Tablet: 2 per row */
+        @media (max-width: 1200px) {
+            .bp-games-container {
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            }
+
+            .featured-picks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        /* Mobile: single column */
+        @media (max-width: 720px) {
+            .bp-games-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .featured-picks-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .featured-picks-header h2 {
+                font-size: 20px;
+            }
+
+            .fp-card-header {
+                padding: 12px;
+            }
+
+            .fp-card-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+
+            .fp-card-avatar .avatar-fallback {
+                font-size: 12px;
+            }
+
+            .fp-card-team-logo {
+                width: 20px;
+                height: 20px;
+                bottom: -2px;
+                right: -2px;
+            }
+
+            .fp-card-team-logo img {
+                width: 14px;
+                height: 14px;
+            }
+
+            .fp-card-body {
+                padding: 12px;
+            }
+
+            .fp-card-line-val {
+                font-size: 18px;
+            }
+
+            .fp-card-footer {
+                padding: 10px 12px;
+            }
+
+            .section-divider {
+                margin: 24px 0 16px 0;
+            }
+
+            .compact-header {
+                padding: 12px;
+            }
+
+            .compact-team-logo {
+                width: 32px;
+                height: 32px;
+            }
+
+            .compact-picks {
+                padding: 10px 12px;
+            }
+        }
+
+        /* ===== GAME BETS ===== */
+        .bp-game-bets {
+            padding: 0;
+        }
+
+        /* ===== GAME ROW ===== */
         .bp-game-row {
             display: grid;
-            grid-template-columns: 80px 1fr 1fr 140px 120px 80px 100px;
-            padding: 12px 20px;
+            grid-template-columns: 100px 1fr 1fr 160px 140px 80px;
+            padding: 16px 24px;
             align-items: center;
             border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.2s ease;
         }
 
         .bp-game-row:last-child {
             border-bottom: none;
         }
 
-        .bp-game-row[data-tier="elite"] {
-            background: rgba(245, 158, 11, 0.08);
+        .bp-game-row:hover {
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        .bp-game-row[data-tier="high"] {
-            background: rgba(34, 197, 94, 0.06);
+        /* Tier-based row styling */
+        .bp-game-row.tier-elite-row {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.03) 100%);
+            border-left: 3px solid #F59E0B;
         }
 
+        .bp-game-row.tier-high-row {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.02) 100%);
+            border-left: 3px solid #22C55E;
+        }
+
+        /* Bet Label with tier badge */
         .bp-bet-label {
-            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Team Row inside game row */
+        .bp-tier-badge {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .bp-tier-badge.elite {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #1F2937;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+        }
+
+        .bp-tier-badge.high {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            color: #1F2937;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+        }
+
+        /* ===== TEAM ROWS ===== */
         .bp-team-row {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 10px 16px;
+            border-radius: 8px;
             transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
 
         .bp-team-row.picked {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .bp-team-row.picked::before {
+            content: '✓';
+            font-size: 12px;
+            font-weight: 700;
+            color: #60A5FA;
+            margin-right: 4px;
         }
 
         .bp-team-abbrev {
-            font-weight: 700;
-            font-size: 13px;
+            font-weight: 800;
+            font-size: 15px;
             color: var(--text-primary);
-            min-width: 36px;
+            min-width: 40px;
         }
 
         .bp-spread-line, .bp-total-line {
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 16px;
             color: var(--text-primary);
         }
 
         .bp-total-label {
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-secondary);
-            min-width: 40px;
+            min-width: 50px;
         }
 
-        .bp-odds {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* Model Pick Chip */
+        /* ===== PICK CHIPS - LARGER & PROMINENT ===== */
         .bp-model-pick {
             display: flex;
             justify-content: center;
@@ -11620,103 +12971,158 @@ def generate_css() -> str:
         .bp-pick-chip {
             display: inline-flex;
             align-items: center;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 13px;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            min-width: 120px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
         }
 
         .bp-pick-chip.spread {
-            background: rgba(139, 92, 246, 0.2);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%);
             color: #A78BFA;
-            border: 1px solid rgba(139, 92, 246, 0.4);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
         }
 
         .bp-pick-chip.over {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22C55E;
-            border: 1px solid rgba(34, 197, 94, 0.4);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(22, 163, 74, 0.2) 100%);
+            color: #4ADE80;
+            border: 2px solid rgba(34, 197, 94, 0.5);
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
         }
 
         .bp-pick-chip.under {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
-            border: 1px solid rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.2) 100%);
+            color: #F87171;
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
         }
 
-        /* Cover Probability */
-        .bp-cover-prob {
+        /* ===== CONFIDENCE METER ===== */
+        .bp-confidence-meter {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            align-items: center;
+            gap: 10px;
         }
 
-        .bp-prob-value {
+        .bp-conf-bar {
+            width: 80px;
+            height: 8px;
+            background: var(--surface-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .bp-conf-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bp-conf-fill.high {
+            background: linear-gradient(90deg, #22C55E, #4ADE80);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+        }
+
+        .bp-conf-fill.medium {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+        }
+
+        .bp-conf-fill.low {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+        }
+
+        .bp-conf-label {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
             font-size: 14px;
             color: var(--text-primary);
+            min-width: 40px;
         }
 
-        .bp-prob-bar {
-            width: 80px;
-            height: 4px;
-            background: var(--surface-elevated);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .bp-prob-fill {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        /* Edge */
+        /* ===== EDGE ===== */
         .bp-edge {
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .bp-edge.ev-positive {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ADE80;
+        }
+
+        .bp-edge.ev-negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: #F87171;
+        }
+
+        /* ===== GAMES FOOTER ===== */
+        .bp-games-footer {
+            padding: 20px 0;
+            text-align: center;
+            color: var(--text-muted);
             font-size: 14px;
         }
 
-        /* Rating */
-        .bp-rating {
-            display: flex;
-            gap: 2px;
-        }
-
-        /* Games Footer */
-        .bp-games-footer {
-            padding: 16px 0;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        /* Responsive adjustments */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .bp-column-headers,
             .bp-game-row {
-                grid-template-columns: 60px 1fr 1fr 120px 100px 70px 80px;
+                grid-template-columns: 80px 1fr 1fr 140px 120px 70px;
+                padding: 14px 20px;
+            }
+
+            .bp-pick-chip {
+                min-width: 100px;
+                padding: 8px 16px;
+                font-size: 13px;
             }
         }
 
         @media (max-width: 768px) {
             .bp-game-header {
                 flex-direction: column;
-                gap: 12px;
+                gap: 16px;
                 align-items: flex-start;
+                padding: 16px 20px;
             }
 
-            .bp-column-headers {
-                display: none;
+            .bp-game-meta {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-between;
             }
 
             .bp-game-row {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 12px;
+                padding: 16px 20px;
+            }
+
+            .bp-bet-label {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            .bp-model-pick {
+                width: 100%;
+                margin-top: 8px;
+            }
+
+            .bp-pick-chip {
+                width: 100%;
+                justify-content: center;
             }
 
             .bp-bet-label {
@@ -11733,6 +13139,91 @@ def generate_css() -> str:
             .bp-edge,
             .bp-rating {
                 flex: 1;
+            }
+
+            /* ===== NEW CARD HEADER - Mobile ===== */
+            .bp-card-header {
+                flex-direction: column;
+                padding: 12px 16px;
+                gap: 12px;
+            }
+
+            .bp-matchup-row {
+                width: 100%;
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .bp-team-logo-wrapper {
+                width: 40px;
+                height: 40px;
+            }
+
+            .bp-logo-text {
+                font-size: 12px;
+            }
+
+            .bp-team-names {
+                font-size: 14px;
+            }
+
+            .bp-card-badges {
+                justify-content: center;
+            }
+
+            .bp-weather {
+                padding: 3px 8px;
+                font-size: 11px;
+            }
+
+            /* ===== PICK ROW - Mobile Stack ===== */
+            .bp-pick-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+
+            .bp-pick-type {
+                justify-content: center;
+            }
+
+            .bp-pick-hero {
+                justify-content: center;
+            }
+
+            .bp-pick-chip {
+                padding: 12px 24px;
+                font-size: 15px;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .bp-pick-stats {
+                justify-content: center;
+                gap: 24px;
+            }
+
+            .bp-stat {
+                min-width: 60px;
+            }
+
+            .bp-stat-value {
+                font-size: 16px;
+            }
+
+            .bp-stat-label {
+                font-size: 9px;
+            }
+
+            /* ===== TIER BADGE - Centered ===== */
+            .bp-tier-badge {
+                font-size: 8px;
+                padding: 2px 5px;
+            }
+
+            .bp-card-tier-label {
+                font-size: 10px;
+                padding: 4px 10px;
             }
         }
 
@@ -13545,19 +15036,24 @@ def generate_javascript() -> str:
             applyCheatSheetFilters();
         }
 
-        function filterCheatSheetPosition(position) {
+        function filterCheatSheetPosition(position, btn) {
             csCurrentPositionFilter = position;
-            applyCheatSheetFilters();
-        }
-
-        function filterCheatSheetTier(tier) {
-            csCurrentTierFilter = tier;
+            // Update pill active states for position pills
+            document.querySelectorAll('#cheat-sheet-filters .filter-pill[data-filter="all"], #cheat-sheet-filters .filter-pill[data-filter="QB"], #cheat-sheet-filters .filter-pill[data-filter="RB"], #cheat-sheet-filters .filter-pill[data-filter="WR"], #cheat-sheet-filters .filter-pill[data-filter="TE"]').forEach(p => {
+                if (p.textContent.includes('Pos') || ['QB','RB','WR','TE'].includes(p.dataset.filter)) {
+                    p.classList.remove('active');
+                }
+            });
+            if (btn) btn.classList.add('active');
             applyCheatSheetFilters();
         }
 
         let csCurrentGameFilter = 'all';
-        function filterCheatSheetGame(game) {
+        function filterCheatSheetGame(game, btn) {
             csCurrentGameFilter = game;
+            // Update pill active states for game pills
+            document.querySelectorAll('#game-filters .filter-pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
             applyCheatSheetFilters();
         }
 
@@ -15254,6 +16750,414 @@ def load_tracking_data() -> dict:
     }
 
 
+def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> Path:
+    """Export picks data to JSON for Next.js dashboard.
+
+    Outputs a JSON file in the format expected by the Next.js dashboard at
+    deploy/web/src/data/picks.json
+    """
+    if len(recs_df) == 0:
+        print("No picks to export to JSON")
+        return None
+
+    # Filter to player props only (exclude game lines)
+    if 'bet_category' in recs_df.columns:
+        player_props_df = recs_df[recs_df['bet_category'] != 'GAME_LINE'].copy()
+    else:
+        player_props_df = recs_df.copy()
+
+    # Calculate stats
+    if 'effective_tier' in player_props_df.columns:
+        elite_count = len(player_props_df[player_props_df['effective_tier'] == 'ELITE'])
+        strong_count = len(player_props_df[player_props_df['effective_tier'] == 'STRONG'])
+    else:
+        elite_count = 0
+        strong_count = 0
+    avg_edge = player_props_df['edge_pct'].mean() if 'edge_pct' in player_props_df.columns else 0
+
+    # Get unique games count
+    if 'game' in player_props_df.columns:
+        games_count = player_props_df['game'].nunique()
+    elif 'opponent' in player_props_df.columns:
+        games_count = player_props_df['opponent'].nunique()
+    else:
+        games_count = 13  # Default for full week
+
+    # Load game history data for picks
+    game_history_cache = {}
+    name_to_player_id = {}  # Map player names to IDs
+    try:
+        stats_path = PROJECT_ROOT / 'data' / 'nflverse' / 'weekly_stats.parquet'
+        if stats_path.exists():
+            weekly_stats = pd.read_parquet(stats_path)
+            # Filter to current season and recent weeks
+            weekly_stats = weekly_stats[
+                (weekly_stats['season'] == season) &
+                (weekly_stats['week'] < week)
+            ].sort_values('week', ascending=False)
+
+            # Create name -> player_id lookup from weekly stats
+            for _, row in weekly_stats.drop_duplicates('player_id').iterrows():
+                if pd.notna(row.get('player_id')) and row['player_id']:
+                    name = row.get('player_display_name', row.get('player_name', ''))
+                    if name:
+                        name_to_player_id[name] = row['player_id']
+
+            # Try to get player_ids from dataframe or from name lookup
+            player_ids = set()
+            if 'player_id' in player_props_df.columns:
+                player_ids = set(player_props_df['player_id'].dropna().unique())
+            else:
+                # Lookup from player names
+                for player_name in player_props_df['player'].dropna().unique():
+                    pid = name_to_player_id.get(player_name)
+                    if pid:
+                        player_ids.add(pid)
+
+            # Group by player_id for lookup
+            for player_id in player_ids:
+                if player_id and player_id != '':
+                    player_stats = weekly_stats[weekly_stats['player_id'] == player_id].head(6)
+                    if len(player_stats) > 0:
+                        game_history_cache[player_id] = {
+                            'weeks': player_stats['week'].tolist(),
+                            'opponents': player_stats.get('opponent_team', player_stats.get('opponent', pd.Series(['UNK']*len(player_stats)))).tolist(),
+                            'receiving_yards': player_stats['receiving_yards'].fillna(0).astype(int).tolist() if 'receiving_yards' in player_stats.columns else [],
+                            'receptions': player_stats['receptions'].fillna(0).astype(int).tolist() if 'receptions' in player_stats.columns else [],
+                            'rushing_yards': player_stats['rushing_yards'].fillna(0).astype(int).tolist() if 'rushing_yards' in player_stats.columns else [],
+                            'rushing_attempts': player_stats['carries'].fillna(0).astype(int).tolist() if 'carries' in player_stats.columns else [],
+                            'passing_yards': player_stats['passing_yards'].fillna(0).astype(int).tolist() if 'passing_yards' in player_stats.columns else [],
+                            'passing_attempts': player_stats['attempts'].fillna(0).astype(int).tolist() if 'attempts' in player_stats.columns else [],
+                            'completions': player_stats['completions'].fillna(0).astype(int).tolist() if 'completions' in player_stats.columns else [],
+                            'passing_tds': player_stats['passing_tds'].fillna(0).astype(int).tolist() if 'passing_tds' in player_stats.columns else [],
+                            'rushing_tds': player_stats['rushing_tds'].fillna(0).astype(int).tolist() if 'rushing_tds' in player_stats.columns else [],
+                            'receiving_tds': player_stats['receiving_tds'].fillna(0).astype(int).tolist() if 'receiving_tds' in player_stats.columns else [],
+                        }
+    except Exception as e:
+        print(f"  Warning: Could not load game history: {e}")
+
+    # Load player headshot URLs from rosters
+    headshot_lookup = {}
+    try:
+        rosters_path = PROJECT_ROOT / 'data' / 'nflverse' / 'rosters.parquet'
+        if rosters_path.exists():
+            rosters_df = pd.read_parquet(rosters_path)
+            # Filter to current season for most accurate data
+            if 'season' in rosters_df.columns:
+                rosters_df = rosters_df[rosters_df['season'] == season]
+            # Build lookup by full_name -> headshot_url
+            for _, row in rosters_df.iterrows():
+                name = str(row.get('full_name', '')).strip()
+                url = row.get('headshot_url', '')
+                if name and pd.notna(url) and url:
+                    headshot_lookup[name] = url
+            print(f"  Loaded {len(headshot_lookup)} player headshots from rosters")
+    except Exception as e:
+        print(f"  Warning: Could not load headshots from rosters: {e}")
+
+    # Load depth chart for player depth positions (WR1, RB2, etc.)
+    depth_chart_lookup = {}  # (player_name, team) -> depth_position
+    try:
+        depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts_2025.parquet'
+        if depth_path.exists():
+            depth_df = pd.read_parquet(depth_path)
+            # Only get offensive skill positions
+            skill_positions = ['Wide Receiver', 'Running Back', 'Tight End', 'Quarterback']
+            depth_df = depth_df[depth_df['pos_name'].isin(skill_positions)]
+            # Build lookup: (player_name, team) -> "WR1", "RB2", etc.
+            pos_abbrev_map = {
+                'Wide Receiver': 'WR',
+                'Running Back': 'RB',
+                'Tight End': 'TE',
+                'Quarterback': 'QB',
+            }
+            for _, row in depth_df.iterrows():
+                name = str(row.get('player_name', '')).strip()
+                team = str(row.get('team', '')).upper()
+                pos_name = row.get('pos_name', '')
+                pos_rank = int(row.get('pos_rank', 1)) if pd.notna(row.get('pos_rank')) else 1
+                if name and team and pos_name:
+                    abbrev = pos_abbrev_map.get(pos_name, 'FLEX')
+                    depth_chart_lookup[(name, team)] = f"{abbrev}{pos_rank}"
+            print(f"  Loaded {len(depth_chart_lookup)} depth chart positions")
+    except Exception as e:
+        print(f"  Warning: Could not load depth chart: {e}")
+
+    # Calculate defense allowed by position (how many yards/receptions each team allows to WR/RB/TE)
+    defense_vs_position = {}  # team -> position -> {'allowed': float, 'rank': int}
+    try:
+        if stats_path.exists():
+            # Use the already-loaded weekly_stats
+            # Group by opponent_team and position to calculate avg allowed
+            position_map = {'WR': 'WR', 'RB': 'RB', 'TE': 'TE', 'QB': 'QB'}
+            for opp_team in weekly_stats['opponent_team'].dropna().unique():
+                team_games = weekly_stats[weekly_stats['opponent_team'] == opp_team]
+                defense_vs_position[opp_team] = {}
+                for pos in ['WR', 'RB', 'TE', 'QB']:
+                    pos_stats = team_games[team_games['position'] == pos]
+                    if len(pos_stats) > 0:
+                        # Calculate average receiving/rushing yards allowed per game to this position
+                        if pos in ['WR', 'TE']:
+                            # Sum receiving yards per week, then average
+                            weekly_totals = pos_stats.groupby('week')['receiving_yards'].sum()
+                            avg_allowed = weekly_totals.mean() if len(weekly_totals) > 0 else 0
+                        elif pos == 'RB':
+                            weekly_totals = pos_stats.groupby('week')['rushing_yards'].sum()
+                            avg_allowed = weekly_totals.mean() if len(weekly_totals) > 0 else 0
+                        else:  # QB
+                            weekly_totals = pos_stats.groupby('week')['passing_yards'].sum()
+                            avg_allowed = weekly_totals.mean() if len(weekly_totals) > 0 else 0
+                        defense_vs_position[opp_team][pos] = {'allowed': round(avg_allowed, 1)}
+
+            # Calculate ranks (higher allowed = worse defense = higher rank number)
+            for pos in ['WR', 'RB', 'TE', 'QB']:
+                teams_sorted = sorted(
+                    [(t, defense_vs_position.get(t, {}).get(pos, {}).get('allowed', 0)) for t in defense_vs_position],
+                    key=lambda x: x[1],
+                    reverse=True  # Worst defense (most allowed) = rank 1
+                )
+                for rank, (team, _) in enumerate(teams_sorted, 1):
+                    if pos in defense_vs_position.get(team, {}):
+                        defense_vs_position[team][pos]['rank'] = rank
+            print(f"  Calculated defense vs position stats for {len(defense_vs_position)} teams")
+    except Exception as e:
+        print(f"  Warning: Could not calculate defense vs position: {e}")
+
+    # Team logo URL mapping - ESPN uses different abbreviations for some teams
+    ESPN_TEAM_MAP = {
+        'LA': 'lar',    # Rams
+        'WSH': 'wsh',   # Commanders
+        'JAC': 'jax',   # Jaguars (alternate abbr)
+    }
+    def get_team_logo_url(team: str) -> str:
+        team_abbr = str(team).upper() if team else 'NFL'
+        espn_abbr = ESPN_TEAM_MAP.get(team_abbr, team_abbr.lower())
+        return f'https://a.espncdn.com/i/teamlogos/nfl/500/{espn_abbr}.png'
+
+    # Normalize player name for matching (strip Jr., Sr., III, etc.)
+    def normalize_name(name: str) -> str:
+        if not name:
+            return ''
+        # Remove common suffixes
+        normalized = name.strip()
+        for suffix in [' Jr.', ' Sr.', ' III', ' II', ' IV', ' V']:
+            normalized = normalized.replace(suffix, '')
+        return normalized.strip()
+
+    # Build normalized name lookup
+    normalized_headshot_lookup = {}
+    for name, url in headshot_lookup.items():
+        normalized_headshot_lookup[normalize_name(name)] = url
+
+    # Player headshot URL - lookup from rosters data with name normalization
+    def get_headshot_url(player_name: str) -> str | None:
+        # Try exact match first
+        url = headshot_lookup.get(player_name)
+        if url:
+            return url
+        # Try normalized name match
+        return normalized_headshot_lookup.get(normalize_name(player_name))
+
+    # Convert tier to lowercase for frontend
+    def normalize_tier(tier: str) -> str:
+        tier_str = str(tier).lower() if tier else 'moderate'
+        if tier_str in ['elite', 'strong', 'moderate', 'caution']:
+            return tier_str
+        return 'moderate'
+
+    # Calculate star rating from confidence
+    def get_stars(confidence: float) -> int:
+        conf = float(confidence) if pd.notna(confidence) else 0.5
+        if conf >= 0.75:
+            return 5
+        elif conf >= 0.68:
+            return 4
+        elif conf >= 0.60:
+            return 3
+        elif conf >= 0.55:
+            return 2
+        return 1
+
+    # Build picks list
+    picks_list = []
+    filtered_count = 0
+    for idx, row in player_props_df.iterrows():
+        # CRITICAL FIX: Filter out picks where projection conflicts with direction
+        # This happens when XGBoost classifier disagrees with Monte Carlo projection
+        projection = float(row.get('model_projection', row.get('projection', row.get('line', 0)))) if pd.notna(row.get('model_projection', row.get('projection'))) else float(row.get('line', 0))
+        line = float(row.get('line', 0)) if pd.notna(row.get('line')) else 0
+        pick_direction = str(row.get('pick', row.get('direction', 'OVER'))).upper()
+
+        # Skip conflicting picks:
+        # - OVER picks where projection < line (model says under-perform)
+        # - UNDER picks where projection > line (model says over-perform)
+        if pick_direction in ['OVER', 'YES'] and projection < line:
+            filtered_count += 1
+            continue
+        if pick_direction in ['UNDER', 'NO'] and projection > line:
+            filtered_count += 1
+            continue
+
+        # Get player_id from dataframe or lookup by name
+        player_id = str(row.get('player_id', '')) if pd.notna(row.get('player_id')) else ''
+        if not player_id:
+            player_name = str(row.get('player', ''))
+            player_id = name_to_player_id.get(player_name, '')
+
+        # Get game history for this player
+        history = game_history_cache.get(player_id, {
+            'weeks': [],
+            'opponents': [],
+            'receiving_yards': [],
+            'receptions': [],
+            'rushing_yards': [],
+            'rushing_attempts': [],
+            'passing_yards': [],
+            'passing_attempts': [],
+            'completions': [],
+            'passing_tds': [],
+            'rushing_tds': [],
+            'receiving_tds': [],
+        })
+
+        # Calculate projection and edge
+        projection = float(row.get('model_projection', row.get('projection', row.get('line', 0)))) if pd.notna(row.get('model_projection', row.get('projection'))) else float(row.get('line', 0))
+        line = float(row.get('line', 0)) if pd.notna(row.get('line')) else 0
+        # Normalize pick direction BEFORE edge calculation (handles 'Yes', 'OVER', 'Over', etc.)
+        pick_direction = str(row.get('pick', row.get('direction', ''))).upper()
+        is_over = pick_direction in ['OVER', 'YES']
+        edge = projection - line if is_over else line - projection
+
+        # Confidence
+        confidence = float(row.get('combined_confidence', row.get('model_prob', 0.55))) if pd.notna(row.get('combined_confidence', row.get('model_prob'))) else 0.55
+
+        # L5 rate calculation
+        l5_rate = None
+        l5_hits = None
+        if 'l5_hit_rate' in row and pd.notna(row['l5_hit_rate']):
+            l5_rate = int(float(row['l5_hit_rate']) * 100) if float(row['l5_hit_rate']) <= 1 else int(row['l5_hit_rate'])
+
+        player_name = str(row.get('player', 'Unknown'))
+        team = str(row.get('team', ''))
+        opponent = str(row.get('opponent', row.get('opponent_abbr', '')))
+        position = str(row.get('position', row.get('actual_position', 'FLEX')))
+
+        # Get depth chart position (e.g., "WR1", "RB2")
+        depth_position = depth_chart_lookup.get((player_name, team.upper()), None)
+        # Also try without suffix normalization
+        if not depth_position:
+            normalized_name = normalize_name(player_name)
+            for (name, t), dp in depth_chart_lookup.items():
+                if normalize_name(name) == normalized_name and t == team.upper():
+                    depth_position = dp
+                    break
+
+        # Get defense vs position stats for opponent
+        opp_def_allowed = None
+        opp_def_rank = None
+        if opponent and position in defense_vs_position.get(opponent, {}):
+            opp_def_allowed = defense_vs_position[opponent][position].get('allowed')
+            opp_def_rank = defense_vs_position[opponent][position].get('rank')
+
+        pick_data = {
+            'id': f"pick-{idx}",
+            'player': player_name,
+            'position': position,
+            'depth_position': depth_position,
+            'team': team,
+            'opponent': opponent,
+            'headshot_url': get_headshot_url(player_name),
+            'team_logo_url': get_team_logo_url(row.get('team', '')),
+            'market': str(row.get('market', '')),
+            'market_display': str(row.get('market_display', row.get('market', ''))),
+            'line': line,
+            'pick': 'OVER' if str(row.get('pick', row.get('direction', 'OVER'))).upper() in ['OVER', 'YES'] else 'UNDER',
+            'projection': round(projection, 1),
+            'edge': round(edge, 1),
+            'confidence': round(confidence, 2),
+            'tier': normalize_tier(row.get('effective_tier', 'moderate')),
+            'stars': get_stars(confidence),
+            'ev': round(float(row.get('roi_pct', row.get('edge_pct', 0))) if pd.notna(row.get('roi_pct', row.get('edge_pct'))) else 0, 1),
+            'opp_rank': int(row.get('def_rank', 16)) if pd.notna(row.get('def_rank')) else None,
+            'opp_def_allowed': opp_def_allowed,
+            'opp_def_rank': opp_def_rank,
+            'hist_over_rate': round(float(row.get('hist_over_rate', 0.5)) if pd.notna(row.get('hist_over_rate')) else 0.5, 2),
+            'hist_count': int(row.get('hist_count', 0)) if pd.notna(row.get('hist_count')) else 0,
+            'game': f"{team} vs {opponent}",
+            'game_history': history,
+        }
+
+        if l5_rate is not None:
+            pick_data['l5_rate'] = l5_rate
+        if l5_hits:
+            pick_data['l5_hits'] = l5_hits
+
+        picks_list.append(pick_data)
+
+    # Sort by confidence descending
+    picks_list.sort(key=lambda x: x['confidence'], reverse=True)
+
+    # Load schedule data for game metadata
+    games_metadata = []
+    try:
+        schedule_path = PROJECT_ROOT / 'data' / 'nflverse' / 'schedules.parquet'
+        if schedule_path.exists():
+            schedule_df = pd.read_parquet(schedule_path)
+            week_games = schedule_df[(schedule_df['week'] == week) & (schedule_df['season'] == season)]
+
+            for _, game in week_games.iterrows():
+                away = str(game.get('away_team', ''))
+                home = str(game.get('home_team', ''))
+                game_key = f"{away} vs {home}"
+                # Also create normalized key (sorted teams)
+                normalized_key = ' vs '.join(sorted([away, home]))
+
+                games_metadata.append({
+                    'game': game_key,
+                    'normalized': normalized_key,
+                    'away_team': away,
+                    'home_team': home,
+                    'gameday': str(game.get('gameday', '')),
+                    'gametime': str(game.get('gametime', '')),
+                    'stadium': str(game.get('stadium', '')) if pd.notna(game.get('stadium')) else '',
+                    'roof': str(game.get('roof', '')) if pd.notna(game.get('roof')) else '',
+                    'temp': int(game.get('temp', 0)) if pd.notna(game.get('temp')) else None,
+                    'wind': int(game.get('wind', 0)) if pd.notna(game.get('wind')) else None,
+                })
+
+            # Sort by gameday and gametime
+            games_metadata.sort(key=lambda x: (x['gameday'], x['gametime']))
+            print(f"  Loaded {len(games_metadata)} games with metadata")
+    except Exception as e:
+        print(f"  Warning: Could not load schedule data: {e}")
+
+    # Build final JSON structure
+    dashboard_data = {
+        'week': week,
+        'generated_at': datetime.now().isoformat(),
+        'stats': {
+            'total_picks': len(picks_list),
+            'avg_edge': round(avg_edge, 1) if pd.notna(avg_edge) else 0,
+            'games': games_count,
+            'elite_count': elite_count,
+            'strong_count': strong_count,
+        },
+        'games': games_metadata,
+        'picks': picks_list,
+    }
+
+    # Output path for Next.js app
+    output_dir = PROJECT_ROOT / 'deploy' / 'web' / 'src' / 'data'
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / 'picks.json'
+
+    with open(output_path, 'w') as f:
+        json.dump(dashboard_data, f, indent=2, default=str)
+
+    print(f"JSON export: {output_path} ({len(picks_list)} picks, filtered {filtered_count} conflicting)")
+    return output_path
+
+
 def generate_dashboard(week: int = None, season: int = 2025):
     """Generate the professional dashboard HTML."""
     if week is None:
@@ -15277,7 +17181,18 @@ def generate_dashboard(week: int = None, season: int = 2025):
             print(f"Error: No recommendations found for week {week}")
             return None
 
-    game_lines_path = PROJECT_ROOT / "reports" / f"WEEK{week}_GAME_LINE_RECOMMENDATIONS.csv"
+    # Try multiple possible game lines file names
+    game_lines_paths = [
+        PROJECT_ROOT / "reports" / f"WEEK{week}_GAME_LINE_RECOMMENDATIONS.csv",
+        PROJECT_ROOT / "reports" / f"game_lines_predictions_week{week}.csv",
+        PROJECT_ROOT / "data" / f"game_line_predictions_week{week}.csv",
+    ]
+    game_lines_path = None
+    for path in game_lines_paths:
+        if path.exists():
+            game_lines_path = path
+            print(f"Found game lines: {path}")
+            break
 
     # Log tier distribution
     elite_count = len(recs_df[recs_df['effective_tier'] == 'ELITE'])
@@ -15289,8 +17204,9 @@ def generate_dashboard(week: int = None, season: int = 2025):
           f"{moderate_count} MODERATE, {caution_count} CAUTION")
 
     game_lines_df = None
-    if game_lines_path.exists():
+    if game_lines_path and game_lines_path.exists():
         game_lines_df = pd.read_csv(game_lines_path)
+        print(f"  Loaded {len(game_lines_df)} game line recommendations")
 
     # Load schedule for game times and venue info
     schedule_df = load_schedule(week)
@@ -15951,6 +17867,9 @@ def generate_dashboard(week: int = None, season: int = 2025):
     output_path.write_text(html)
     print(f"Dashboard generated: {output_path}")
 
+    # Also export JSON for Next.js dashboard
+    export_picks_json(recs_df, week, season)
+
     return output_path
 
 
@@ -15958,6 +17877,69 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Generate NFL QUANT Professional Dashboard")
     parser.add_argument("--week", type=int, default=None, help="Week number")
+    parser.add_argument("--json-only", action="store_true", help="Only export JSON for Next.js (skip HTML)")
     args = parser.parse_args()
 
-    generate_dashboard(week=args.week)
+    if args.json_only:
+        # Load data and export JSON only
+        from nfl_quant.config import settings
+        week = args.week or settings.CURRENT_WEEK
+        recs_df = load_edge_recommendations(week)
+
+        # Fall back to CURRENT_WEEK_RECOMMENDATIONS if edge recs too few
+        if len(recs_df) < 20:
+            recs_path = PROJECT_ROOT / "reports" / "CURRENT_WEEK_RECOMMENDATIONS.csv"
+            if recs_path.exists():
+                print(f"Edge recommendations too few ({len(recs_df)}), using CURRENT_WEEK_RECOMMENDATIONS.csv")
+                recs_df = pd.read_csv(recs_path)
+                # Map confidence column to tier for proper categorization
+                def map_confidence_to_tier(conf_str):
+                    if pd.isna(conf_str):
+                        return 'MODERATE'
+                    conf_str = str(conf_str).upper()
+                    if 'ELITE' in conf_str or conf_str == 'VERY HIGH' or '90' in conf_str:
+                        return 'ELITE'
+                    elif 'HIGH' in conf_str or '80' in conf_str or '75' in conf_str:
+                        return 'STRONG'
+                    elif 'MED' in conf_str or '60' in conf_str or '70' in conf_str:
+                        return 'MODERATE'
+                    else:
+                        return 'MODERATE'
+
+                if 'confidence' in recs_df.columns:
+                    recs_df['effective_tier'] = recs_df['confidence'].apply(map_confidence_to_tier)
+                elif 'model_confidence' in recs_df.columns:
+                    # Use model_confidence (0-100 scale) for tier
+                    recs_df['effective_tier'] = recs_df['model_confidence'].apply(
+                        lambda x: 'ELITE' if x >= 85 else ('STRONG' if x >= 70 else 'MODERATE')
+                    )
+                else:
+                    recs_df['effective_tier'] = 'MODERATE'
+
+                # Add defensive rankings
+                recs_df = add_defensive_rankings_to_df(recs_df, week)
+
+                # Filter to only picks where projection aligns with pick direction
+                def is_projection_aligned(row):
+                    proj = row.get('model_projection', row.get('projection', 0))
+                    line = row.get('line', 0)
+                    pick = str(row.get('pick', '')).upper()
+                    if pd.isna(proj) or pd.isna(line):
+                        return True  # Keep if we can't check
+                    # Handle OVER/YES as same direction, UNDER/NO as same
+                    if pick in ['OVER', 'YES']:
+                        return proj > line
+                    elif pick in ['UNDER', 'NO']:
+                        return proj < line
+                    return True
+
+                original_count = len(recs_df)
+                recs_df = recs_df[recs_df.apply(is_projection_aligned, axis=1)]
+                print(f"Loaded {len(recs_df)} aligned picks from CURRENT_WEEK_RECOMMENDATIONS.csv (filtered {original_count - len(recs_df)} misaligned)")
+
+        if len(recs_df) > 0:
+            export_picks_json(recs_df, week)
+        else:
+            print(f"No recommendations found for week {week}")
+    else:
+        generate_dashboard(week=args.week)
