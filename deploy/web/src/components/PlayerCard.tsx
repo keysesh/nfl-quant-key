@@ -26,75 +26,75 @@ function StarRating({ stars, maxStars = 5 }: { stars: number; maxStars?: number 
   );
 }
 
-// Weather badge component
-function WeatherBadge({ roof, temp, wind, market }: { roof?: string | null; temp?: number | null; wind?: number | null; market: string }) {
-  // Only show for outdoor games with relevant weather
-  if (roof === 'dome' || roof === 'closed') return null;
-
-  const isPassingMarket = market.includes('pass') || market.includes('reception') || market.includes('rec');
+// Game context badges - shows vegas lines and weather factors
+function GameContextBadges({ pick }: { pick: Pick }) {
   const badges: React.ReactNode[] = [];
+  const { vegas_total, vegas_spread, roof, temp, wind, market } = pick;
 
-  // Wind warning (affects passing)
-  if (wind && wind >= 15 && isPassingMarket) {
+  const isOutdoor = roof !== 'dome' && roof !== 'closed';
+  const isPassingMarket = market.includes('pass') || market.includes('reception') || market.includes('rec');
+
+  // High scoring game indicator
+  if (vegas_total && vegas_total >= 47) {
     badges.push(
-      <span key="wind" className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/25">
-        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-        </svg>
-        {wind}mph
-      </span>
+      <div key="total" className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Total</span>
+        <span className="text-xs font-bold text-emerald-400">{vegas_total}</span>
+      </div>
+    );
+  }
+
+  // Spread indicator (shows game script risk)
+  if (vegas_spread !== null && vegas_spread !== undefined) {
+    const isFavored = vegas_spread < 0;
+    const isBlowout = Math.abs(vegas_spread) >= 7;
+    badges.push(
+      <div key="spread" className={`flex items-center gap-1.5 px-2 py-1 rounded-md border ${
+        isBlowout
+          ? isFavored
+            ? 'bg-emerald-500/10 border-emerald-500/20'
+            : 'bg-orange-500/10 border-orange-500/20'
+          : 'bg-zinc-500/10 border-zinc-500/20'
+      }`}>
+        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Line</span>
+        <span className={`text-xs font-bold ${
+          isBlowout
+            ? isFavored ? 'text-emerald-400' : 'text-orange-400'
+            : 'text-zinc-400'
+        }`}>
+          {vegas_spread > 0 ? '+' : ''}{vegas_spread.toFixed(1)}
+        </span>
+      </div>
+    );
+  }
+
+  // Wind warning for passing games
+  if (isOutdoor && wind && wind >= 15 && isPassingMarket) {
+    badges.push(
+      <div key="wind" className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20">
+        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Wind</span>
+        <span className="text-xs font-bold text-amber-400">{wind}mph</span>
+      </div>
     );
   }
 
   // Cold weather
-  if (temp !== null && temp !== undefined && temp <= 35) {
+  if (isOutdoor && temp !== null && temp !== undefined && temp <= 35) {
     badges.push(
-      <span key="cold" className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400 border border-sky-500/25">
-        <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 2a1 1 0 011 1v1.323l1.954-1.128a1 1 0 011 1.732L12 6.054V8h1.946a1 1 0 110 2H12v1.946a1 1 0 11-2 0V10H8.054a1 1 0 110-2H10V6.054L8.046 4.927a1 1 0 011-1.732L11 4.323V3a1 1 0 011-1z" />
-        </svg>
-        {temp}°F
-      </span>
+      <div key="temp" className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-sky-500/10 border border-sky-500/20">
+        <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Temp</span>
+        <span className="text-xs font-bold text-sky-400">{temp}°F</span>
+      </div>
     );
   }
 
-  return badges.length > 0 ? <>{badges}</> : null;
-}
+  if (badges.length === 0) return null;
 
-// Game script badge component
-function GameScriptBadge({ vegasTotal, vegasSpread }: { vegasTotal?: number | null; vegasSpread?: number | null }) {
-  const badges: React.ReactNode[] = [];
-
-  // High scoring game (good for stats)
-  if (vegasTotal && vegasTotal >= 48) {
-    badges.push(
-      <span key="high" className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-        O/U {vegasTotal}
-      </span>
-    );
-  }
-
-  // Blowout risk (game script concern)
-  if (vegasSpread && Math.abs(vegasSpread) >= 7) {
-    const isFavored = vegasSpread < 0;
-    badges.push(
-      <span key="spread" className={`inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded border ${
-        isFavored
-          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25'
-          : 'bg-orange-500/15 text-orange-400 border-orange-500/25'
-      }`}>
-        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isFavored ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
-        </svg>
-        {vegasSpread > 0 ? '+' : ''}{vegasSpread.toFixed(0)}
-      </span>
-    );
-  }
-
-  return badges.length > 0 ? <>{badges}</> : null;
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {badges}
+    </div>
+  );
 }
 
 interface PlayerCardProps {
@@ -269,12 +269,6 @@ export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
                 {pick.l5_rate}% L5
               </span>
             )}
-
-            {/* Weather badges */}
-            <WeatherBadge roof={pick.roof} temp={pick.temp} wind={pick.wind} market={pick.market} />
-
-            {/* Game script badges */}
-            <GameScriptBadge vegasTotal={pick.vegas_total} vegasSpread={pick.vegas_spread} />
           </div>
 
           {/* Right: Stars + Chart button */}
@@ -290,6 +284,9 @@ export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
             </button>
           </div>
         </div>
+
+        {/* Row 4: Game Context - Vegas lines & weather */}
+        <GameContextBadges pick={pick} />
       </div>
 
       {/* ========== DESKTOP LAYOUT ========== */}
@@ -389,16 +386,13 @@ export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
             </span>
           )}
 
-          {/* Weather badges */}
-          <WeatherBadge roof={pick.roof} temp={pick.temp} wind={pick.wind} market={pick.market} />
-
-          {/* Game script badges */}
-          <GameScriptBadge vegasTotal={pick.vegas_total} vegasSpread={pick.vegas_spread} />
-
           <span className="text-xs text-zinc-500 ml-auto">
             {pick.hist_count} games
           </span>
         </div>
+
+        {/* Game Context - Vegas lines & weather */}
+        <GameContextBadges pick={pick} />
       </div>
     </div>
   );
