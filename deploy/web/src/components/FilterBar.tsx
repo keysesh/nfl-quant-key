@@ -16,6 +16,14 @@ function formatGameTime(gametime: string): string {
   return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
 
+// Get short day of week (e.g., "Sun", "Mon", "Thu")
+function getDayOfWeek(gameday: string): string {
+  if (!gameday) return '';
+  const date = new Date(gameday + 'T12:00:00'); // Add time to avoid timezone issues
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[date.getDay()];
+}
+
 // Get weather/venue icon
 function getWeatherIcon(game: GameInfo): { icon: string; label: string } {
   if (game.roof === 'dome' || game.roof === 'closed') {
@@ -182,6 +190,7 @@ export default function FilterBar({
               </button>
               {sortGamesByKickoff(games).map(game => {
                 const weather = getWeatherIcon(game);
+                const dayOfWeek = getDayOfWeek(game.gameday);
                 return (
                   <button
                     key={game.normalized}
@@ -193,6 +202,7 @@ export default function FilterBar({
                         : 'bg-white/[0.02] border border-white/[0.04] text-zinc-400 hover:bg-white/[0.06]'
                     }`}
                   >
+                    <span className="text-zinc-500 text-[10px]">{dayOfWeek}</span>
                     <span className="font-semibold">{game.away_team}</span>
                     <span className="text-zinc-600 text-[10px]">@</span>
                     <span className="font-semibold">{game.home_team}</span>
@@ -276,7 +286,7 @@ export default function FilterBar({
               <option value="all">Game</option>
               {sortGamesByKickoff(games).map(game => (
                 <option key={game.normalized} value={game.normalized}>
-                  {game.away_team}@{game.home_team}
+                  {getDayOfWeek(game.gameday)} {game.away_team}@{game.home_team}
                 </option>
               ))}
             </select>
