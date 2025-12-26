@@ -24,21 +24,18 @@ function getDayOfWeek(gameday: string): string {
   return days[date.getDay()];
 }
 
-// Get weather/venue icon
-function getWeatherIcon(game: GameInfo): { icon: string; label: string } {
+// Get weather/venue indicator
+function getWeatherIcon(game: GameInfo): { icon: string; label: string } | null {
   if (game.roof === 'dome' || game.roof === 'closed') {
-    return { icon: '🏟️', label: 'Dome' };
+    return null; // No indicator needed for dome games
   }
   if (game.temp !== null && game.temp < 35) {
-    return { icon: '❄️', label: `${game.temp}°F` };
+    return { icon: 'COLD', label: `${game.temp}°F` };
   }
   if (game.wind !== null && game.wind > 15) {
-    return { icon: '💨', label: `${game.wind}mph` };
+    return { icon: 'WIND', label: `${game.wind}mph` };
   }
-  if (game.temp !== null) {
-    return { icon: '☀️', label: `${game.temp}°F` };
-  }
-  return { icon: '🏈', label: 'Outdoor' };
+  return null; // No indicator for normal outdoor games
 }
 
 // Sort games by kickoff datetime
@@ -195,7 +192,7 @@ export default function FilterBar({
                   <button
                     key={game.normalized}
                     onClick={() => onGameChange(game.normalized)}
-                    title={`${game.stadium} • ${weather.label}`}
+                    title={`${game.stadium}${weather ? ` • ${weather.label}` : ''}`}
                     className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       gameFilter === game.normalized
                         ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-500/10 text-emerald-400 border border-emerald-500/30'
@@ -208,7 +205,13 @@ export default function FilterBar({
                     <span className="font-semibold">{game.home_team}</span>
                     <span className="text-zinc-600 mx-1">•</span>
                     <span className="text-zinc-500 text-[10px]">{formatGameTime(game.gametime)}</span>
-                    {weather.icon !== '🏈' && <span className="text-[10px] ml-0.5" title={weather.label}>{weather.icon}</span>}
+                    {weather && (
+                      <span className={`text-[9px] font-semibold ml-1 px-1 py-0.5 rounded ${
+                        weather.icon === 'COLD' ? 'bg-sky-500/20 text-sky-400' : 'bg-amber-500/20 text-amber-400'
+                      }`} title={weather.label}>
+                        {weather.icon}
+                      </span>
+                    )}
                   </button>
                 );
               })}

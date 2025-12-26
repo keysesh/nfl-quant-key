@@ -37,8 +37,11 @@ function WeatherBadge({ roof, temp, wind, market }: { roof?: string | null; temp
   // Wind warning (affects passing)
   if (wind && wind >= 15 && isPassingMarket) {
     badges.push(
-      <span key="wind" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
-        💨 {wind}mph
+      <span key="wind" className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/25">
+        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+        {wind}mph
       </span>
     );
   }
@@ -46,8 +49,11 @@ function WeatherBadge({ roof, temp, wind, market }: { roof?: string | null; temp
   // Cold weather
   if (temp !== null && temp !== undefined && temp <= 35) {
     badges.push(
-      <span key="cold" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-        🥶 {temp}°
+      <span key="cold" className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400 border border-sky-500/25">
+        <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 2a1 1 0 011 1v1.323l1.954-1.128a1 1 0 011 1.732L12 6.054V8h1.946a1 1 0 110 2H12v1.946a1 1 0 11-2 0V10H8.054a1 1 0 110-2H10V6.054L8.046 4.927a1 1 0 011-1.732L11 4.323V3a1 1 0 011-1z" />
+        </svg>
+        {temp}°F
       </span>
     );
   }
@@ -62,8 +68,11 @@ function GameScriptBadge({ vegasTotal, vegasSpread }: { vegasTotal?: number | nu
   // High scoring game (good for stats)
   if (vegasTotal && vegasTotal >= 48) {
     badges.push(
-      <span key="high" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-        🔥 O/U {vegasTotal}
+      <span key="high" className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+        O/U {vegasTotal}
       </span>
     );
   }
@@ -72,8 +81,15 @@ function GameScriptBadge({ vegasTotal, vegasSpread }: { vegasTotal?: number | nu
   if (vegasSpread && Math.abs(vegasSpread) >= 7) {
     const isFavored = vegasSpread < 0;
     badges.push(
-      <span key="spread" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">
-        {isFavored ? '📈' : '📉'} {vegasSpread > 0 ? '+' : ''}{vegasSpread.toFixed(0)}
+      <span key="spread" className={`inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded border ${
+        isFavored
+          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25'
+          : 'bg-orange-500/15 text-orange-400 border-orange-500/25'
+      }`}>
+        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isFavored ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+        </svg>
+        {vegasSpread > 0 ? '+' : ''}{vegasSpread.toFixed(0)}
       </span>
     );
   }
