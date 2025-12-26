@@ -1,8 +1,8 @@
 'use client';
 
+import React, { useState } from 'react';
 import { Pick } from '@/lib/types';
 import Image from 'next/image';
-import { useState } from 'react';
 
 // Get team logo URL - ESPN circular logos (500x500, better quality)
 function getTeamLogoUrl(team: string): string {
@@ -26,6 +26,61 @@ function StarRating({ stars, maxStars = 5 }: { stars: number; maxStars?: number 
   );
 }
 
+// Weather badge component
+function WeatherBadge({ roof, temp, wind, market }: { roof?: string | null; temp?: number | null; wind?: number | null; market: string }) {
+  // Only show for outdoor games with relevant weather
+  if (roof === 'dome' || roof === 'closed') return null;
+
+  const isPassingMarket = market.includes('pass') || market.includes('reception') || market.includes('rec');
+  const badges: React.ReactNode[] = [];
+
+  // Wind warning (affects passing)
+  if (wind && wind >= 15 && isPassingMarket) {
+    badges.push(
+      <span key="wind" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
+        💨 {wind}mph
+      </span>
+    );
+  }
+
+  // Cold weather
+  if (temp !== null && temp !== undefined && temp <= 35) {
+    badges.push(
+      <span key="cold" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+        🥶 {temp}°
+      </span>
+    );
+  }
+
+  return badges.length > 0 ? <>{badges}</> : null;
+}
+
+// Game script badge component
+function GameScriptBadge({ vegasTotal, vegasSpread }: { vegasTotal?: number | null; vegasSpread?: number | null }) {
+  const badges: React.ReactNode[] = [];
+
+  // High scoring game (good for stats)
+  if (vegasTotal && vegasTotal >= 48) {
+    badges.push(
+      <span key="high" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+        🔥 O/U {vegasTotal}
+      </span>
+    );
+  }
+
+  // Blowout risk (game script concern)
+  if (vegasSpread && Math.abs(vegasSpread) >= 7) {
+    const isFavored = vegasSpread < 0;
+    badges.push(
+      <span key="spread" className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">
+        {isFavored ? '📈' : '📉'} {vegasSpread > 0 ? '+' : ''}{vegasSpread.toFixed(0)}
+      </span>
+    );
+  }
+
+  return badges.length > 0 ? <>{badges}</> : null;
+}
+
 interface PlayerCardProps {
   pick: Pick;
   isSelected?: boolean;
@@ -33,36 +88,33 @@ interface PlayerCardProps {
   onAnalyze?: (pick: Pick) => void;
 }
 
-export default function PlayerCard({ pick, isSelected = false, onSelect, onAnalyze }: PlayerCardProps) {
+export default function PlayerCard({ pick, onAnalyze }: PlayerCardProps) {
   const [logoError, setLogoError] = useState(false);
   const isOver = pick.pick === 'OVER';
   const edgeSign = pick.edge >= 0 ? '+' : '';
 
-  // Confidence-based border color
-  const confidenceBorder = pick.confidence >= 0.7
-    ? 'border-emerald-500/40 ring-1 ring-emerald-500/10'
-    : pick.confidence >= 0.6
-    ? 'border-yellow-500/30 ring-1 ring-yellow-500/10'
-    : 'border-zinc-800/50';
-
   const tierColors = {
     elite: {
-      badge: 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/30',
+      badge: 'bg-gradient-to-r from-yellow-500/25 to-yellow-500/15 text-yellow-400 border border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.12)]',
       text: 'text-yellow-400',
+      glow: 'shadow-[0_0_30px_rgba(234,179,8,0.15)]',
     },
     strong: {
-      badge: 'bg-cyan-500/20 text-cyan-400 ring-1 ring-cyan-500/30',
+      badge: 'bg-gradient-to-r from-cyan-500/25 to-cyan-500/15 text-cyan-400 border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.12)]',
       text: 'text-cyan-400',
+      glow: 'shadow-[0_0_30px_rgba(6,182,212,0.15)]',
     },
     moderate: {
-      badge: 'bg-zinc-700/50 text-zinc-300 ring-1 ring-zinc-600/30',
+      badge: 'bg-white/[0.04] text-zinc-300 border border-white/[0.08]',
       text: 'text-zinc-400',
+      glow: '',
     },
     caution: {
-      badge: 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/30',
+      badge: 'bg-gradient-to-r from-orange-500/25 to-orange-500/15 text-orange-400 border border-orange-500/30',
       text: 'text-orange-400',
+      glow: '',
     },
-  }[pick.tier] || { badge: 'bg-zinc-700/50 text-zinc-300', text: 'text-zinc-400' };
+  }[pick.tier] || { badge: 'bg-white/[0.04] text-zinc-300', text: 'text-zinc-400', glow: '' };
 
   // Shared avatar component
   const Avatar = ({ size = 'normal' }: { size?: 'normal' | 'small' }) => {
@@ -71,7 +123,8 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
 
     return (
       <div className="relative flex-shrink-0">
-        <div className={`${dims} rounded-full bg-zinc-800 overflow-hidden ring-2 ring-zinc-700/50`}>
+        <div className={`${dims} rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg`}
+          style={{ background: 'linear-gradient(135deg, rgba(39,39,42,0.8), rgba(24,24,27,0.9))' }}>
           {pick.headshot_url ? (
             <Image
               src={pick.headshot_url}
@@ -82,14 +135,14 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
               unoptimized
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-zinc-500 font-semibold text-sm bg-gradient-to-br from-zinc-700 to-zinc-800">
+            <div className="w-full h-full flex items-center justify-center text-zinc-400 font-semibold text-sm bg-gradient-to-br from-zinc-700/50 to-zinc-800/50 backdrop-blur-sm">
               {pick.player.split(' ').map(n => n[0]).join('')}
             </div>
           )}
         </div>
-        <div className={`absolute -bottom-0.5 -right-0.5 ${logoDims} rounded-full bg-zinc-900 ring-1 ring-zinc-700 overflow-hidden shadow-sm`}>
+        <div className={`absolute -bottom-0.5 -right-0.5 ${logoDims} rounded-full bg-zinc-900/90 ring-1 ring-white/10 overflow-hidden shadow-md backdrop-blur-sm`}>
           {logoError ? (
-            <span className="w-full h-full flex items-center justify-center text-[6px] font-bold text-zinc-600 bg-zinc-200">{pick.team}</span>
+            <span className="w-full h-full flex items-center justify-center text-[6px] font-bold text-zinc-500 bg-zinc-800">{pick.team}</span>
           ) : (
             <img
               src={getTeamLogoUrl(pick.team)}
@@ -105,118 +158,121 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
 
   return (
     <div
-      className={`relative bg-zinc-900/80 rounded-xl border transition-all cursor-pointer hover:bg-zinc-900 ${
-        isSelected
-          ? 'border-emerald-500/50 ring-2 ring-emerald-500/20'
-          : `${confidenceBorder} hover:border-zinc-600`
-      }`}
+      className={`relative rounded-2xl border transition-all duration-200 cursor-pointer backdrop-blur-xl border-white/[0.06] hover:border-white/[0.12] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)] ${tierColors.glow}`}
+      style={{
+        background: 'linear-gradient(135deg, rgba(24,26,32,0.8) 0%, rgba(16,18,24,0.6) 100%)',
+      }}
       onClick={() => onAnalyze?.(pick)}
     >
-      {/* Selected indicator */}
-      {isSelected && (
-        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center z-10">
-          <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-      )}
 
       {/* ========== MOBILE LAYOUT ========== */}
       <div className="md:hidden p-3">
-        {/* Row 1: Avatar + Player info + Chart button */}
-        <div className="flex items-center gap-2.5">
+        {/* Row 1: Avatar + Player info + Tier */}
+        <div className="flex items-center gap-2">
           <Avatar size="small" />
 
           <div className="flex-1 min-w-0">
-            {/* Player vs Opponent */}
-            <h3 className="font-semibold text-white text-sm truncate">
-              {pick.player} <span className="text-zinc-500 font-normal">vs {pick.opponent}</span>
-            </h3>
-            {/* Line + Market */}
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className={`text-xs font-semibold ${isOver ? 'text-emerald-400' : 'text-blue-400'}`}>
-                {isOver ? 'o' : 'u'}{pick.line}
-              </span>
+            {/* Player name + Position */}
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-bold text-white text-[15px] truncate">{pick.player}</h3>
+              {pick.depth_position && (
+                <span className="text-[10px] text-zinc-500">{pick.depth_position}</span>
+              )}
+            </div>
+            {/* Team vs Opponent + Market */}
+            <div className="flex items-center gap-1 mt-0.5">
+              <span className="text-xs text-zinc-400">{pick.team} vs {pick.opponent}</span>
+              <span className="text-zinc-600">•</span>
               <span className="text-xs text-zinc-500">{pick.market_display}</span>
             </div>
           </div>
 
-          {/* Chart/Analyze button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onAnalyze?.(pick); }}
-            className="flex-shrink-0 w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-            </svg>
-          </button>
+          {/* Tier badge */}
+          <span className={`flex-shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${tierColors.badge}`}>
+            {pick.tier}
+          </span>
         </div>
 
-        {/* Row 2: Projection + Edge + Stars */}
-        <div className="flex items-center justify-between mt-2.5 px-1">
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-400 text-xs">Proj.</span>
-            <span className={`text-sm font-bold ${isOver ? 'text-emerald-400' : 'text-blue-400'}`}>
-              {pick.projection.toFixed(1)}
-            </span>
-            <span className={`text-xs font-medium ${pick.edge >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-              ({edgeSign}{pick.edge.toFixed(1)})
-            </span>
+        {/* Row 2: Prop line box - Glass inner panel */}
+        <div className="mt-2.5 p-2.5 rounded-xl bg-black/30 border border-white/[0.04] backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            {/* Pick direction + Line */}
+            <div className="flex items-center gap-2">
+              <span className={`px-2.5 py-1 rounded-lg text-sm font-bold ${
+                isOver
+                  ? 'bg-gradient-to-r from-emerald-500/25 to-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                  : 'bg-gradient-to-r from-blue-500/25 to-blue-500/15 text-blue-400 border border-blue-500/30'
+              }`}>
+                {isOver ? 'OVER' : 'UNDER'} {pick.line}
+              </span>
+              <div className="flex items-center gap-1">
+                <span className="text-zinc-600 text-xs">→</span>
+                <span className={`text-lg font-bold ${isOver ? 'text-emerald-400' : 'text-blue-400'}`}>
+                  {pick.projection.toFixed(1)}
+                </span>
+              </div>
+            </div>
+
+            {/* Confidence + Edge */}
+            <div className="text-right">
+              <div className={`text-lg font-bold ${
+                pick.confidence >= 0.7 ? 'text-emerald-400' :
+                pick.confidence >= 0.6 ? 'text-yellow-400' : 'text-zinc-400'
+              }`}>
+                {(pick.confidence * 100).toFixed(0)}%
+              </div>
+              <div className={`text-xs font-medium ${pick.edge >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {edgeSign}{pick.edge.toFixed(1)} edge
+              </div>
+            </div>
           </div>
-          <StarRating stars={pick.stars} />
         </div>
 
-        {/* Row 3: Stats pills */}
-        <div className="flex items-center gap-1.5 mt-2.5">
-          {/* OPP Defense - what they allow to this position */}
-          {pick.opp_def_rank && (
-            <span className={`text-[10px] font-semibold px-2 py-1 rounded ${
-              pick.opp_def_rank <= 8 ? 'bg-emerald-500/20 text-emerald-400' :
-              pick.opp_def_rank >= 25 ? 'bg-red-500/20 text-red-400' :
-              'bg-zinc-800 text-zinc-300'
-            }`}>
-              {pick.opp_def_allowed ? `${pick.opp_def_allowed.toFixed(1)} ` : ''}
-              #{pick.opp_def_rank}
-            </span>
-          )}
-
-          {/* L5 Rate */}
-          {pick.l5_rate !== undefined && (
-            <span className={`text-[10px] font-semibold px-2 py-1 rounded ${
-              pick.l5_rate >= 60 ? 'bg-emerald-500/20 text-emerald-400' :
-              pick.l5_rate >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
-              'bg-red-500/20 text-red-400'
-            }`}>
-              {pick.l5_rate}% L-5
-            </span>
-          )}
-
-          {/* Depth position */}
-          {pick.depth_position && (
-            <span className="text-[10px] font-semibold px-2 py-1 rounded bg-zinc-800 text-zinc-400">
-              {pick.depth_position}
-            </span>
-          )}
-
-          {/* Add to slip button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onSelect?.(pick); }}
-            className={`ml-auto flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-              isSelected
-                ? 'bg-emerald-500 text-black'
-                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-            }`}
-          >
-            {isSelected ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
+        {/* Row 3: Stats row */}
+        <div className="flex items-center justify-between mt-2">
+          {/* Left: Defense + L5 + Weather/Game Script */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {/* OPP Defense */}
+            {pick.opp_def_rank && (
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                pick.opp_def_rank <= 8 ? 'bg-emerald-500/20 text-emerald-400' :
+                pick.opp_def_rank >= 25 ? 'bg-red-500/20 text-red-400' :
+                'bg-zinc-800 text-zinc-300'
+              }`}>
+                {pick.opp_def_allowed ? `${pick.opp_def_allowed.toFixed(0)} avg ` : ''}#{pick.opp_def_rank}
+              </span>
             )}
-          </button>
+
+            {/* L5 Rate */}
+            {pick.l5_rate !== undefined && (
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                pick.l5_rate >= 60 ? 'bg-emerald-500/20 text-emerald-400' :
+                pick.l5_rate >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
+                'bg-red-500/20 text-red-400'
+              }`}>
+                {pick.l5_rate}% L5
+              </span>
+            )}
+
+            {/* Weather badges */}
+            <WeatherBadge roof={pick.roof} temp={pick.temp} wind={pick.wind} market={pick.market} />
+
+            {/* Game script badges */}
+            <GameScriptBadge vegasTotal={pick.vegas_total} vegasSpread={pick.vegas_spread} />
+          </div>
+
+          {/* Right: Stars + Chart button */}
+          <div className="flex items-center gap-2">
+            <StarRating stars={pick.stars} />
+            <button
+              onClick={(e) => { e.stopPropagation(); onAnalyze?.(pick); }}
+              className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-zinc-400 hover:bg-white/[0.08] hover:text-white transition-all"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -238,36 +294,18 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
               {pick.position}{pick.depth_position ? ` (${pick.depth_position})` : ''} • {pick.team} vs {pick.opponent}
             </p>
           </div>
-
-          {/* Add button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onSelect?.(pick); }}
-            className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
-              isSelected
-                ? 'bg-emerald-500 text-black'
-                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-            }`}
-          >
-            {isSelected ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            )}
-          </button>
         </div>
 
-        {/* Prop line */}
-        <div className="mt-4 p-3 rounded-lg bg-zinc-950/50 border border-zinc-800/30">
+        {/* Prop line - Glass inner panel */}
+        <div className="mt-4 p-3 rounded-xl bg-black/30 border border-white/[0.04] backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] text-zinc-500 uppercase tracking-wide mb-1">{pick.market_display}</p>
               <div className="flex items-center gap-2">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded text-sm font-bold ${
-                  isOver ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-sm font-bold ${
+                  isOver
+                    ? 'bg-gradient-to-r from-emerald-500/25 to-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-gradient-to-r from-blue-500/25 to-blue-500/15 text-blue-400 border border-blue-500/30'
                 }`}>
                   {isOver ? 'OVER' : 'UNDER'} {pick.line}
                 </span>
@@ -281,18 +319,22 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
             </div>
           </div>
 
-          {/* Edge bar */}
+          {/* Edge bar - Glass style */}
           <div className="mt-3 flex items-center gap-3">
-            <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all ${isOver ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                className={`h-full rounded-full transition-all ${
+                  isOver
+                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-400'
+                    : 'bg-gradient-to-r from-blue-500 to-blue-400'
+                }`}
                 style={{ width: `${Math.min(Math.max((pick.confidence) * 100, 10), 100)}%` }}
               />
             </div>
-            <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
-              pick.confidence >= 0.7 ? 'bg-emerald-500/20 text-emerald-400' :
-              pick.confidence >= 0.6 ? 'bg-yellow-500/20 text-yellow-400' :
-              'bg-zinc-700/50 text-zinc-400'
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-md ${
+              pick.confidence >= 0.7 ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' :
+              pick.confidence >= 0.6 ? 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/20' :
+              'bg-white/[0.04] text-zinc-400 border border-white/[0.06]'
             }`}>
               {(pick.confidence * 100).toFixed(0)}%
             </span>
@@ -304,32 +346,39 @@ export default function PlayerCard({ pick, isSelected = false, onSelect, onAnaly
           </div>
         </div>
 
-        {/* Bottom stats */}
+        {/* Bottom stats - Glass pills */}
         <div className="mt-3 flex items-center gap-2 flex-wrap">
           {pick.l5_rate !== undefined && (
-            <span className={`text-xs font-medium px-2 py-1 rounded ${
-              pick.l5_rate >= 60 ? 'bg-emerald-500/15 text-emerald-400' :
-              pick.l5_rate >= 40 ? 'bg-yellow-500/15 text-yellow-400' :
-              'bg-red-500/15 text-red-400'
+            <span className={`text-xs font-medium px-2 py-1 rounded-md border ${
+              pick.l5_rate >= 60 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              pick.l5_rate >= 40 ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
+              'bg-red-500/10 text-red-400 border-red-500/20'
             }`}>
               {pick.l5_rate}% L5
             </span>
           )}
           {pick.opp_def_rank && (
-            <span className={`text-xs font-medium px-2 py-1 rounded ${
-              pick.opp_def_rank <= 8 ? 'bg-emerald-500/15 text-emerald-400' :
-              pick.opp_def_rank >= 25 ? 'bg-red-500/15 text-red-400' :
-              'bg-zinc-700 text-zinc-300'
+            <span className={`text-xs font-medium px-2 py-1 rounded-md border ${
+              pick.opp_def_rank <= 8 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              pick.opp_def_rank >= 25 ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+              'bg-white/[0.03] text-zinc-300 border-white/[0.06]'
             }`}>
               {pick.opp_def_allowed ? `${pick.opp_def_allowed.toFixed(1)} ` : ''}
               (#{pick.opp_def_rank} vs {pick.position})
             </span>
           )}
           {pick.ev > 0 && (
-            <span className="text-xs font-medium text-emerald-400 px-2 py-1 rounded bg-emerald-500/15">
+            <span className="text-xs font-medium text-emerald-400 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20">
               +{pick.ev.toFixed(0)}% EV
             </span>
           )}
+
+          {/* Weather badges */}
+          <WeatherBadge roof={pick.roof} temp={pick.temp} wind={pick.wind} market={pick.market} />
+
+          {/* Game script badges */}
+          <GameScriptBadge vegasTotal={pick.vegas_total} vegasSpread={pick.vegas_spread} />
+
           <span className="text-xs text-zinc-500 ml-auto">
             {pick.hist_count} games
           </span>

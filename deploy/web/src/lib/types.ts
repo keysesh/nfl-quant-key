@@ -17,6 +17,10 @@ export interface GameHistory {
   passing_tds: number[];
   rushing_tds: number[];
   receiving_tds: number[];
+  defense_allowed?: (number | null)[];  // Current opponent's recent defensive performance
+  defense_weeks?: number[];  // The weeks for defense data (may differ from player weeks)
+  defense_opponent?: string;  // Which team's defense trend is shown
+  defense_opponents?: string[];  // Teams the defense played each week
 }
 
 export interface Pick {
@@ -47,6 +51,12 @@ export interface Pick {
   hist_count: number;
   game: string;
   game_history: GameHistory;
+  // Weather & Game Script context
+  vegas_total?: number | null;      // Implied total points for the game
+  vegas_spread?: number | null;     // Point spread (negative = player's team favored)
+  roof?: string | null;             // 'dome', 'outdoors', 'open', 'closed'
+  temp?: number | null;             // Temperature in Fahrenheit (outdoor games)
+  wind?: number | null;             // Wind speed in mph (outdoor games)
 }
 
 export interface DashboardStats {

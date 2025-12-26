@@ -1,202 +1,202 @@
 {
-  "week": 17,
-  "generated_at": "2025-12-26T15:21:49.234916",
+  "week": 16,
+  "generated_at": "2025-12-26T17:15:23.077957",
   "stats": {
     "total_picks": 110,
-    "avg_edge": 6.6,
+    "avg_edge": 7.2,
     "games": 12,
-    "elite_count": 5,
-    "strong_count": 13
+    "elite_count": 7,
+    "strong_count": 19
   },
   "games": [
     {
-      "game": "DAL vs WAS",
-      "normalized": "DAL vs WAS",
-      "away_team": "DAL",
+      "game": "LA vs SEA",
+      "normalized": "LA vs SEA",
+      "away_team": "LA",
+      "home_team": "SEA",
+      "gameday": "2025-12-18",
+      "gametime": "20:15",
+      "stadium": "Lumen Field",
+      "roof": "outdoors",
+      "temp": 51,
+      "wind": 17
+    },
+    {
+      "game": "PHI vs WAS",
+      "normalized": "PHI vs WAS",
+      "away_team": "PHI",
       "home_team": "WAS",
-      "gameday": "2025-12-25",
-      "gametime": "13:00",
+      "gameday": "2025-12-20",
+      "gametime": "17:00",
       "stadium": "FedExField",
       "roof": "outdoors",
-      "temp": 50,
+      "temp": 42,
       "wind": 7
     },
     {
-      "game": "DET vs MIN",
-      "normalized": "DET vs MIN",
-      "away_team": "DET",
-      "home_team": "MIN",
-      "gameday": "2025-12-25",
-      "gametime": "16:30",
-      "stadium": "U.S. Bank Stadium",
-      "roof": "dome",
-      "temp": null,
-      "wind": null
-    },
-    {
-      "game": "DEN vs KC",
-      "normalized": "DEN vs KC",
-      "away_team": "DEN",
-      "home_team": "KC",
-      "gameday": "2025-12-25",
-      "gametime": "20:15",
-      "stadium": "GEHA Field at Arrowhead Stadium",
+      "game": "GB vs CHI",
+      "normalized": "CHI vs GB",
+      "away_team": "GB",
+      "home_team": "CHI",
+      "gameday": "2025-12-20",
+      "gametime": "20:20",
+      "stadium": "Soldier Field",
       "roof": "outdoors",
-      "temp": null,
-      "wind": null
+      "temp": 37,
+      "wind": 6
     },
     {
-      "game": "HOU vs LAC",
-      "normalized": "HOU vs LAC",
-      "away_team": "HOU",
-      "home_team": "LAC",
-      "gameday": "2025-12-27",
-      "gametime": "16:30",
-      "stadium": "SoFi Stadium",
-      "roof": "dome",
-      "temp": null,
-      "wind": null
-    },
-    {
-      "game": "BAL vs GB",
-      "normalized": "BAL vs GB",
-      "away_team": "BAL",
-      "home_team": "GB",
-      "gameday": "2025-12-27",
-      "gametime": "20:00",
-      "stadium": "Lambeau Field",
-      "roof": "outdoors",
-      "temp": null,
-      "wind": null
-    },
-    {
-      "game": "SEA vs CAR",
-      "normalized": "CAR vs SEA",
-      "away_team": "SEA",
+      "game": "TB vs CAR",
+      "normalized": "CAR vs TB",
+      "away_team": "TB",
       "home_team": "CAR",
-      "gameday": "2025-12-28",
+      "gameday": "2025-12-21",
       "gametime": "13:00",
       "stadium": "Bank of America Stadium",
       "roof": "outdoors",
-      "temp": null,
-      "wind": null
+      "temp": 61,
+      "wind": 8
     },
     {
-      "game": "ARI vs CIN",
-      "normalized": "ARI vs CIN",
-      "away_team": "ARI",
-      "home_team": "CIN",
-      "gameday": "2025-12-28",
-      "gametime": "13:00",
-      "stadium": "Paycor Stadium",
-      "roof": "outdoors",
-      "temp": null,
-      "wind": null
-    },
-    {
-      "game": "PIT vs CLE",
-      "normalized": "CLE vs PIT",
-      "away_team": "PIT",
+      "game": "BUF vs CLE",
+      "normalized": "BUF vs CLE",
+      "away_team": "BUF",
       "home_team": "CLE",
-      "gameday": "2025-12-28",
+      "gameday": "2025-12-21",
       "gametime": "13:00",
       "stadium": "FirstEnergy Stadium",
       "roof": "outdoors",
-      "temp": null,
-      "wind": null
+      "temp": 25,
+      "wind": 16
     },
     {
-      "game": "JAX vs IND",
-      "normalized": "IND vs JAX",
-      "away_team": "JAX",
-      "home_team": "IND",
-      "gameday": "2025-12-28",
+      "game": "LAC vs DAL",
+      "normalized": "DAL vs LAC",
+      "away_team": "LAC",
+      "home_team": "DAL",
+      "gameday": "2025-12-21",
       "gametime": "13:00",
-      "stadium": "Lucas Oil Stadium",
+      "stadium": "AT&T Stadium",
       "roof": "closed",
       "temp": null,
       "wind": null
     },
     {
-      "game": "TB vs MIA",
-      "normalized": "MIA vs TB",
-      "away_team": "TB",
+      "game": "CIN vs MIA",
+      "normalized": "CIN vs MIA",
+      "away_team": "CIN",
       "home_team": "MIA",
-      "gameday": "2025-12-28",
+      "gameday": "2025-12-21",
       "gametime": "13:00",
       "stadium": "Hard Rock Stadium",
       "roof": "outdoors",
-      "temp": null,
-      "wind": null
+      "temp": 81,
+      "wind": 7
     },
     {
-      "game": "NE vs NYJ",
-      "normalized": "NE vs NYJ",
-      "away_team": "NE",
-      "home_team": "NYJ",
-      "gameday": "2025-12-28",
+      "game": "NYJ vs NO",
+      "normalized": "NO vs NYJ",
+      "away_team": "NYJ",
+      "home_team": "NO",
+      "gameday": "2025-12-21",
       "gametime": "13:00",
-      "stadium": "MetLife Stadium",
-      "roof": "outdoors",
-      "temp": null,
-      "wind": null
-    },
-    {
-      "game": "NO vs TEN",
-      "normalized": "NO vs TEN",
-      "away_team": "NO",
-      "home_team": "TEN",
-      "gameday": "2025-12-28",
-      "gametime": "13:00",
-      "stadium": "Nissan Stadium",
-      "roof": "outdoors",
-      "temp": null,
-      "wind": null
-    },
-    {
-      "game": "NYG vs LV",
-      "normalized": "LV vs NYG",
-      "away_team": "NYG",
-      "home_team": "LV",
-      "gameday": "2025-12-28",
-      "gametime": "16:05",
-      "stadium": "Allegiant Stadium",
+      "stadium": "Mercedes-Benz Superdome",
       "roof": "dome",
       "temp": null,
       "wind": null
     },
     {
-      "game": "PHI vs BUF",
-      "normalized": "BUF vs PHI",
-      "away_team": "PHI",
-      "home_team": "BUF",
-      "gameday": "2025-12-28",
+      "game": "MIN vs NYG",
+      "normalized": "MIN vs NYG",
+      "away_team": "MIN",
+      "home_team": "NYG",
+      "gameday": "2025-12-21",
+      "gametime": "13:00",
+      "stadium": "MetLife Stadium",
+      "roof": "outdoors",
+      "temp": 46,
+      "wind": 20
+    },
+    {
+      "game": "KC vs TEN",
+      "normalized": "KC vs TEN",
+      "away_team": "KC",
+      "home_team": "TEN",
+      "gameday": "2025-12-21",
+      "gametime": "13:00",
+      "stadium": "Nissan Stadium",
+      "roof": "outdoors",
+      "temp": 51,
+      "wind": 8
+    },
+    {
+      "game": "ATL vs ARI",
+      "normalized": "ARI vs ATL",
+      "away_team": "ATL",
+      "home_team": "ARI",
+      "gameday": "2025-12-21",
+      "gametime": "16:05",
+      "stadium": "State Farm Stadium",
+      "roof": "closed",
+      "temp": null,
+      "wind": null
+    },
+    {
+      "game": "JAX vs DEN",
+      "normalized": "DEN vs JAX",
+      "away_team": "JAX",
+      "home_team": "DEN",
+      "gameday": "2025-12-21",
+      "gametime": "16:05",
+      "stadium": "Empower Field at Mile High",
+      "roof": "outdoors",
+      "temp": 62,
+      "wind": 3
+    },
+    {
+      "game": "PIT vs DET",
+      "normalized": "DET vs PIT",
+      "away_team": "PIT",
+      "home_team": "DET",
+      "gameday": "2025-12-21",
       "gametime": "16:25",
-      "stadium": "New Era Field",
-      "roof": "outdoors",
+      "stadium": "Ford Field",
+      "roof": "dome",
       "temp": null,
       "wind": null
     },
     {
-      "game": "CHI vs SF",
-      "normalized": "CHI vs SF",
-      "away_team": "CHI",
-      "home_team": "SF",
-      "gameday": "2025-12-28",
+      "game": "LV vs HOU",
+      "normalized": "HOU vs LV",
+      "away_team": "LV",
+      "home_team": "HOU",
+      "gameday": "2025-12-21",
+      "gametime": "16:25",
+      "stadium": "NRG Stadium",
+      "roof": "closed",
+      "temp": null,
+      "wind": null
+    },
+    {
+      "game": "NE vs BAL",
+      "normalized": "BAL vs NE",
+      "away_team": "NE",
+      "home_team": "BAL",
+      "gameday": "2025-12-21",
       "gametime": "20:20",
-      "stadium": "Levi's Stadium",
+      "stadium": "M&T Bank Stadium",
       "roof": "outdoors",
-      "temp": null,
-      "wind": null
+      "temp": 40,
+      "wind": 2
     },
     {
-      "game": "LA vs ATL",
-      "normalized": "ATL vs LA",
-      "away_team": "LA",
-      "home_team": "ATL",
-      "gameday": "2025-12-29",
+      "game": "SF vs IND",
+      "normalized": "IND vs SF",
+      "away_team": "SF",
+      "home_team": "IND",
+      "gameday": "2025-12-22",
       "gametime": "20:15",
-      "stadium": "Mercedes-Benz Stadium",
+      "stadium": "Lucas Oil Stadium",
       "roof": "closed",
       "temp": null,
       "wind": null
@@ -207,7 +207,7 @@
       "id": "pick-60",
       "player": "Quinn Ewers",
       "position": "QB",
-      "depth_position": "QB3",
+      "depth_position": "QB1",
       "team": "MIA",
       "opponent": "TB",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/wikumn4ijbsxyuhtv1vz",
@@ -223,8 +223,8 @@
       "stars": 5,
       "ev": 58.4,
       "opp_rank": 21,
-      "opp_def_allowed": 259.6,
-      "opp_def_rank": 4,
+      "opp_def_allowed": 34.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 2,
       "game": "MIA vs TB",
@@ -276,6 +276,31 @@
         "receiving_tds": [
           0,
           0
+        ],
+        "defense_allowed": [
+          30.0,
+          35.0,
+          40.0,
+          20.0,
+          44.0,
+          32.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "TB",
+        "defense_opponents": [
+          "BUF",
+          "LA",
+          "ARI",
+          "NO",
+          "ATL",
+          "CAR"
         ]
       }
     },
@@ -299,8 +324,8 @@
       "stars": 4,
       "ev": 11.5,
       "opp_rank": 19,
-      "opp_def_allowed": 112.7,
-      "opp_def_rank": 4,
+      "opp_def_allowed": 1.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "CIN vs ARI",
@@ -400,6 +425,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          3.0,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          1.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "ARI",
+        "defense_opponents": [
+          "SF",
+          "JAX",
+          "TB",
+          "LA",
+          "HOU",
+          "ATL"
         ]
       }
     },
@@ -423,8 +473,8 @@
       "stars": 4,
       "ev": 7.0,
       "opp_rank": 27,
-      "opp_def_allowed": 83.9,
-      "opp_def_rank": 24,
+      "opp_def_allowed": 1.0,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "JAX vs IND",
@@ -524,6 +574,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          1.0,
+          0.0,
+          0.0,
+          2.0,
+          0.0,
+          5.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "IND",
+        "defense_opponents": [
+          "ATL",
+          "KC",
+          "HOU",
+          "JAX",
+          "SEA",
+          "SF"
         ]
       }
     },
@@ -547,8 +622,8 @@
       "stars": 4,
       "ev": 44.0,
       "opp_rank": 5,
-      "opp_def_allowed": 96.8,
-      "opp_def_rank": 15,
+      "opp_def_allowed": 1.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -648,6 +723,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -671,8 +771,8 @@
       "stars": 4,
       "ev": 0.1,
       "opp_rank": 29,
-      "opp_def_allowed": 99.2,
-      "opp_def_rank": 13,
+      "opp_def_allowed": 0.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "SF vs CHI",
@@ -772,6 +872,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CHI",
+        "defense_opponents": [
+          "MIN",
+          "PIT",
+          "PHI",
+          "GB",
+          "CLE",
+          "GB"
         ]
       }
     },
@@ -795,8 +920,8 @@
       "stars": 4,
       "ev": 37.4,
       "opp_rank": 27,
-      "opp_def_allowed": 236.9,
-      "opp_def_rank": 13,
+      "opp_def_allowed": 33.0,
+      "opp_def_rank": null,
       "hist_over_rate": 0.36,
       "hist_count": 14,
       "game": "LV vs NYG",
@@ -896,6 +1021,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          36.0,
+          24.0,
+          42.0,
+          31.0,
+          19.0,
+          14.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
         ]
       }
     },
@@ -919,8 +1069,8 @@
       "stars": 3,
       "ev": 14.1,
       "opp_rank": 26,
-      "opp_def_allowed": 241.1,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 1.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.57,
       "hist_count": 9,
       "game": "NO vs TEN",
@@ -1020,6 +1170,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          1.0,
+          2.0,
+          2.0,
+          3.0,
+          3.0,
+          0.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "TEN",
+        "defense_opponents": [
+          "HOU",
+          "SEA",
+          "JAX",
+          "CLE",
+          "SF",
+          "KC"
         ]
       }
     },
@@ -1027,7 +1202,7 @@
       "id": "pick-86",
       "player": "Jaxson Dart",
       "position": "QB",
-      "depth_position": "QB3",
+      "depth_position": "QB1",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/n6uymxssgiicjmxkzxoc",
@@ -1043,8 +1218,8 @@
       "stars": 3,
       "ev": 1.6,
       "opp_rank": 17,
-      "opp_def_allowed": 219.4,
-      "opp_def_rank": 20,
+      "opp_def_allowed": 1.5,
+      "opp_def_rank": null,
       "hist_over_rate": 0.62,
       "hist_count": 12,
       "game": "NYG vs LV",
@@ -1144,6 +1319,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          4.0,
+          1.0,
+          2.0,
+          0.0,
+          3.0,
+          1.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -1151,7 +1351,7 @@
       "id": "pick-83",
       "player": "Jaxson Dart",
       "position": "QB",
-      "depth_position": "QB3",
+      "depth_position": "QB1",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/n6uymxssgiicjmxkzxoc",
@@ -1167,8 +1367,8 @@
       "stars": 3,
       "ev": 29.2,
       "opp_rank": 11,
-      "opp_def_allowed": 219.4,
-      "opp_def_rank": 20,
+      "opp_def_allowed": 30.8,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 12,
       "game": "NYG vs LV",
@@ -1268,6 +1468,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          33.0,
+          20.0,
+          20.0,
+          38.0,
+          15.0,
+          35.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -1275,7 +1500,7 @@
       "id": "pick-85",
       "player": "Jaxson Dart",
       "position": "QB",
-      "depth_position": "QB3",
+      "depth_position": "QB1",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/n6uymxssgiicjmxkzxoc",
@@ -1291,8 +1516,8 @@
       "stars": 3,
       "ev": 25.7,
       "opp_rank": 18,
-      "opp_def_allowed": 219.4,
-      "opp_def_rank": 20,
+      "opp_def_allowed": 21.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.45,
       "hist_count": 12,
       "game": "NYG vs LV",
@@ -1392,6 +1617,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          25.0,
+          11.0,
+          15.0,
+          31.0,
+          12.0,
+          23.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -1399,7 +1649,7 @@
       "id": "pick-114",
       "player": "Jauan Jennings",
       "position": "WR",
-      "depth_position": "WR2",
+      "depth_position": "WR1",
       "team": "SF",
       "opponent": "CHI",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/cdx9mq3iglzog9mkqvdr",
@@ -1415,8 +1665,8 @@
       "stars": 3,
       "ev": 31.6,
       "opp_rank": 13,
-      "opp_def_allowed": 147.4,
-      "opp_def_rank": 13,
+      "opp_def_allowed": 1.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 13,
       "game": "SF vs CHI",
@@ -1516,6 +1766,31 @@
           1,
           0,
           1
+        ],
+        "defense_allowed": [
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CHI",
+        "defense_opponents": [
+          "MIN",
+          "PIT",
+          "PHI",
+          "GB",
+          "CLE",
+          "GB"
         ]
       }
     },
@@ -1535,12 +1810,12 @@
       "projection": 15.2,
       "edge": 3.3,
       "confidence": 0.66,
-      "tier": "strong",
+      "tier": "caution",
       "stars": 3,
       "ev": 41.9,
       "opp_rank": 21,
-      "opp_def_allowed": 99.2,
-      "opp_def_rank": 13,
+      "opp_def_allowed": 24.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.78,
       "hist_count": 15,
       "game": "SF vs CHI",
@@ -1640,6 +1915,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          22.0,
+          31.0,
+          17.0,
+          24.0,
+          15.0,
+          39.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CHI",
+        "defense_opponents": [
+          "MIN",
+          "PIT",
+          "PHI",
+          "GB",
+          "CLE",
+          "GB"
         ]
       }
     },
@@ -1663,8 +1963,8 @@
       "stars": 3,
       "ev": 24.7,
       "opp_rank": 20,
-      "opp_def_allowed": 197.6,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 31.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.23,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -1764,6 +2064,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          37.0,
+          34.0,
+          27.0,
+          33.0,
+          40.0,
+          23.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -1787,8 +2112,8 @@
       "stars": 3,
       "ev": 21.2,
       "opp_rank": 22,
-      "opp_def_allowed": 224.0,
-      "opp_def_rank": 18,
+      "opp_def_allowed": 21.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.45,
       "hist_count": 15,
       "game": "TB vs MIA",
@@ -1888,6 +2213,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          28.0,
+          20.0,
+          26.0,
+          14.0,
+          23.0,
+          25.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "MIA",
+        "defense_opponents": [
+          "BUF",
+          "WAS",
+          "NO",
+          "NYJ",
+          "PIT",
+          "CIN"
         ]
       }
     },
@@ -1911,8 +2261,8 @@
       "stars": 3,
       "ev": 32.8,
       "opp_rank": 28,
-      "opp_def_allowed": 81.9,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 24.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.54,
       "hist_count": 15,
       "game": "ATL vs LA",
@@ -2012,6 +2362,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          31.0,
+          27.0,
+          40.0,
+          14.0,
+          20.0,
+          23.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LA",
+        "defense_opponents": [
+          "SEA",
+          "TB",
+          "CAR",
+          "ARI",
+          "DET",
+          "SEA"
         ]
       }
     },
@@ -2035,8 +2410,8 @@
       "stars": 3,
       "ev": 26.8,
       "opp_rank": 26,
-      "opp_def_allowed": 68.0,
-      "opp_def_rank": 32,
+      "opp_def_allowed": 21.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "IND vs JAX",
@@ -2136,6 +2511,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          16.0,
+          18.0,
+          13.0,
+          25.0,
+          30.0,
+          16.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "JAX",
+        "defense_opponents": [
+          "LAC",
+          "ARI",
+          "TEN",
+          "IND",
+          "NYJ",
+          "DEN"
         ]
       }
     },
@@ -2159,8 +2559,8 @@
       "stars": 3,
       "ev": 19.3,
       "opp_rank": 26,
-      "opp_def_allowed": 68.0,
-      "opp_def_rank": 32,
+      "opp_def_allowed": 86.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.46,
       "hist_count": 15,
       "game": "IND vs JAX",
@@ -2260,6 +2660,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          42.0,
+          28.0,
+          60.0,
+          74.0,
+          23.0,
+          50.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "JAX",
+        "defense_opponents": [
+          "LAC",
+          "ARI",
+          "TEN",
+          "IND",
+          "NYJ",
+          "DEN"
         ]
       }
     },
@@ -2283,8 +2708,8 @@
       "stars": 2,
       "ev": 21.8,
       "opp_rank": 27,
-      "opp_def_allowed": 236.9,
-      "opp_def_rank": 13,
+      "opp_def_allowed": 21.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.3,
       "hist_count": 14,
       "game": "LV vs NYG",
@@ -2384,6 +2809,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          20.0,
+          13.0,
+          28.0,
+          24.0,
+          10.0,
+          9.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
         ]
       }
     },
@@ -2407,8 +2857,8 @@
       "stars": 3,
       "ev": 16.7,
       "opp_rank": 24,
-      "opp_def_allowed": 205.5,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 32.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.25,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -2508,6 +2958,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          37.0,
+          36.0,
+          36.0,
+          26.0,
+          25.0,
+          14.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -2531,8 +3006,8 @@
       "stars": 2,
       "ev": 21.0,
       "opp_rank": 31,
-      "opp_def_allowed": 102.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 26.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.33,
       "hist_count": 15,
       "game": "LA vs ATL",
@@ -2632,6 +3107,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          25.0,
+          17.0,
+          27.0,
+          25.0,
+          22.0,
+          23.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "ATL",
+        "defense_opponents": [
+          "CAR",
+          "NO",
+          "NYJ",
+          "SEA",
+          "TB",
+          "ARI"
         ]
       }
     },
@@ -2639,7 +3139,7 @@
       "id": "pick-41",
       "player": "Shedeur Sanders",
       "position": "QB",
-      "depth_position": "QB4",
+      "depth_position": "QB1",
       "team": "CLE",
       "opponent": "PIT",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/joe08hz6to2madpko8zl",
@@ -2655,8 +3155,8 @@
       "stars": 2,
       "ev": 15.4,
       "opp_rank": 32,
-      "opp_def_allowed": 267.5,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 38.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 6,
       "game": "CLE vs PIT",
@@ -2756,6 +3256,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          40.0,
+          35.0,
+          23.0,
+          35.0,
+          28.0,
+          54.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PIT",
+        "defense_opponents": [
+          "CIN",
+          "CHI",
+          "BUF",
+          "BAL",
+          "MIA",
+          "DET"
         ]
       }
     },
@@ -2779,8 +3304,8 @@
       "stars": 2,
       "ev": 14.9,
       "opp_rank": 9,
-      "opp_def_allowed": 205.5,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 18.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.55,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -2880,6 +3405,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          14.0,
+          23.0,
+          17.0,
+          12.0,
+          15.0,
+          7.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -2903,8 +3453,8 @@
       "stars": 2,
       "ev": 18.2,
       "opp_rank": 31,
-      "opp_def_allowed": 102.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 127.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.53,
       "hist_count": 15,
       "game": "LA vs ATL",
@@ -3004,6 +3554,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          45.0,
+          11.0,
+          68.0,
+          29.0,
+          60.0,
+          65.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "ATL",
+        "defense_opponents": [
+          "CAR",
+          "NO",
+          "NYJ",
+          "SEA",
+          "TB",
+          "ARI"
         ]
       }
     },
@@ -3028,7 +3603,7 @@
       "ev": 16.1,
       "opp_rank": 8,
       "opp_def_allowed": 197.6,
-      "opp_def_rank": 27,
+      "opp_def_rank": null,
       "hist_over_rate": 0.34,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -3128,6 +3703,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          194.0,
+          253.0,
+          201.0,
+          160.0,
+          249.0,
+          201.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -3135,7 +3735,7 @@
       "id": "pick-45",
       "player": "Shedeur Sanders",
       "position": "QB",
-      "depth_position": "QB4",
+      "depth_position": "QB1",
       "team": "CLE",
       "opponent": "PIT",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/joe08hz6to2madpko8zl",
@@ -3152,7 +3752,7 @@
       "ev": 16.5,
       "opp_rank": 31,
       "opp_def_allowed": 267.5,
-      "opp_def_rank": 2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 6,
       "game": "CLE vs PIT",
@@ -3252,6 +3852,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          199.0,
+          239.0,
+          123.0,
+          219.0,
+          253.0,
+          364.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PIT",
+        "defense_opponents": [
+          "CIN",
+          "CHI",
+          "BUF",
+          "BAL",
+          "MIA",
+          "DET"
         ]
       }
     },
@@ -3271,12 +3896,12 @@
       "projection": 251.4,
       "edge": 61.9,
       "confidence": 0.58,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 2,
       "ev": 14.7,
       "opp_rank": 5,
       "opp_def_allowed": 193.7,
-      "opp_def_rank": 29,
+      "opp_def_rank": null,
       "hist_over_rate": 0.0,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -3376,6 +4001,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          124.0,
+          199.0,
+          157.0,
+          122.0,
+          163.0,
+          188.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -3399,8 +4049,8 @@
       "stars": 2,
       "ev": 13.3,
       "opp_rank": 2,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 21.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.4,
       "hist_count": 15,
       "game": "LV vs NYG",
@@ -3500,6 +4150,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          6.0,
+          4.0,
+          9.0,
+          3.0,
+          3.0,
+          6.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
         ]
       }
     },
@@ -3523,8 +4198,8 @@
       "stars": 2,
       "ev": 22.6,
       "opp_rank": 3,
-      "opp_def_allowed": 112.5,
-      "opp_def_rank": 5,
+      "opp_def_allowed": 24.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "PHI vs BUF",
@@ -3624,6 +4299,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          35.0,
+          24.0,
+          18.0,
+          18.0,
+          24.0,
+          26.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "BUF",
+        "defense_opponents": [
+          "TB",
+          "HOU",
+          "PIT",
+          "CIN",
+          "NE",
+          "CLE"
         ]
       }
     },
@@ -3631,7 +4331,7 @@
       "id": "pick-126",
       "player": "Kirk Cousins",
       "position": "QB",
-      "depth_position": "QB2",
+      "depth_position": "QB1",
       "team": "ATL",
       "opponent": "LA",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/hmdqr7gju0dciapvdjcv",
@@ -3648,7 +4348,7 @@
       "ev": 16.3,
       "opp_rank": 11,
       "opp_def_allowed": 239.4,
-      "opp_def_rank": 11,
+      "opp_def_rank": null,
       "hist_over_rate": 0.42,
       "hist_count": 8,
       "game": "ATL vs LA",
@@ -3748,6 +4448,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          279.0,
+          41.0,
+          206.0,
+          271.0,
+          338.0,
+          270.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LA",
+        "defense_opponents": [
+          "SEA",
+          "TB",
+          "CAR",
+          "ARI",
+          "DET",
+          "SEA"
         ]
       }
     },
@@ -3771,8 +4496,8 @@
       "stars": 2,
       "ev": 15.0,
       "opp_rank": 9,
-      "opp_def_allowed": 197.6,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 18.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.31,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -3872,6 +4597,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          24.0,
+          24.0,
+          14.0,
+          14.0,
+          27.0,
+          16.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -3895,8 +4645,8 @@
       "stars": 2,
       "ev": 14.9,
       "opp_rank": 17,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 25,
+      "opp_def_allowed": 197.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.42,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -3996,6 +4746,31 @@
           1,
           0,
           1
+        ],
+        "defense_allowed": [
+          29.0,
+          251.0,
+          22.0,
+          8.0,
+          134.0,
+          10.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -4003,7 +4778,7 @@
       "id": "pick-14",
       "player": "Jayden Higgins",
       "position": "WR",
-      "depth_position": "WR4",
+      "depth_position": "WR2",
       "team": "HOU",
       "opponent": "LAC",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/wrdw1u4onrmfuuluuipk",
@@ -4019,8 +4794,8 @@
       "stars": 2,
       "ev": 14.5,
       "opp_rank": 18,
-      "opp_def_allowed": 126.7,
-      "opp_def_rank": 23,
+      "opp_def_allowed": 18.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.44,
       "hist_count": 15,
       "game": "HOU vs LAC",
@@ -4120,6 +4895,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          2.0,
+          5.0,
+          2.0,
+          4.0,
+          19.0,
+          7.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -4127,7 +4927,7 @@
       "id": "pick-22",
       "player": "Jacoby Brissett",
       "position": "QB",
-      "depth_position": "QB2",
+      "depth_position": "QB1",
       "team": "ARI",
       "opponent": "CIN",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/rdxowm5dvpbb8p3aazbc",
@@ -4144,7 +4944,7 @@
       "ev": 14.8,
       "opp_rank": 22,
       "opp_def_allowed": 256.2,
-      "opp_def_rank": 5,
+      "opp_def_rank": null,
       "hist_over_rate": 0.8,
       "hist_count": 12,
       "game": "ARI vs CIN",
@@ -4244,6 +5044,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          116.0,
+          294.0,
+          246.0,
+          251.0,
+          150.0,
+          260.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CIN",
+        "defense_opponents": [
+          "PIT",
+          "NE",
+          "BAL",
+          "BUF",
+          "BAL",
+          "MIA"
         ]
       }
     },
@@ -4268,7 +5093,7 @@
       "ev": 14.8,
       "opp_rank": 14,
       "opp_def_allowed": 229.2,
-      "opp_def_rank": 15,
+      "opp_def_rank": null,
       "hist_over_rate": 0.39,
       "hist_count": 14,
       "game": "CAR vs SEA",
@@ -4368,6 +5193,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          130.0,
+          256.0,
+          126.0,
+          162.0,
+          120.0,
+          457.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -4375,7 +5225,7 @@
       "id": "pick-40",
       "player": "Chuba Hubbard",
       "position": "RB",
-      "depth_position": "RB1",
+      "depth_position": "RB2",
       "team": "CAR",
       "opponent": "SEA",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/pjgml85ghq7oa48dctn7",
@@ -4391,8 +5241,8 @@
       "stars": 2,
       "ev": 39.7,
       "opp_rank": 2,
-      "opp_def_allowed": 75.7,
-      "opp_def_rank": 29,
+      "opp_def_allowed": 22.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 13,
       "game": "CAR vs SEA",
@@ -4492,6 +5342,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          15.0,
+          3.0,
+          19.0,
+          15.0,
+          18.0,
+          3.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -4499,7 +5374,7 @@
       "id": "pick-75",
       "player": "Chimere Dike",
       "position": "WR",
-      "depth_position": "WR4",
+      "depth_position": "WR2",
       "team": "TEN",
       "opponent": "NO",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/njdduv9jx7c8vlrll8ex",
@@ -4515,8 +5390,8 @@
       "stars": 2,
       "ev": 15.0,
       "opp_rank": 28,
-      "opp_def_allowed": 118.7,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 193.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.58,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -4616,6 +5491,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          124.0,
+          199.0,
+          157.0,
+          122.0,
+          163.0,
+          188.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -4623,7 +5523,7 @@
       "id": "pick-81",
       "player": "Elic Ayomanor",
       "position": "WR",
-      "depth_position": "WR5",
+      "depth_position": "WR1",
       "team": "TEN",
       "opponent": "NO",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/aekfvt5nyl69emvxr2yj",
@@ -4639,8 +5539,8 @@
       "stars": 2,
       "ev": 5.1,
       "opp_rank": 18,
-      "opp_def_allowed": 118.7,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 18.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.25,
       "hist_count": 14,
       "game": "TEN vs NO",
@@ -4740,6 +5640,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          2.0,
+          2.0,
+          3.0,
+          2.0,
+          22.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -4747,7 +5672,7 @@
       "id": "pick-89",
       "player": "Wan'Dale Robinson",
       "position": "WR",
-      "depth_position": "WR2",
+      "depth_position": "WR1",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/yzcvyhmilvxedfjfjglc",
@@ -4763,8 +5688,8 @@
       "stars": 2,
       "ev": 14.1,
       "opp_rank": 26,
-      "opp_def_allowed": 149.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 218.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.59,
       "hist_count": 15,
       "game": "NYG vs LV",
@@ -4864,6 +5789,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          268.0,
+          209.0,
+          160.0,
+          212.0,
+          208.0,
+          187.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -4871,7 +5821,7 @@
       "id": "pick-95",
       "player": "Tre Tucker",
       "position": "WR",
-      "depth_position": "WR2",
+      "depth_position": "WR1",
       "team": "LV",
       "opponent": "NYG",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/fsx05ats4azj8mus03d4",
@@ -4887,8 +5837,8 @@
       "stars": 2,
       "ev": 26.8,
       "opp_rank": 15,
-      "opp_def_allowed": 160.6,
-      "opp_def_rank": 6,
+      "opp_def_allowed": 21.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.39,
       "hist_count": 15,
       "game": "LV vs NYG",
@@ -4988,6 +5938,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          5.0,
+          0.0,
+          11.0,
+          3.0,
+          10.0,
+          2.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
         ]
       }
     },
@@ -5011,8 +5986,8 @@
       "stars": 2,
       "ev": 41.3,
       "opp_rank": 17,
-      "opp_def_allowed": 40.2,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 21.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.51,
       "hist_count": 15,
       "game": "NYG vs LV",
@@ -5112,6 +6087,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          1.0,
+          4.0,
+          6.0,
+          2.0,
+          4.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -5136,7 +6136,7 @@
       "ev": 13.7,
       "opp_rank": 13,
       "opp_def_allowed": 205.5,
-      "opp_def_rank": 26,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -5236,6 +6236,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          255.0,
+          354.0,
+          154.0,
+          139.0,
+          64.0,
+          95.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -5260,7 +6285,7 @@
       "ev": 12.8,
       "opp_rank": 3,
       "opp_def_allowed": 194.7,
-      "opp_def_rank": 28,
+      "opp_def_rank": null,
       "hist_over_rate": 0.41,
       "hist_count": 12,
       "game": "HOU vs LAC",
@@ -5360,6 +6385,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          161.0,
+          153.0,
+          165.0,
+          240.0,
+          211.0,
+          244.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -5383,8 +6433,8 @@
       "stars": 2,
       "ev": 16.7,
       "opp_rank": 8,
-      "opp_def_allowed": 126.7,
-      "opp_def_rank": 23,
+      "opp_def_allowed": 18.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.41,
       "hist_count": 14,
       "game": "HOU vs LAC",
@@ -5484,6 +6534,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          1.0,
+          14.0,
+          18.0,
+          8.0,
+          7.0,
+          3.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -5507,8 +6582,8 @@
       "stars": 2,
       "ev": 23.0,
       "opp_rank": 21,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 25,
+      "opp_def_allowed": 18.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.42,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -5608,6 +6683,31 @@
           1,
           0,
           1
+        ],
+        "defense_allowed": [
+          2.0,
+          8.0,
+          1.0,
+          3.0,
+          27.0,
+          4.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -5615,7 +6715,7 @@
       "id": "pick-16",
       "player": "Omarion Hampton",
       "position": "RB",
-      "depth_position": "RB2",
+      "depth_position": "RB1",
       "team": "LAC",
       "opponent": "HOU",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/ck7xcbwuka7wu2zwhssk",
@@ -5631,8 +6731,8 @@
       "stars": 2,
       "ev": 12.5,
       "opp_rank": 30,
-      "opp_def_allowed": 77.3,
-      "opp_def_rank": 28,
+      "opp_def_allowed": 96.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 8,
       "game": "LAC vs HOU",
@@ -5732,6 +6832,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          22.0,
+          116.0,
+          85.0,
+          30.0,
+          56.0,
+          128.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -5739,7 +6864,7 @@
       "id": "pick-27",
       "player": "Michael Carter",
       "position": "RB",
-      "depth_position": "RB4",
+      "depth_position": "RB1",
       "team": "ARI",
       "opponent": "CIN",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/e1y7zhd7w3xbthodfa3m",
@@ -5755,8 +6880,8 @@
       "stars": 2,
       "ev": 31.7,
       "opp_rank": 19,
-      "opp_def_allowed": 128.3,
-      "opp_def_rank": 1,
+      "opp_def_allowed": 20.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.38,
       "hist_count": 17,
       "game": "ARI vs CIN",
@@ -5856,6 +6981,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          2.0,
+          2.0,
+          2.0,
+          3.0,
+          5.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CIN",
+        "defense_opponents": [
+          "PIT",
+          "NE",
+          "BAL",
+          "BUF",
+          "BAL",
+          "MIA"
         ]
       }
     },
@@ -5875,12 +7025,12 @@
       "projection": 29.6,
       "edge": 0.9,
       "confidence": 0.56,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 2,
       "ev": 17.9,
       "opp_rank": 30,
-      "opp_def_allowed": 229.2,
-      "opp_def_rank": 15,
+      "opp_def_allowed": 36.6,
+      "opp_def_rank": null,
       "hist_over_rate": 0.0,
       "hist_count": 14,
       "game": "CAR vs SEA",
@@ -5980,6 +7130,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          28.0,
+          42.0,
+          30.0,
+          30.0,
+          27.0,
+          49.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -6003,8 +7178,8 @@
       "stars": 2,
       "ev": 7.8,
       "opp_rank": 30,
-      "opp_def_allowed": 120.5,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 22.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.43,
       "hist_count": 15,
       "game": "CAR vs SEA",
@@ -6104,6 +7279,31 @@
           1,
           2,
           0
+        ],
+        "defense_allowed": [
+          7.0,
+          28.0,
+          2.0,
+          15.0,
+          3.0,
+          12.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -6127,8 +7327,8 @@
       "stars": 2,
       "ev": 11.1,
       "opp_rank": 1,
-      "opp_def_allowed": 78.7,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 259.0,
+      "opp_def_rank": null,
       "hist_over_rate": 0.41,
       "hist_count": 15,
       "game": "MIA vs TB",
@@ -6228,6 +7428,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          -3.0,
+          97.0,
+          69.0,
+          30.0,
+          373.0,
+          73.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "TB",
+        "defense_opponents": [
+          "BUF",
+          "LA",
+          "ARI",
+          "NO",
+          "ATL",
+          "CAR"
         ]
       }
     },
@@ -6247,12 +7472,12 @@
       "projection": 30.4,
       "edge": 1.1,
       "confidence": 0.56,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 2,
       "ev": 13.0,
       "opp_rank": 4,
-      "opp_def_allowed": 193.7,
-      "opp_def_rank": 29,
+      "opp_def_allowed": 27.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.0,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -6352,6 +7577,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          25.0,
+          23.0,
+          23.0,
+          30.0,
+          24.0,
+          35.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -6359,7 +7609,7 @@
       "id": "pick-77",
       "player": "Gunnar Helm",
       "position": "TE",
-      "depth_position": "TE3",
+      "depth_position": "TE1",
       "team": "TEN",
       "opponent": "NO",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/lcyqbbnrzgtbnirz8knj",
@@ -6375,8 +7625,8 @@
       "stars": 2,
       "ev": 10.7,
       "opp_rank": 31,
-      "opp_def_allowed": 49.7,
-      "opp_def_rank": 20,
+      "opp_def_allowed": 193.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.55,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -6476,6 +7726,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          60.0,
+          199.0,
+          40.0,
+          122.0,
+          25.0,
+          4.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -6483,7 +7758,7 @@
       "id": "pick-93",
       "player": "Wan'Dale Robinson",
       "position": "WR",
-      "depth_position": "WR2",
+      "depth_position": "WR1",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/yzcvyhmilvxedfjfjglc",
@@ -6499,8 +7774,8 @@
       "stars": 2,
       "ev": 6.9,
       "opp_rank": 27,
-      "opp_def_allowed": 149.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 21.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.66,
       "hist_count": 15,
       "game": "NYG vs LV",
@@ -6600,6 +7875,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          1.0,
+          2.0,
+          16.0,
+          6.0,
+          2.0,
+          23.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -6607,7 +7907,7 @@
       "id": "pick-97",
       "player": "Darius Slayton",
       "position": "WR",
-      "depth_position": "WR3",
+      "depth_position": "WR2",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/fyjkvaekv40jn72d0b3q",
@@ -6623,8 +7923,8 @@
       "stars": 2,
       "ev": 19.9,
       "opp_rank": 15,
-      "opp_def_allowed": 149.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 21.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.44,
       "hist_count": 12,
       "game": "NYG vs LV",
@@ -6724,6 +8024,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          25.0,
+          11.0,
+          16.0,
+          2.0,
+          1.0,
+          2.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -6731,7 +8056,7 @@
       "id": "pick-120",
       "player": "Kyle Monangai",
       "position": "RB",
-      "depth_position": "RB3",
+      "depth_position": "RB2",
       "team": "CHI",
       "opponent": "SF",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/cici2wf1walmoluhe95i",
@@ -6743,12 +8068,12 @@
       "projection": 9.8,
       "edge": 0.7,
       "confidence": 0.56,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 2,
       "ev": 14.4,
       "opp_rank": 6,
-      "opp_def_allowed": 87.9,
-      "opp_def_rank": 21,
+      "opp_def_allowed": 23.6,
+      "opp_def_rank": null,
       "hist_over_rate": 0.8,
       "hist_count": 15,
       "game": "CHI vs SF",
@@ -6848,6 +8173,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          30.0,
+          14.0,
+          13.0,
+          28.0,
+          19.0,
+          19.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "SF",
+        "defense_opponents": [
+          "LA",
+          "ARI",
+          "CAR",
+          "CLE",
+          "TEN",
+          "IND"
         ]
       }
     },
@@ -6855,7 +8205,7 @@
       "id": "pick-15",
       "player": "Omarion Hampton",
       "position": "RB",
-      "depth_position": "RB2",
+      "depth_position": "RB1",
       "team": "LAC",
       "opponent": "HOU",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/ck7xcbwuka7wu2zwhssk",
@@ -6871,8 +8221,8 @@
       "stars": 1,
       "ev": 2.5,
       "opp_rank": 30,
-      "opp_def_allowed": 77.3,
-      "opp_def_rank": 28,
+      "opp_def_allowed": 22.6,
+      "opp_def_rank": null,
       "hist_over_rate": 0.67,
       "hist_count": 8,
       "game": "LAC vs HOU",
@@ -6972,6 +8322,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          17.0,
+          24.0,
+          22.0,
+          29.0,
+          21.0,
+          25.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -6991,12 +8366,12 @@
       "projection": 18.5,
       "edge": 1.0,
       "confidence": 0.55,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 2,
       "ev": 6.6,
       "opp_rank": 29,
-      "opp_def_allowed": 229.2,
-      "opp_def_rank": 15,
+      "opp_def_allowed": 22.8,
+      "opp_def_rank": null,
       "hist_over_rate": 0.12,
       "hist_count": 14,
       "game": "CAR vs SEA",
@@ -7096,6 +8471,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          15.0,
+          28.0,
+          19.0,
+          15.0,
+          18.0,
+          29.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -7119,8 +8519,8 @@
       "stars": 1,
       "ev": 8.5,
       "opp_rank": 29,
-      "opp_def_allowed": 120.5,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 227.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 13,
       "game": "CAR vs SEA",
@@ -7220,6 +8620,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          130.0,
+          11.0,
+          0.0,
+          0.0,
+          13.0,
+          40.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -7244,7 +8669,7 @@
       "ev": 11.1,
       "opp_rank": 17,
       "opp_def_allowed": 224.0,
-      "opp_def_rank": 18,
+      "opp_def_rank": null,
       "hist_over_rate": 0.45,
       "hist_count": 15,
       "game": "TB vs MIA",
@@ -7344,6 +8769,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          306.0,
+          213.0,
+          239.0,
+          163.0,
+          224.0,
+          309.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "MIA",
+        "defense_opponents": [
+          "BUF",
+          "WAS",
+          "NO",
+          "NYJ",
+          "PIT",
+          "CIN"
         ]
       }
     },
@@ -7367,8 +8817,8 @@
       "stars": 1,
       "ev": 8.8,
       "opp_rank": 18,
-      "opp_def_allowed": 116.1,
-      "opp_def_rank": 31,
+      "opp_def_allowed": 224.0,
+      "opp_def_rank": null,
       "hist_over_rate": 0.34,
       "hist_count": 6,
       "game": "TB vs MIA",
@@ -7468,6 +8918,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          306.0,
+          213.0,
+          239.0,
+          169.0,
+          224.0,
+          313.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "MIA",
+        "defense_opponents": [
+          "BUF",
+          "WAS",
+          "NO",
+          "NYJ",
+          "PIT",
+          "CIN"
         ]
       }
     },
@@ -7475,7 +8950,7 @@
       "id": "pick-79",
       "player": "Chimere Dike",
       "position": "WR",
-      "depth_position": "WR4",
+      "depth_position": "WR2",
       "team": "TEN",
       "opponent": "NO",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/njdduv9jx7c8vlrll8ex",
@@ -7491,8 +8966,8 @@
       "stars": 1,
       "ev": 4.8,
       "opp_rank": 26,
-      "opp_def_allowed": 118.7,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 18.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.74,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -7592,6 +9067,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          3.0,
+          3.0,
+          4.0,
+          2.0,
+          4.0,
+          3.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -7616,7 +9116,7 @@
       "ev": 10.9,
       "opp_rank": 25,
       "opp_def_allowed": 236.9,
-      "opp_def_rank": 13,
+      "opp_def_rank": null,
       "hist_over_rate": 0.46,
       "hist_count": 14,
       "game": "LV vs NYG",
@@ -7716,6 +9216,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          220.0,
+          174.0,
+          279.0,
+          282.0,
+          211.0,
+          108.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
         ]
       }
     },
@@ -7723,7 +9248,7 @@
       "id": "pick-90",
       "player": "Darius Slayton",
       "position": "WR",
-      "depth_position": "WR3",
+      "depth_position": "WR2",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/fyjkvaekv40jn72d0b3q",
@@ -7739,8 +9264,8 @@
       "stars": 1,
       "ev": 7.9,
       "opp_rank": 8,
-      "opp_def_allowed": 149.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 218.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.52,
       "hist_count": 12,
       "game": "NYG vs LV",
@@ -7840,6 +9365,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          144.0,
+          5.0,
+          23.0,
+          11.0,
+          50.0,
+          17.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -7863,8 +9413,8 @@
       "stars": 1,
       "ev": 4.4,
       "opp_rank": 30,
-      "opp_def_allowed": 135.3,
-      "opp_def_rank": 21,
+      "opp_def_allowed": 17.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.62,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -7964,6 +9514,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          2.0,
+          1.0,
+          2.0,
+          4.0,
+          1.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -7987,8 +9562,8 @@
       "stars": 1,
       "ev": 9.8,
       "opp_rank": 3,
-      "opp_def_allowed": 112.5,
-      "opp_def_rank": 5,
+      "opp_def_allowed": 143.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.49,
       "hist_count": 15,
       "game": "PHI vs BUF",
@@ -8088,6 +9663,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          202.0,
+          74.0,
+          35.0,
+          23.0,
+          148.0,
+          159.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "BUF",
+        "defense_opponents": [
+          "TB",
+          "HOU",
+          "PIT",
+          "CIN",
+          "NE",
+          "CLE"
         ]
       }
     },
@@ -8111,8 +9711,8 @@
       "stars": 1,
       "ev": 8.9,
       "opp_rank": 1,
-      "opp_def_allowed": 159.2,
-      "opp_def_rank": 8,
+      "opp_def_allowed": 22.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.54,
       "hist_count": 10,
       "game": "ATL vs LA",
@@ -8212,6 +9812,31 @@
           3,
           0,
           1
+        ],
+        "defense_allowed": [
+          29.0,
+          17.0,
+          15.0,
+          25.0,
+          25.0,
+          22.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LA",
+        "defense_opponents": [
+          "SEA",
+          "TB",
+          "CAR",
+          "ARI",
+          "DET",
+          "SEA"
         ]
       }
     },
@@ -8235,8 +9860,8 @@
       "stars": 1,
       "ev": 9.5,
       "opp_rank": 28,
-      "opp_def_allowed": 81.9,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 103.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.54,
       "hist_count": 15,
       "game": "ATL vs LA",
@@ -8336,6 +9961,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          67.0,
+          123.0,
+          58.0,
+          13.0,
+          38.0,
+          100.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LA",
+        "defense_opponents": [
+          "SEA",
+          "TB",
+          "CAR",
+          "ARI",
+          "DET",
+          "SEA"
         ]
       }
     },
@@ -8343,7 +9993,7 @@
       "id": "pick-24",
       "player": "Michael Carter",
       "position": "RB",
-      "depth_position": "RB4",
+      "depth_position": "RB1",
       "team": "ARI",
       "opponent": "CIN",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/e1y7zhd7w3xbthodfa3m",
@@ -8359,8 +10009,8 @@
       "stars": 1,
       "ev": 8.7,
       "opp_rank": 16,
-      "opp_def_allowed": 128.3,
-      "opp_def_rank": 1,
+      "opp_def_allowed": 254.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.73,
       "hist_count": 17,
       "game": "ARI vs CIN",
@@ -8460,6 +10110,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          67.0,
+          115.0,
+          47.0,
+          41.0,
+          18.0,
+          40.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CIN",
+        "defense_opponents": [
+          "PIT",
+          "NE",
+          "BAL",
+          "BUF",
+          "BAL",
+          "MIA"
         ]
       }
     },
@@ -8483,8 +10158,8 @@
       "stars": 1,
       "ev": 6.3,
       "opp_rank": 30,
-      "opp_def_allowed": 120.5,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 227.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.6,
       "hist_count": 15,
       "game": "CAR vs SEA",
@@ -8584,6 +10259,31 @@
           1,
           2,
           0
+        ],
+        "defense_allowed": [
+          130.0,
+          256.0,
+          126.0,
+          162.0,
+          120.0,
+          457.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "SEA",
+        "defense_opponents": [
+          "LA",
+          "TEN",
+          "MIN",
+          "ATL",
+          "IND",
+          "LA"
         ]
       }
     },
@@ -8607,8 +10307,8 @@
       "stars": 1,
       "ev": 8.0,
       "opp_rank": 5,
-      "opp_def_allowed": 170.1,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 266.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.55,
       "hist_count": 14,
       "game": "JAX vs IND",
@@ -8708,6 +10408,31 @@
           1,
           1,
           0
+        ],
+        "defense_allowed": [
+          0.0,
+          26.0,
+          276.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "IND",
+        "defense_opponents": [
+          "ATL",
+          "KC",
+          "HOU",
+          "JAX",
+          "SEA",
+          "SF"
         ]
       }
     },
@@ -8715,7 +10440,7 @@
       "id": "pick-64",
       "player": "Jaylen Waddle",
       "position": "WR",
-      "depth_position": "WR2",
+      "depth_position": "WR1",
       "team": "MIA",
       "opponent": "TB",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/dsxd2zcqm42wsv4ewtfc",
@@ -8731,8 +10456,8 @@
       "stars": 1,
       "ev": 8.3,
       "opp_rank": 19,
-      "opp_def_allowed": 149.2,
-      "opp_def_rank": 12,
+      "opp_def_allowed": 259.0,
+      "opp_def_rank": null,
       "hist_over_rate": 0.43,
       "hist_count": 15,
       "game": "MIA vs TB",
@@ -8832,6 +10557,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          -3.0,
+          97.0,
+          69.0,
+          30.0,
+          373.0,
+          73.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "TB",
+        "defense_opponents": [
+          "BUF",
+          "LA",
+          "ARI",
+          "NO",
+          "ATL",
+          "CAR"
         ]
       }
     },
@@ -8855,8 +10605,8 @@
       "stars": 1,
       "ev": 9.0,
       "opp_rank": 11,
-      "opp_def_allowed": 78.7,
-      "opp_def_rank": 27,
+      "opp_def_allowed": 103.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.65,
       "hist_count": 15,
       "game": "MIA vs TB",
@@ -8956,6 +10706,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          48.0,
+          46.0,
+          17.0,
+          140.0,
+          93.0,
+          29.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "TB",
+        "defense_opponents": [
+          "BUF",
+          "LA",
+          "ARI",
+          "NO",
+          "ATL",
+          "CAR"
         ]
       }
     },
@@ -8979,8 +10754,8 @@
       "stars": 1,
       "ev": 6.1,
       "opp_rank": 29,
-      "opp_def_allowed": 135.3,
-      "opp_def_rank": 21,
+      "opp_def_allowed": 203.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.57,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -9080,6 +10855,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          42.0,
+          75.0,
+          8.0,
+          12.0,
+          0.0,
+          53.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -9103,8 +10903,8 @@
       "stars": 1,
       "ev": 7.0,
       "opp_rank": 16,
-      "opp_def_allowed": 96.8,
-      "opp_def_rank": 15,
+      "opp_def_allowed": 123.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.61,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -9204,6 +11004,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          39.0,
+          87.0,
+          125.0,
+          56.0,
+          35.0,
+          63.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -9227,8 +11052,8 @@
       "stars": 1,
       "ev": 2.2,
       "opp_rank": 31,
-      "opp_def_allowed": 238.8,
-      "opp_def_rank": 12,
+      "opp_def_allowed": 23.5,
+      "opp_def_rank": null,
       "hist_over_rate": 0.64,
       "hist_count": 15,
       "game": "CHI vs SF",
@@ -9328,6 +11153,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          24.0,
+          47.0,
+          18.0,
+          16.0,
+          18.0,
+          23.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "SF",
+        "defense_opponents": [
+          "LA",
+          "ARI",
+          "CAR",
+          "CLE",
+          "TEN",
+          "IND"
         ]
       }
     },
@@ -9351,8 +11201,8 @@
       "stars": 1,
       "ev": 10.9,
       "opp_rank": 9,
-      "opp_def_allowed": 194.7,
-      "opp_def_rank": 28,
+      "opp_def_allowed": 30.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 12,
       "game": "HOU vs LAC",
@@ -9452,6 +11302,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          31.0,
+          22.0,
+          23.0,
+          40.0,
+          33.0,
+          30.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -9475,8 +11350,8 @@
       "stars": 1,
       "ev": 2.9,
       "opp_rank": 5,
-      "opp_def_allowed": 194.7,
-      "opp_def_rank": 28,
+      "opp_def_allowed": 18.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 12,
       "game": "HOU vs LAC",
@@ -9576,6 +11451,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          16.0,
+          14.0,
+          18.0,
+          21.0,
+          19.0,
+          21.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -9599,8 +11499,8 @@
       "stars": 1,
       "ev": 5.9,
       "opp_rank": 5,
-      "opp_def_allowed": 43.5,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 193.8,
+      "opp_def_rank": null,
       "hist_over_rate": 0.48,
       "hist_count": 15,
       "game": "HOU vs LAC",
@@ -9700,6 +11600,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          161.0,
+          153.0,
+          165.0,
+          240.0,
+          211.0,
+          255.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -9723,8 +11648,8 @@
       "stars": 1,
       "ev": 4.4,
       "opp_rank": 16,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 25,
+      "opp_def_allowed": 197.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.39,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -9824,6 +11749,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          22.0,
+          251.0,
+          44.0,
+          5.0,
+          249.0,
+          6.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -9847,8 +11797,8 @@
       "stars": 1,
       "ev": 32.0,
       "opp_rank": 23,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 25,
+      "opp_def_allowed": 18.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.47,
       "hist_count": 12,
       "game": "LAC vs HOU",
@@ -9948,6 +11898,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          2.0,
+          2.0,
+          4.0,
+          1.0,
+          5.0,
+          2.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -9971,8 +11946,8 @@
       "stars": 1,
       "ev": 5.6,
       "opp_rank": 8,
-      "opp_def_allowed": 90.8,
-      "opp_def_rank": 1,
+      "opp_def_allowed": 254.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.6,
       "hist_count": 15,
       "game": "ARI vs CIN",
@@ -10072,6 +12047,31 @@
           1,
           0,
           1
+        ],
+        "defense_allowed": [
+          243.0,
+          294.0,
+          246.0,
+          251.0,
+          150.0,
+          251.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CIN",
+        "defense_opponents": [
+          "PIT",
+          "NE",
+          "BAL",
+          "BUF",
+          "BAL",
+          "MIA"
         ]
       }
     },
@@ -10095,8 +12095,8 @@
       "stars": 1,
       "ev": 24.5,
       "opp_rank": 28,
-      "opp_def_allowed": 119.6,
-      "opp_def_rank": 28,
+      "opp_def_allowed": 20.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.49,
       "hist_count": 15,
       "game": "ARI vs CIN",
@@ -10196,6 +12196,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          1.0,
+          3.0,
+          5.0,
+          6.0,
+          8.0,
+          3.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CIN",
+        "defense_opponents": [
+          "PIT",
+          "NE",
+          "BAL",
+          "BUF",
+          "BAL",
+          "MIA"
         ]
       }
     },
@@ -10203,7 +12228,7 @@
       "id": "pick-34",
       "player": "Rashid Shaheed",
       "position": "WR",
-      "depth_position": "WR2",
+      "depth_position": "WR3",
       "team": "SEA",
       "opponent": "CAR",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/ynsy489xqmiwt5q9whty",
@@ -10219,8 +12244,8 @@
       "stars": 1,
       "ev": 5.1,
       "opp_rank": 15,
-      "opp_def_allowed": 132.5,
-      "opp_def_rank": 22,
+      "opp_def_allowed": 220.5,
+      "opp_def_rank": null,
       "hist_over_rate": 0.44,
       "hist_count": 16,
       "game": "SEA vs CAR",
@@ -10320,6 +12345,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          282.0,
+          11.0,
+          193.0,
+          0.0,
+          5.0,
+          30.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "CAR",
+        "defense_opponents": [
+          "NO",
+          "ATL",
+          "SF",
+          "LA",
+          "NO",
+          "TB"
         ]
       }
     },
@@ -10343,8 +12393,8 @@
       "stars": 1,
       "ev": 3.9,
       "opp_rank": 21,
-      "opp_def_allowed": 58.8,
-      "opp_def_rank": 11,
+      "opp_def_allowed": 20.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.44,
       "hist_count": 15,
       "game": "SEA vs CAR",
@@ -10444,6 +12494,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          7.0,
+          5.0,
+          6.0,
+          6.0,
+          5.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "CAR",
+        "defense_opponents": [
+          "NO",
+          "ATL",
+          "SF",
+          "LA",
+          "NO",
+          "TB"
         ]
       }
     },
@@ -10451,7 +12526,7 @@
       "id": "pick-44",
       "player": "Shedeur Sanders",
       "position": "QB",
-      "depth_position": "QB4",
+      "depth_position": "QB1",
       "team": "CLE",
       "opponent": "PIT",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/joe08hz6to2madpko8zl",
@@ -10463,12 +12538,12 @@
       "projection": 17.1,
       "edge": 0.4,
       "confidence": 0.53,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 1,
       "ev": 0.5,
       "opp_rank": 32,
-      "opp_def_allowed": 267.5,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 24.5,
+      "opp_def_rank": null,
       "hist_over_rate": 1.0,
       "hist_count": 6,
       "game": "CLE vs PIT",
@@ -10568,6 +12643,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          23.0,
+          19.0,
+          15.0,
+          19.0,
+          22.0,
+          34.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PIT",
+        "defense_opponents": [
+          "CIN",
+          "CHI",
+          "BUF",
+          "BAL",
+          "MIA",
+          "DET"
         ]
       }
     },
@@ -10591,8 +12691,8 @@
       "stars": 1,
       "ev": 7.9,
       "opp_rank": 13,
-      "opp_def_allowed": 44.7,
-      "opp_def_rank": 25,
+      "opp_def_allowed": 237.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.65,
       "hist_count": 12,
       "game": "LV vs NYG",
@@ -10608,7 +12708,32 @@
         "completions": [],
         "passing_tds": [],
         "rushing_tds": [],
-        "receiving_tds": []
+        "receiving_tds": [],
+        "defense_allowed": [
+          220.0,
+          180.0,
+          279.0,
+          282.0,
+          211.0,
+          160.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
+        ]
       }
     },
     {
@@ -10631,8 +12756,8 @@
       "stars": 1,
       "ev": 24.4,
       "opp_rank": 5,
-      "opp_def_allowed": 170.1,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 23.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.52,
       "hist_count": 14,
       "game": "JAX vs IND",
@@ -10732,6 +12857,31 @@
           1,
           1,
           0
+        ],
+        "defense_allowed": [
+          1.0,
+          3.0,
+          2.0,
+          18.0,
+          1.0,
+          0.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "IND",
+        "defense_opponents": [
+          "ATL",
+          "KC",
+          "HOU",
+          "JAX",
+          "SEA",
+          "SF"
         ]
       }
     },
@@ -10755,8 +12905,8 @@
       "stars": 1,
       "ev": 5.4,
       "opp_rank": 18,
-      "opp_def_allowed": 70.0,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 23.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.37,
       "hist_count": 10,
       "game": "JAX vs IND",
@@ -10856,6 +13006,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          6.0,
+          4.0,
+          5.0,
+          3.0,
+          7.0,
+          5.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "IND",
+        "defense_opponents": [
+          "ATL",
+          "KC",
+          "HOU",
+          "JAX",
+          "SEA",
+          "SF"
         ]
       }
     },
@@ -10875,12 +13050,12 @@
       "projection": 19.1,
       "edge": 0.4,
       "confidence": 0.53,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 1,
       "ev": 3.3,
       "opp_rank": 7,
-      "opp_def_allowed": 193.7,
-      "opp_def_rank": 29,
+      "opp_def_allowed": 18.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.0,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -10980,6 +13155,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          17.0,
+          16.0,
+          12.0,
+          14.0,
+          15.0,
+          22.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -11003,8 +13203,8 @@
       "stars": 1,
       "ev": 5.0,
       "opp_rank": 7,
-      "opp_def_allowed": 118.7,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 193.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.41,
       "hist_count": 13,
       "game": "TEN vs NO",
@@ -11104,6 +13304,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          0.0,
+          0.0,
+          0.0,
+          122.0,
+          0.0,
+          34.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -11111,7 +13336,7 @@
       "id": "pick-80",
       "player": "Gunnar Helm",
       "position": "TE",
-      "depth_position": "TE3",
+      "depth_position": "TE1",
       "team": "TEN",
       "opponent": "NO",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/lcyqbbnrzgtbnirz8knj",
@@ -11127,8 +13352,8 @@
       "stars": 1,
       "ev": 26.4,
       "opp_rank": 31,
-      "opp_def_allowed": 49.7,
-      "opp_def_rank": 20,
+      "opp_def_allowed": 18.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.58,
       "hist_count": 15,
       "game": "TEN vs NO",
@@ -11228,6 +13453,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          16.0,
+          3.0,
+          14.0,
+          2.0,
+          1.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -11235,7 +13485,7 @@
       "id": "pick-88",
       "player": "Jaxson Dart",
       "position": "QB",
-      "depth_position": "QB3",
+      "depth_position": "QB1",
       "team": "NYG",
       "opponent": "LV",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/n6uymxssgiicjmxkzxoc",
@@ -11252,7 +13502,7 @@
       "ev": 6.8,
       "opp_rank": 19,
       "opp_def_allowed": 219.4,
-      "opp_def_rank": 20,
+      "opp_def_rank": null,
       "hist_over_rate": 0.67,
       "hist_count": 12,
       "game": "NYG vs LV",
@@ -11352,6 +13602,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          268.0,
+          209.0,
+          151.0,
+          212.0,
+          175.0,
+          187.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -11375,8 +13650,8 @@
       "stars": 1,
       "ev": 4.9,
       "opp_rank": 16,
-      "opp_def_allowed": 40.2,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 218.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.61,
       "hist_count": 15,
       "game": "NYG vs LV",
@@ -11476,6 +13751,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          66.0,
+          39.0,
+          39.0,
+          62.0,
+          41.0,
+          59.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LV",
+        "defense_opponents": [
+          "DAL",
+          "CLE",
+          "LAC",
+          "DEN",
+          "PHI",
+          "HOU"
         ]
       }
     },
@@ -11499,8 +13799,8 @@
       "stars": 1,
       "ev": 6.8,
       "opp_rank": 12,
-      "opp_def_allowed": 120.9,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 181.6,
+      "opp_def_rank": null,
       "hist_over_rate": 0.58,
       "hist_count": 15,
       "game": "PHI vs BUF",
@@ -11600,6 +13900,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          173.0,
+          153.0,
+          117.0,
+          284.0,
+          155.0,
+          157.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "BUF",
+        "defense_opponents": [
+          "TB",
+          "HOU",
+          "PIT",
+          "CIN",
+          "NE",
+          "CLE"
         ]
       }
     },
@@ -11623,8 +13948,8 @@
       "stars": 1,
       "ev": 5.0,
       "opp_rank": 21,
-      "opp_def_allowed": 99.2,
-      "opp_def_rank": 13,
+      "opp_def_allowed": 130.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.47,
       "hist_count": 15,
       "game": "SF vs CHI",
@@ -11724,6 +14049,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          70.0,
+          68.0,
+          56.0,
+          86.0,
+          48.0,
+          36.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CHI",
+        "defense_opponents": [
+          "MIN",
+          "PIT",
+          "PHI",
+          "GB",
+          "CLE",
+          "GB"
         ]
       }
     },
@@ -11747,8 +14097,8 @@
       "stars": 1,
       "ev": 9.3,
       "opp_rank": 4,
-      "opp_def_allowed": 43.5,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 18.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.49,
       "hist_count": 15,
       "game": "HOU vs LAC",
@@ -11848,6 +14198,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          3.0,
+          14.0,
+          3.0,
+          6.0,
+          2.0,
+          6.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LAC",
+        "defense_opponents": [
+          "PIT",
+          "JAX",
+          "LV",
+          "PHI",
+          "KC",
+          "DAL"
         ]
       }
     },
@@ -11871,8 +14246,8 @@
       "stars": 1,
       "ev": 2.0,
       "opp_rank": 11,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 25,
+      "opp_def_allowed": 18.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.47,
       "hist_count": 15,
       "game": "LAC vs HOU",
@@ -11972,6 +14347,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          3.0,
+          23.0,
+          2.0,
+          1.0,
+          27.0,
+          1.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "HOU",
+        "defense_opponents": [
+          "TEN",
+          "BUF",
+          "IND",
+          "KC",
+          "ARI",
+          "LV"
         ]
       }
     },
@@ -11995,8 +14395,8 @@
       "stars": 1,
       "ev": 19.3,
       "opp_rank": 15,
-      "opp_def_allowed": 90.8,
-      "opp_def_rank": 1,
+      "opp_def_allowed": 20.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.59,
       "hist_count": 15,
       "game": "ARI vs CIN",
@@ -12096,6 +14496,31 @@
           1,
           0,
           1
+        ],
+        "defense_allowed": [
+          2.0,
+          3.0,
+          1.0,
+          2.0,
+          0.0,
+          3.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "CIN",
+        "defense_opponents": [
+          "PIT",
+          "NE",
+          "BAL",
+          "BUF",
+          "BAL",
+          "MIA"
         ]
       }
     },
@@ -12119,8 +14544,8 @@
       "stars": 1,
       "ev": 5.0,
       "opp_rank": 4,
-      "opp_def_allowed": 132.5,
-      "opp_def_rank": 22,
+      "opp_def_allowed": 20.1,
+      "opp_def_rank": null,
       "hist_over_rate": 0.57,
       "hist_count": 15,
       "game": "SEA vs CAR",
@@ -12220,6 +14645,31 @@
           0,
           2,
           0
+        ],
+        "defense_allowed": [
+          5.0,
+          7.0,
+          5.0,
+          6.0,
+          6.0,
+          5.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "CAR",
+        "defense_opponents": [
+          "NO",
+          "ATL",
+          "SF",
+          "LA",
+          "NO",
+          "TB"
         ]
       }
     },
@@ -12243,8 +14693,8 @@
       "stars": 1,
       "ev": 3.6,
       "opp_rank": 21,
-      "opp_def_allowed": 70.0,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 266.2,
+      "opp_def_rank": null,
       "hist_over_rate": 0.51,
       "hist_count": 10,
       "game": "JAX vs IND",
@@ -12344,6 +14794,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          38.0,
+          43.0,
+          55.0,
+          27.0,
+          27.0,
+          115.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "IND",
+        "defense_opponents": [
+          "ATL",
+          "KC",
+          "HOU",
+          "JAX",
+          "SEA",
+          "SF"
         ]
       }
     },
@@ -12367,8 +14842,8 @@
       "stars": 1,
       "ev": 7.9,
       "opp_rank": 23,
-      "opp_def_allowed": 83.9,
-      "opp_def_rank": 24,
+      "opp_def_allowed": 24.7,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "JAX vs IND",
@@ -12468,6 +14943,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          29.0,
+          40.0,
+          29.0,
+          29.0,
+          21.0,
+          31.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "IND",
+        "defense_opponents": [
+          "ATL",
+          "KC",
+          "HOU",
+          "JAX",
+          "SEA",
+          "SF"
         ]
       }
     },
@@ -12491,8 +14991,8 @@
       "stars": 1,
       "ev": 4.7,
       "opp_rank": 10,
-      "opp_def_allowed": 122.5,
-      "opp_def_rank": 24,
+      "opp_def_allowed": 213.8,
+      "opp_def_rank": null,
       "hist_over_rate": 0.56,
       "hist_count": 14,
       "game": "NYJ vs NE",
@@ -12592,6 +15092,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          0.0,
+          23.0,
+          9.0,
+          139.0,
+          37.0,
+          0.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NE",
+        "defense_opponents": [
+          "TB",
+          "NYJ",
+          "CIN",
+          "NYG",
+          "BUF",
+          "BAL"
         ]
       }
     },
@@ -12599,7 +15124,7 @@
       "id": "pick-76",
       "player": "Elic Ayomanor",
       "position": "WR",
-      "depth_position": "WR5",
+      "depth_position": "WR1",
       "team": "TEN",
       "opponent": "NO",
       "headshot_url": "https://static.www.nfl.com/image/upload/f_auto,q_auto/league/aekfvt5nyl69emvxr2yj",
@@ -12615,8 +15140,8 @@
       "stars": 1,
       "ev": 3.0,
       "opp_rank": 18,
-      "opp_def_allowed": 118.7,
-      "opp_def_rank": 30,
+      "opp_def_allowed": 193.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.29,
       "hist_count": 14,
       "game": "TEN vs NO",
@@ -12716,6 +15241,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          60.0,
+          199.0,
+          40.0,
+          122.0,
+          25.0,
+          4.0
+        ],
+        "defense_weeks": [
+          10,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NO",
+        "defense_opponents": [
+          "CAR",
+          "ATL",
+          "MIA",
+          "TB",
+          "CAR",
+          "NYJ"
         ]
       }
     },
@@ -12739,8 +15289,8 @@
       "stars": 1,
       "ev": 5.6,
       "opp_rank": 27,
-      "opp_def_allowed": 32.9,
-      "opp_def_rank": 31,
+      "opp_def_allowed": 16.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.46,
       "hist_count": 14,
       "game": "PHI vs BUF",
@@ -12840,6 +15390,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          16.0,
+          3.0,
+          3.0,
+          5.0,
+          3.0,
+          3.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "BUF",
+        "defense_opponents": [
+          "TB",
+          "HOU",
+          "PIT",
+          "CIN",
+          "NE",
+          "CLE"
         ]
       }
     },
@@ -12863,8 +15438,8 @@
       "stars": 1,
       "ev": 5.3,
       "opp_rank": 10,
-      "opp_def_allowed": 224.0,
-      "opp_def_rank": 18,
+      "opp_def_allowed": 29.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.45,
       "hist_count": 15,
       "game": "TB vs MIA",
@@ -12964,6 +15539,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          40.0,
+          30.0,
+          38.0,
+          30.0,
+          27.0,
+          32.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "MIA",
+        "defense_opponents": [
+          "BUF",
+          "WAS",
+          "NO",
+          "NYJ",
+          "PIT",
+          "CIN"
         ]
       }
     },
@@ -12987,8 +15587,8 @@
       "stars": 1,
       "ev": 1.2,
       "opp_rank": 18,
-      "opp_def_allowed": 52.4,
-      "opp_def_rank": 17,
+      "opp_def_allowed": 220.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.55,
       "hist_count": 15,
       "game": "NE vs NYJ",
@@ -13088,6 +15688,31 @@
           1,
           0,
           0
+        ],
+        "defense_allowed": [
+          31.0,
+          24.0,
+          51.0,
+          13.0,
+          73.0,
+          346.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "NYJ",
+        "defense_opponents": [
+          "NE",
+          "BAL",
+          "ATL",
+          "MIA",
+          "JAX",
+          "NO"
         ]
       }
     },
@@ -13111,8 +15736,8 @@
       "stars": 1,
       "ev": 1.4,
       "opp_rank": 7,
-      "opp_def_allowed": 121.7,
-      "opp_def_rank": 2,
+      "opp_def_allowed": 237.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.54,
       "hist_count": 15,
       "game": "LV vs NYG",
@@ -13212,6 +15837,31 @@
           0,
           1,
           0
+        ],
+        "defense_allowed": [
+          55.0,
+          -1.0,
+          0.0,
+          73.0,
+          19.0,
+          2.0
+        ],
+        "defense_weeks": [
+          10,
+          11,
+          12,
+          13,
+          15,
+          16
+        ],
+        "defense_opponent": "NYG",
+        "defense_opponents": [
+          "CHI",
+          "GB",
+          "DET",
+          "NE",
+          "WAS",
+          "MIN"
         ]
       }
     },
@@ -13235,8 +15885,8 @@
       "stars": 1,
       "ev": 2.3,
       "opp_rank": 5,
-      "opp_def_allowed": 96.8,
-      "opp_def_rank": 15,
+      "opp_def_allowed": 203.3,
+      "opp_def_rank": null,
       "hist_over_rate": 0.52,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -13336,6 +15986,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          42.0,
+          75.0,
+          8.0,
+          12.0,
+          0.0,
+          53.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -13359,8 +16034,8 @@
       "stars": 1,
       "ev": 3.2,
       "opp_rank": 16,
-      "opp_def_allowed": 96.8,
-      "opp_def_rank": 15,
+      "opp_def_allowed": 26.9,
+      "opp_def_rank": null,
       "hist_over_rate": 0.5,
       "hist_count": 15,
       "game": "BUF vs PHI",
@@ -13460,6 +16135,31 @@
           0,
           0,
           1
+        ],
+        "defense_allowed": [
+          19.0,
+          28.0,
+          45.0,
+          37.0,
+          13.0,
+          26.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "PHI",
+        "defense_opponents": [
+          "DET",
+          "DAL",
+          "CHI",
+          "LAC",
+          "LV",
+          "WAS"
         ]
       }
     },
@@ -13483,8 +16183,8 @@
       "stars": 1,
       "ev": 6.4,
       "opp_rank": 6,
-      "opp_def_allowed": 81.9,
-      "opp_def_rank": 26,
+      "opp_def_allowed": 22.4,
+      "opp_def_rank": null,
       "hist_over_rate": 0.53,
       "hist_count": 15,
       "game": "ATL vs LA",
@@ -13584,6 +16284,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          9.0,
+          17.0,
+          1.0,
+          25.0,
+          13.0,
+          8.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LA",
+        "defense_opponents": [
+          "SEA",
+          "TB",
+          "CAR",
+          "ARI",
+          "DET",
+          "SEA"
         ]
       }
     },
@@ -13603,12 +16328,12 @@
       "projection": 9.9,
       "edge": 0.6,
       "confidence": 0.51,
-      "tier": "moderate",
+      "tier": "caution",
       "stars": 1,
       "ev": 3.8,
       "opp_rank": 27,
-      "opp_def_allowed": 102.7,
-      "opp_def_rank": 10,
+      "opp_def_allowed": 26.7,
+      "opp_def_rank": null,
       "hist_over_rate": 1.0,
       "hist_count": 15,
       "game": "LA vs ATL",
@@ -13708,6 +16433,31 @@
           0,
           0,
           0
+        ],
+        "defense_allowed": [
+          25.0,
+          17.0,
+          27.0,
+          25.0,
+          22.0,
+          23.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "ATL",
+        "defense_opponents": [
+          "CAR",
+          "NO",
+          "NYJ",
+          "SEA",
+          "TB",
+          "ARI"
         ]
       }
     }

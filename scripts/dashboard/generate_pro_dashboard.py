@@ -19,6 +19,7 @@ import pandas as pd
 import numpy as np
 import re
 import json
+import copy
 from datetime import datetime
 from pathlib import Path
 import hashlib
@@ -16858,12 +16859,28 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
     # Load depth chart for player depth positions (WR1, RB2, etc.)
     depth_chart_lookup = {}  # (player_name, team) -> depth_position
     try:
-        depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts_2025.parquet'
+        # Use fresh depth_charts.parquet first (updated daily), fallback to season-specific
+        depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
+        if not depth_path.exists():
+            depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts_2025.parquet'
         if depth_path.exists():
             depth_df = pd.read_parquet(depth_path)
             # Only get offensive skill positions
             skill_positions = ['Wide Receiver', 'Running Back', 'Tight End', 'Quarterback']
             depth_df = depth_df[depth_df['pos_name'].isin(skill_positions)]
+
+            # NFLverse 2025+ uses 'dt' timestamp for freshness (season may be NaN for current data)
+            # Sort by dt descending (most recent first) to get latest depth chart
+            if 'dt' in depth_df.columns:
+                depth_df = depth_df.sort_values('dt', ascending=False, na_position='last')
+            elif 'week' in depth_df.columns:
+                # Fallback for older data format
+                depth_df['week_sort'] = depth_df['week'].fillna(0)
+                depth_df = depth_df.sort_values('week_sort', ascending=False)
+
+            # Keep only the most recent entry for each (player, team, position)
+            depth_df = depth_df.drop_duplicates(subset=['player_name', 'team', 'pos_name'], keep='first')
+
             # Build lookup: (player_name, team) -> "WR1", "RB2", etc.
             pos_abbrev_map = {
                 'Wide Receiver': 'WR',
@@ -16883,45 +16900,248 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
     except Exception as e:
         print(f"  Warning: Could not load depth chart: {e}")
 
-    # Calculate defense allowed by position (how many yards/receptions each team allows to WR/RB/TE)
-    defense_vs_position = {}  # team -> position -> {'allowed': float, 'rank': int}
+    # Calculate defense allowed by MARKET (how much each team allows for each stat type)
+    # Key: team -> market -> {'allowed': float, 'rank': int}
+    defense_vs_market = {}
+    # Weekly defense: team -> week -> market -> total_allowed (for chart history)
+    defense_weekly = {}
+    # Team -> week -> opponent lookup (for showing who defense played each week)
+    team_week_opponent = {}
+    try:
+        schedule_path = PROJECT_ROOT / 'data' / 'nflverse' / 'schedules.parquet'
+        if schedule_path.exists():
+            sched_df = pd.read_parquet(schedule_path)
+            sched_season = sched_df[sched_df['season'] == season]
+            for _, game in sched_season.iterrows():
+                wk = int(game['week'])
+                away = str(game['away_team'])
+                home = str(game['home_team'])
+                # Home team played away team, away team played home team
+                if home not in team_week_opponent:
+                    team_week_opponent[home] = {}
+                if away not in team_week_opponent:
+                    team_week_opponent[away] = {}
+                team_week_opponent[home][wk] = away
+                team_week_opponent[away][wk] = home
+    except Exception as e:
+        print(f"  Warning: Could not load schedule for defense opponents: {e}")
+
+    # Load game context for weather and vegas data
+    # Key: (team, opponent) -> {'vegas_total', 'vegas_spread', 'roof', 'temp', 'wind'}
+    game_context_lookup = {}
+    try:
+        schedule_path = PROJECT_ROOT / 'data' / 'nflverse' / 'schedules.parquet'
+        if schedule_path.exists():
+            sched_df = pd.read_parquet(schedule_path)
+            week_games = sched_df[(sched_df['week'] == week) & (sched_df['season'] == season)]
+            for _, game in week_games.iterrows():
+                away = str(game.get('away_team', ''))
+                home = str(game.get('home_team', ''))
+                spread_line = float(game.get('spread_line', 0)) if pd.notna(game.get('spread_line')) else None
+                total_line = float(game.get('total_line', 0)) if pd.notna(game.get('total_line')) else None
+                roof = str(game.get('roof', '')) if pd.notna(game.get('roof')) else None
+                temp = int(game.get('temp', 0)) if pd.notna(game.get('temp')) else None
+                wind = int(game.get('wind', 0)) if pd.notna(game.get('wind')) else None
+
+                # Away team context (spread is from home perspective, so flip for away)
+                game_context_lookup[(away, home)] = {
+                    'vegas_total': total_line,
+                    'vegas_spread': -spread_line if spread_line else None,  # Flip for away team
+                    'roof': roof,
+                    'temp': temp,
+                    'wind': wind,
+                }
+                # Home team context
+                game_context_lookup[(home, away)] = {
+                    'vegas_total': total_line,
+                    'vegas_spread': spread_line,
+                    'roof': roof,
+                    'temp': temp,
+                    'wind': wind,
+                }
+            print(f"  Loaded game context for {len(week_games)} games")
+    except Exception as e:
+        print(f"  Warning: Could not load game context: {e}")
+
+    # Map markets to their stat columns and which positions they apply to
+    # Column names from NFLverse weekly_stats.parquet
+    MARKET_STAT_MAP = {
+        'player_reception_yds': {'col': 'receiving_yards', 'positions': ['WR', 'TE', 'RB']},
+        'player_receptions': {'col': 'receptions', 'positions': ['WR', 'TE', 'RB']},
+        'player_rush_yds': {'col': 'rushing_yards', 'positions': ['RB', 'QB', 'WR']},
+        'player_rush_attempts': {'col': 'carries', 'positions': ['RB', 'QB']},  # NFLverse uses 'carries'
+        'player_pass_yds': {'col': 'passing_yards', 'positions': ['QB']},
+        'player_pass_attempts': {'col': 'attempts', 'positions': ['QB']},  # NFLverse uses 'attempts'
+        'player_pass_completions': {'col': 'completions', 'positions': ['QB']},
+        # TD markets - count TDs allowed by defense
+        'player_pass_tds': {'col': 'passing_tds', 'positions': ['QB']},
+        # Anytime TD - position-specific (RBs can score rushing OR receiving TDs)
+        'player_anytime_td_RB': {'col': None, 'positions': ['RB'], 'aggregate': ['rushing_tds', 'receiving_tds']},
+        'player_anytime_td_WR': {'col': 'receiving_tds', 'positions': ['WR']},
+        'player_anytime_td_TE': {'col': 'receiving_tds', 'positions': ['TE']},
+        'player_anytime_td_QB': {'col': None, 'positions': ['QB'], 'aggregate': ['rushing_tds', 'passing_tds']},  # QB rushing + passing TDs
+    }
+
+    # Load depth charts to get player depth positions (WR1, RB2, etc.)
+    # Create lookup: (player_id, team, week) -> pos_rank OR (player_name, team) -> pos_rank (fallback)
+    player_depth_lookup = {}  # player_id -> pos_rank (most recent)
+    player_name_depth = {}    # (player_name, team) -> pos_rank (fallback)
+    try:
+        depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
+        if depth_path.exists():
+            depth_df = pd.read_parquet(depth_path)
+            # Filter to skill positions
+            pos_map = {'Wide Receiver': 'WR', 'Running Back': 'RB', 'Tight End': 'TE', 'Quarterback': 'QB'}
+            depth_df = depth_df[depth_df['pos_name'].isin(pos_map.keys())]
+            depth_df = depth_df[depth_df['player_name'].notna() & depth_df['pos_rank'].notna()]
+
+            # Sort by dt (most recent first) to get current depth chart
+            if 'dt' in depth_df.columns:
+                depth_df = depth_df.sort_values('dt', ascending=False)
+
+            # Build lookups - most recent entry wins
+            for _, row in depth_df.iterrows():
+                pid = row.get('gsis_id', '')
+                pname = row.get('player_name', '')
+                team = row.get('team', '')
+                pos_rank = int(row['pos_rank'])
+                pos = pos_map.get(row['pos_name'], '')
+
+                # Primary lookup by player_id
+                if pid and pid not in player_depth_lookup:
+                    player_depth_lookup[pid] = {'pos_rank': pos_rank, 'position': pos}
+
+                # Fallback lookup by name+team
+                key = (pname, team)
+                if key not in player_name_depth:
+                    player_name_depth[key] = {'pos_rank': pos_rank, 'position': pos}
+
+            print(f"  Loaded depth positions for {len(player_depth_lookup)} players (by ID), {len(player_name_depth)} (by name)")
+    except Exception as e:
+        print(f"  Warning: Could not load depth charts for defense calc: {e}")
+
+    # Add pos_rank to weekly_stats for depth-filtered defense calculation
+    def get_player_depth(row):
+        """Get player's depth position (1=starter, 2=backup, etc.)"""
+        pid = row.get('player_id', '')
+        if pid and pid in player_depth_lookup:
+            return player_depth_lookup[pid]['pos_rank']
+        # Fallback to name+team
+        pname = row.get('player_display_name', row.get('player_name', ''))
+        team = row.get('team', '')
+        key = (pname, team)
+        if key in player_name_depth:
+            return player_name_depth[key]['pos_rank']
+        return None
+
     try:
         if stats_path.exists():
-            # Use the already-loaded weekly_stats
-            # Group by opponent_team and position to calculate avg allowed
-            position_map = {'WR': 'WR', 'RB': 'RB', 'TE': 'TE', 'QB': 'QB'}
+            # Add depth position to weekly stats
+            weekly_stats = weekly_stats.copy()
+            weekly_stats['pos_rank'] = weekly_stats.apply(get_player_depth, axis=1)
+            depth_matched = weekly_stats['pos_rank'].notna().sum()
+            print(f"  Matched depth position for {depth_matched}/{len(weekly_stats)} stat lines")
+
             for opp_team in weekly_stats['opponent_team'].dropna().unique():
                 team_games = weekly_stats[weekly_stats['opponent_team'] == opp_team]
-                defense_vs_position[opp_team] = {}
-                for pos in ['WR', 'RB', 'TE', 'QB']:
-                    pos_stats = team_games[team_games['position'] == pos]
-                    if len(pos_stats) > 0:
-                        # Calculate average receiving/rushing yards allowed per game to this position
-                        if pos in ['WR', 'TE']:
-                            # Sum receiving yards per week, then average
-                            weekly_totals = pos_stats.groupby('week')['receiving_yards'].sum()
-                            avg_allowed = weekly_totals.mean() if len(weekly_totals) > 0 else 0
-                        elif pos == 'RB':
-                            weekly_totals = pos_stats.groupby('week')['rushing_yards'].sum()
-                            avg_allowed = weekly_totals.mean() if len(weekly_totals) > 0 else 0
-                        else:  # QB
-                            weekly_totals = pos_stats.groupby('week')['passing_yards'].sum()
-                            avg_allowed = weekly_totals.mean() if len(weekly_totals) > 0 else 0
-                        defense_vs_position[opp_team][pos] = {'allowed': round(avg_allowed, 1)}
+                defense_vs_market[opp_team] = {}
+                defense_weekly[opp_team] = {}
 
-            # Calculate ranks (higher allowed = worse defense = higher rank number)
-            for pos in ['WR', 'RB', 'TE', 'QB']:
-                teams_sorted = sorted(
-                    [(t, defense_vs_position.get(t, {}).get(pos, {}).get('allowed', 0)) for t in defense_vs_position],
-                    key=lambda x: x[1],
-                    reverse=True  # Worst defense (most allowed) = rank 1
-                )
-                for rank, (team, _) in enumerate(teams_sorted, 1):
-                    if pos in defense_vs_position.get(team, {}):
-                        defense_vs_position[team][pos]['rank'] = rank
-            print(f"  Calculated defense vs position stats for {len(defense_vs_position)} teams")
+                for market, config in MARKET_STAT_MAP.items():
+                    col = config['col']
+                    positions = config['positions']
+                    aggregate_cols = config.get('aggregate', None)
+
+                    # Filter to relevant positions
+                    pos_stats = team_games[team_games['position'].isin(positions)]
+                    if len(pos_stats) == 0:
+                        continue
+
+                    # For each depth position (1, 2, 3), calculate defense allowed
+                    for depth_rank in [1, 2, 3]:
+                        # Filter to this depth position only
+                        depth_stats = pos_stats[pos_stats['pos_rank'] == depth_rank]
+                        if len(depth_stats) == 0:
+                            continue
+
+                        # Market key includes depth: "player_receptions_WR_1" for WR1s
+                        # For position-specific markets, include position in key
+                        if len(positions) == 1:
+                            depth_market_key = f"{market}_{depth_rank}"
+                        else:
+                            # For multi-position markets (receptions: WR/TE/RB), need position in key
+                            for pos in positions:
+                                pos_depth_stats = depth_stats[depth_stats['position'] == pos]
+                                if len(pos_depth_stats) == 0:
+                                    continue
+                                depth_market_key = f"{market}_{pos}_{depth_rank}"
+
+                                if aggregate_cols:
+                                    valid_cols = [c for c in aggregate_cols if c in pos_depth_stats.columns]
+                                    if not valid_cols:
+                                        continue
+                                    pos_depth_stats = pos_depth_stats.copy()
+                                    pos_depth_stats['_agg_total'] = pos_depth_stats[valid_cols].fillna(0).sum(axis=1)
+                                    weekly_totals = pos_depth_stats.groupby('week')['_agg_total'].sum()
+                                elif col and col in pos_depth_stats.columns:
+                                    weekly_totals = pos_depth_stats.groupby('week')[col].sum()
+                                else:
+                                    continue
+
+                                if len(weekly_totals) > 0:
+                                    for wk, total in weekly_totals.items():
+                                        if wk not in defense_weekly[opp_team]:
+                                            defense_weekly[opp_team][wk] = {}
+                                        defense_weekly[opp_team][wk][depth_market_key] = round(float(total), 1)
+                            continue  # Already handled multi-position case
+
+                        # Single position case
+                        if aggregate_cols:
+                            valid_cols = [c for c in aggregate_cols if c in depth_stats.columns]
+                            if not valid_cols:
+                                continue
+                            depth_stats = depth_stats.copy()
+                            depth_stats['_agg_total'] = depth_stats[valid_cols].fillna(0).sum(axis=1)
+                            weekly_totals = depth_stats.groupby('week')['_agg_total'].sum()
+                        elif col and col in depth_stats.columns:
+                            weekly_totals = depth_stats.groupby('week')[col].sum()
+                        else:
+                            continue
+
+                        if len(weekly_totals) > 0:
+                            for wk, total in weekly_totals.items():
+                                if wk not in defense_weekly[opp_team]:
+                                    defense_weekly[opp_team][wk] = {}
+                                defense_weekly[opp_team][wk][depth_market_key] = round(float(total), 1)
+
+                    # Also store non-depth-filtered totals as fallback (original market key)
+                    if aggregate_cols:
+                        valid_cols = [c for c in aggregate_cols if c in pos_stats.columns]
+                        if not valid_cols:
+                            continue
+                        pos_stats = pos_stats.copy()
+                        pos_stats['_agg_total'] = pos_stats[valid_cols].fillna(0).sum(axis=1)
+                        weekly_totals = pos_stats.groupby('week')['_agg_total'].sum()
+                    elif col:
+                        if col not in pos_stats.columns:
+                            continue
+                        weekly_totals = pos_stats.groupby('week')[col].sum()
+                    else:
+                        continue
+
+                    if len(weekly_totals) > 0:
+                        avg_allowed = weekly_totals.mean()
+                        defense_vs_market[opp_team][market] = {'allowed': round(avg_allowed, 1)}
+                        for wk, total in weekly_totals.items():
+                            if wk not in defense_weekly[opp_team]:
+                                defense_weekly[opp_team][wk] = {}
+                            defense_weekly[opp_team][wk][market] = round(float(total), 1)
+
+            print(f"  Calculated defense vs market stats for {len(defense_vs_market)} teams (with depth filtering)")
     except Exception as e:
+        import traceback
         print(f"  Warning: Could not calculate defense vs position: {e}")
+        traceback.print_exc()
 
     # Team logo URL mapping - ESPN uses different abbreviations for some teams
     ESPN_TEAM_MAP = {
@@ -17004,8 +17224,9 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
             player_name = str(row.get('player', ''))
             player_id = name_to_player_id.get(player_name, '')
 
-        # Get game history for this player
-        history = game_history_cache.get(player_id, {
+        # Get game history for this player (make a COPY to avoid shared mutations)
+        # Each pick needs its own copy since defense_allowed is market-specific
+        base_history = game_history_cache.get(player_id, {
             'weeks': [],
             'opponents': [],
             'receiving_yards': [],
@@ -17019,6 +17240,79 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
             'rushing_tds': [],
             'receiving_tds': [],
         })
+        # Deep copy to prevent shared mutations across picks for same player
+        history = copy.deepcopy(base_history)
+
+        # Add CURRENT OPPONENT's defense trend (what they've allowed over recent weeks)
+        # This shows the defense the player is facing THIS week, not past opponents
+        market_key = str(row.get('market', ''))
+        current_opponent = str(row.get('opponent', row.get('opponent_abbr', '')))
+
+        # Get player's depth position for depth-filtered defense lookup
+        player_depth_rank = None
+        depth_pos = row.get('depth_position', '')  # e.g., "WR1", "RB2"
+        if depth_pos and len(depth_pos) >= 2:
+            try:
+                player_depth_rank = int(depth_pos[-1])  # Extract number from "WR1" -> 1
+            except ValueError:
+                pass
+        # Fallback: lookup from depth chart
+        if player_depth_rank is None and player_id:
+            depth_info = player_depth_lookup.get(player_id, {})
+            player_depth_rank = depth_info.get('pos_rank')
+        if player_depth_rank is None:
+            pname = str(row.get('player', ''))
+            team = str(row.get('team', ''))
+            depth_info = player_name_depth.get((pname, team), {})
+            player_depth_rank = depth_info.get('pos_rank')
+
+        # Get the current opponent's recent defensive performance for this market
+        # Always show 6 recent weeks of opponent defense regardless of player's game count
+        defense_trend = []
+        defense_weeks = []
+        if current_opponent and current_opponent in defense_weekly:
+            # Get sorted weeks for this opponent (most recent first)
+            opp_weeks = sorted(defense_weekly[current_opponent].keys(), reverse=True)
+            # Always take 6 most recent weeks for defense trend
+            recent_weeks = opp_weeks[:6]
+            # Reverse to chronological order (oldest to newest)
+            recent_weeks = list(reversed(recent_weeks))
+            defense_weeks = recent_weeks
+
+            # Build depth-specific market key: "player_receptions_WR_1" for WR1s
+            # For anytime TD, use position-specific lookup key
+            defense_market_key = market_key
+            if market_key == 'player_anytime_td' and position in ['RB', 'WR', 'TE', 'QB']:
+                defense_market_key = f"{market_key}_{position}"
+
+            # Try depth-filtered key first, then fall back to non-depth key
+            depth_market_key = None
+            if player_depth_rank and player_depth_rank <= 3:
+                # Multi-position markets need position in key: player_receptions_WR_1
+                if market_key in ['player_receptions', 'player_reception_yds', 'player_rush_yds']:
+                    depth_market_key = f"{market_key}_{position}_{player_depth_rank}"
+                else:
+                    # Single-position markets: player_pass_yds_1
+                    depth_market_key = f"{defense_market_key}_{player_depth_rank}"
+
+            for week in recent_weeks:
+                week_data = defense_weekly[current_opponent].get(week, {})
+                # Try depth-specific first, then fall back to general
+                if depth_market_key and depth_market_key in week_data:
+                    defense_trend.append(week_data[depth_market_key])
+                elif defense_market_key in week_data:
+                    defense_trend.append(week_data[defense_market_key])
+                else:
+                    defense_trend.append(None)
+
+        history['defense_allowed'] = defense_trend
+        history['defense_weeks'] = defense_weeks  # Store the actual weeks for defense data
+        history['defense_opponent'] = current_opponent  # Track which team's defense this is
+        # Add who the defense played each week
+        history['defense_opponents'] = [
+            team_week_opponent.get(current_opponent, {}).get(wk, '')
+            for wk in defense_weeks
+        ]
 
         # Calculate projection and edge
         projection = float(row.get('model_projection', row.get('projection', row.get('line', 0)))) if pd.notna(row.get('model_projection', row.get('projection'))) else float(row.get('line', 0))
@@ -17052,12 +17346,20 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
                     depth_position = dp
                     break
 
-        # Get defense vs position stats for opponent
+        # Get defense vs market stats for opponent
+        # For anytime TD, use position-specific lookup (e.g., player_anytime_td_RB for RBs)
         opp_def_allowed = None
         opp_def_rank = None
-        if opponent and position in defense_vs_position.get(opponent, {}):
-            opp_def_allowed = defense_vs_position[opponent][position].get('allowed')
-            opp_def_rank = defense_vs_position[opponent][position].get('rank')
+        market_key = str(row.get('market', ''))
+        defense_lookup_key = market_key
+
+        # For anytime TD, append position to get position-specific defense stats
+        if market_key == 'player_anytime_td' and position in ['RB', 'WR', 'TE', 'QB']:
+            defense_lookup_key = f"{market_key}_{position}"
+
+        if opponent and defense_lookup_key in defense_vs_market.get(opponent, {}):
+            opp_def_allowed = defense_vs_market[opponent][defense_lookup_key].get('allowed')
+            opp_def_rank = defense_vs_market[opponent][defense_lookup_key].get('rank')
 
         pick_data = {
             'id': f"pick-{idx}",
@@ -17086,6 +17388,15 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
             'game': f"{team} vs {opponent}",
             'game_history': history,
         }
+
+        # Add game context (weather & vegas) from lookup
+        game_ctx = game_context_lookup.get((team, opponent), {})
+        if game_ctx:
+            pick_data['vegas_total'] = game_ctx.get('vegas_total')
+            pick_data['vegas_spread'] = game_ctx.get('vegas_spread')
+            pick_data['roof'] = game_ctx.get('roof')
+            pick_data['temp'] = game_ctx.get('temp')
+            pick_data['wind'] = game_ctx.get('wind')
 
         if l5_rate is not None:
             pick_data['l5_rate'] = l5_rate

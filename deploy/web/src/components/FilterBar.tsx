@@ -87,13 +87,13 @@ export default function FilterBar({
   ];
 
   return (
-    <div className="sticky top-[73px] z-40 bg-[#0a0a0c]/95 backdrop-blur-sm border-b border-zinc-800/50">
+    <div className="sticky top-[97px] md:top-[105px] z-40 glass-nav border-b border-white/[0.04]">
       <div className="px-4 lg:px-6 py-3">
         {/* Desktop Layout */}
         <div className="hidden md:block space-y-3">
           {/* Row 1: Search, Tiers, Market, Sort, Count */}
           <div className="flex items-center gap-4">
-            {/* Search */}
+            {/* Search - Glass input */}
             <div className="relative flex-1 max-w-sm">
               <svg
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"
@@ -108,24 +108,24 @@ export default function FilterBar({
                 placeholder="Search players, teams..."
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20"
+                className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/[0.06] rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/40 focus:bg-white/[0.05] focus:shadow-[0_0_0_3px_rgba(34,197,94,0.1)] transition-all backdrop-blur-sm"
               />
             </div>
 
-            {/* Tier Filter */}
+            {/* Tier Filter - Glass buttons */}
             <div className="flex items-center gap-2">
               {tiers.map(tier => (
                 <button
                   key={tier.value}
                   onClick={() => onTierChange(tier.value)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                     tierFilter === tier.value
                       ? tier.value === 'elite'
-                        ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/30'
+                        ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-500/10 text-yellow-400 border border-yellow-500/30 shadow-[0_0_16px_rgba(234,179,8,0.1)]'
                         : tier.value === 'strong'
-                        ? 'bg-cyan-500/20 text-cyan-400 ring-1 ring-cyan-500/30'
-                        : 'bg-zinc-700 text-white ring-1 ring-zinc-600'
-                      : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300'
+                        ? 'bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-[0_0_16px_rgba(6,182,212,0.1)]'
+                        : 'bg-white/[0.06] text-white border border-white/[0.1]'
+                      : 'bg-white/[0.02] border border-white/[0.04] text-zinc-400 hover:bg-white/[0.06] hover:text-zinc-200'
                   }`}
                 >
                   {tier.label}
@@ -133,11 +133,11 @@ export default function FilterBar({
               ))}
             </div>
 
-            {/* Market Filter */}
+            {/* Market Filter - Glass select */}
             <select
               value={marketFilter}
               onChange={(e) => onMarketChange(e.target.value)}
-              className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer"
+              className="px-4 py-2.5 bg-white/[0.03] border border-white/[0.06] rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500/40 cursor-pointer backdrop-blur-sm"
             >
               <option value="all">All Markets</option>
               {markets.map(market => (
@@ -147,11 +147,11 @@ export default function FilterBar({
               ))}
             </select>
 
-            {/* Sort */}
+            {/* Sort - Glass select */}
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer"
+              className="px-4 py-2.5 bg-white/[0.03] border border-white/[0.06] rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500/40 cursor-pointer backdrop-blur-sm"
             >
               {sortOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -160,13 +160,13 @@ export default function FilterBar({
               ))}
             </select>
 
-            {/* Results count */}
-            <span className="text-sm text-zinc-500 ml-auto">
+            {/* Results count - Glass pill */}
+            <span className="text-sm text-zinc-400 ml-auto px-3 py-1 rounded-lg bg-white/[0.03] border border-white/[0.04]">
               {totalPicks} picks
             </span>
           </div>
 
-          {/* Row 2: Game Filter Pills */}
+          {/* Row 2: Game Filter Pills - Glass chips */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-zinc-500 font-medium">Games:</span>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -174,8 +174,8 @@ export default function FilterBar({
                 onClick={() => onGameChange('all')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   gameFilter === 'all'
-                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30'
-                    : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'
+                    ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-white/[0.02] border border-white/[0.04] text-zinc-400 hover:bg-white/[0.06]'
                 }`}
               >
                 All
@@ -187,17 +187,18 @@ export default function FilterBar({
                     key={game.normalized}
                     onClick={() => onGameChange(game.normalized)}
                     title={`${game.stadium} • ${weather.label}`}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       gameFilter === game.normalized
-                        ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30'
-                        : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'
+                        ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-white/[0.02] border border-white/[0.04] text-zinc-400 hover:bg-white/[0.06]'
                     }`}
                   >
-                    <img src={getTeamLogoUrl(game.away_team)} alt={game.away_team} className="w-4 h-4 rounded-full" />
-                    <span className="text-zinc-600">@</span>
-                    <img src={getTeamLogoUrl(game.home_team)} alt={game.home_team} className="w-4 h-4 rounded-full" />
-                    <span className="text-zinc-500 text-[10px] ml-0.5">{formatGameTime(game.gametime)}</span>
-                    <span className="text-[10px]" title={weather.label}>{weather.icon}</span>
+                    <span className="font-semibold">{game.away_team}</span>
+                    <span className="text-zinc-600 text-[10px]">@</span>
+                    <span className="font-semibold">{game.home_team}</span>
+                    <span className="text-zinc-600 mx-1">•</span>
+                    <span className="text-zinc-500 text-[10px]">{formatGameTime(game.gametime)}</span>
+                    {weather.icon !== '🏈' && <span className="text-[10px] ml-0.5" title={weather.label}>{weather.icon}</span>}
                   </button>
                 );
               })}
@@ -206,57 +207,59 @@ export default function FilterBar({
         </div>
 
         {/* Mobile Layout */}
-        <div className="md:hidden space-y-3">
-          {/* Search */}
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search players..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50"
-            />
+        <div className="md:hidden space-y-2">
+          {/* Row 1: Search + Count */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 bg-white/[0.03] border border-white/[0.06] rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/40 backdrop-blur-sm"
+              />
+            </div>
+            <span className="text-xs text-zinc-500 whitespace-nowrap px-2 py-1 rounded-lg bg-white/[0.03] border border-white/[0.04]">{totalPicks} picks</span>
           </div>
 
-          {/* Filters row */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
-            {/* Tier chips */}
+          {/* Row 2: Tier chips - compact glass */}
+          <div className="flex items-center gap-1.5">
             {tiers.map(tier => (
               <button
                 key={tier.value}
                 onClick={() => onTierChange(tier.value)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                className={`flex-1 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
                   tierFilter === tier.value
                     ? tier.value === 'elite'
-                      ? 'bg-yellow-500/20 text-yellow-400'
+                      ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-500/10 text-yellow-400 border border-yellow-500/30'
                       : tier.value === 'strong'
-                      ? 'bg-cyan-500/20 text-cyan-400'
-                      : 'bg-zinc-700 text-white'
-                    : 'bg-zinc-900 text-zinc-400'
+                      ? 'bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 text-cyan-400 border border-cyan-500/30'
+                      : 'bg-white/[0.06] text-white border border-white/[0.1]'
+                    : 'bg-white/[0.02] border border-white/[0.04] text-zinc-500'
                 }`}
               >
-                {tier.label}
+                {tier.value === 'all' ? 'All' : tier.value.charAt(0).toUpperCase() + tier.value.slice(1)}
               </button>
             ))}
+          </div>
 
-            {/* Divider */}
-            <div className="w-px h-4 bg-zinc-700 flex-shrink-0" />
-
+          {/* Row 3: Dropdowns in a grid - Glass selects */}
+          <div className="grid grid-cols-3 gap-1.5">
             {/* Market select */}
             <select
               value={marketFilter}
               onChange={(e) => onMarketChange(e.target.value)}
-              className="flex-shrink-0 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 focus:outline-none"
+              className="w-full px-2 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg text-[11px] text-zinc-300 focus:outline-none backdrop-blur-sm"
             >
-              <option value="all">All Markets</option>
+              <option value="all">Market</option>
               {markets.map(market => (
                 <option key={market.value} value={market.value}>
                   {market.label}
@@ -268,12 +271,12 @@ export default function FilterBar({
             <select
               value={gameFilter}
               onChange={(e) => onGameChange(e.target.value)}
-              className="flex-shrink-0 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 focus:outline-none"
+              className="w-full px-2 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg text-[11px] text-zinc-300 focus:outline-none backdrop-blur-sm"
             >
-              <option value="all">All Games</option>
+              <option value="all">Game</option>
               {sortGamesByKickoff(games).map(game => (
                 <option key={game.normalized} value={game.normalized}>
-                  {game.away_team} @ {game.home_team} {formatGameTime(game.gametime)}
+                  {game.away_team}@{game.home_team}
                 </option>
               ))}
             </select>
@@ -282,19 +285,12 @@ export default function FilterBar({
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="flex-shrink-0 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-300 focus:outline-none"
+              className="w-full px-2 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg text-[11px] text-zinc-300 focus:outline-none backdrop-blur-sm"
             >
-              {sortOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+              <option value="confidence_desc">Confidence</option>
+              <option value="edge_desc">Edge</option>
+              <option value="player_asc">A-Z</option>
             </select>
-
-            {/* Results count */}
-            <span className="flex-shrink-0 text-xs text-zinc-500 ml-auto">
-              {totalPicks}
-            </span>
           </div>
         </div>
       </div>

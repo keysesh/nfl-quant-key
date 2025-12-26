@@ -39,7 +39,7 @@ export default function StatsPanel({ stats, picks }: StatsPanelProps) {
     .slice(0, 5);
 
   return (
-    <div className="px-4 py-4 pb-24 space-y-4">
+    <div className="space-y-4">
       {/* Summary Stats */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-zinc-900 rounded-xl p-4">
