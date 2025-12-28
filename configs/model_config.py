@@ -25,7 +25,7 @@ import numpy as np
 # =============================================================================
 # VERSION CONFIGURATION - THE ONLY PLACE VERSION IS DEFINED
 # =============================================================================
-MODEL_VERSION = "29"  # V29: Added vegas_agreement + lvt_direction features (Week 16 analysis)
+MODEL_VERSION = "31"  # V31: Remove noisy behavioral features from weak markets (Dec 27, 2025)
 
 # Derived version strings (DO NOT hardcode elsewhere)
 MODEL_VERSION_FULL = f"V{MODEL_VERSION}"  # "V19"
@@ -191,20 +191,142 @@ _PASSING_ONLY_FEATURES = {
     'opp_pressure_rate',        # Opponent pressure generated
 }
 
+# =============================================================================
+# V30 FEATURE EXCLUSIONS - Based on Feature Importance Audit (Dec 26, 2025)
+# =============================================================================
+# Zero-importance features identified per market from active_model.joblib analysis:
+# - QB markets have 16-17 dead features (38% waste!)
+# - Skill position markets have 4-5 dead features (7-11% waste)
+# These exclusions are ADDITIVE to the receiving/rushing/passing exclusions above.
+
+# Features with 0% importance across MOST markets (globally weak)
+_GLOBALLY_WEAK_FEATURES = {
+    'has_opponent_context',     # 0% in 4/6 markets - flag not providing signal
+    'lvt_direction',            # 0% in 5/6 markets - V29 addition not working
+}
+
+# Additional zero-importance features for RECEPTIONS market
+_RECEPTIONS_ZERO_FEATURES = {
+    'is_slot_receiver',         # 0% - already excluded by position logic
+    'pos_rank',                 # 0% - depth chart rank not predictive for rec count
+    'vegas_agreement',          # 0% - not predictive for this market
+}
+
+# Additional zero-importance features for RECEPTION_YDS market
+_RECEPTION_YDS_ZERO_FEATURES = {
+    'is_slot_receiver',         # 0%
+    'has_injury_designation',   # 0%
+    'vegas_agreement',          # 0%
+}
+
+# Additional zero-importance features for RUSH_YDS market
+_RUSH_YDS_ZERO_FEATURES = {
+    'has_injury_designation',   # 0%
+    'slot_snap_pct',            # 0% - obviously not relevant
+    'is_starter',               # 0%
+}
+
+# Additional zero-importance features for RUSH_ATTEMPTS market (WORST - 13 zero features!)
+# V31: Added behavioral features - correlation with outcome is ~0, causes overfitting
+_RUSH_ATTEMPTS_ZERO_FEATURES = {
+    'injury_status_encoded',    # 0%
+    'practice_status_encoded',  # 0%
+    'has_injury_designation',   # 0%
+    'slot_snap_pct',            # 0%
+    'man_coverage_adjustment',  # 0%
+    'opp_man_coverage_rate_trailing',  # 0%
+    'is_starter',               # 0%
+    'pos_rank',                 # 0%
+    'oline_health_score',       # 0% - surprisingly not helpful
+    'opp_position_yards_allowed_trailing',  # 0%
+    'opp_position_volume_allowed_trailing', # 0%
+    'has_position_context',     # 0%
+    # V31: Behavioral features with ~0 correlation but high importance = overfitting
+    'player_under_rate',        # 10.8% importance but 0 correlation - noise
+    'player_bias',              # 5.0% importance but causes wrong direction predictions
+    'market_under_rate',        # Lags behind actual
+    'LVT_x_player_tendency',    # Interaction with noisy player_under_rate
+    'LVT_x_player_bias',        # Interaction with noisy player_bias
+    'LVT_x_regime',             # Interaction with lagging market_under_rate
+    'market_bias_strength',     # Derived from noisy market_under_rate
+    'player_market_aligned',    # Cross-product of two noisy features
+}
+
+# Additional zero-importance features for PASS_ATTEMPTS market (2nd WORST - 17 zero features!)
+# V31: Added behavioral features - correlation with outcome is ~0, causes overfitting
+_PASS_ATTEMPTS_ZERO_FEATURES = {
+    'slot_snap_pct',            # 0%
+    'vegas_agreement',          # 0%
+    'has_injury_designation',   # 0%
+    'practice_status_encoded',  # 0%
+    'ybc_proxy',                # 0%
+    'has_position_context',     # 0%
+    'position_role_x_opp_yards',# 0%
+    'man_coverage_adjustment',  # 0%
+    'opp_man_coverage_rate_trailing',  # 0%
+    'opp_position_volume_allowed_trailing', # 0%
+    'opp_position_yards_allowed_trailing',  # 0%
+    'slot_funnel_score',        # 0%
+    'slot_alignment_pct',       # 0%
+    'is_slot_receiver',         # 0%
+    'pos_rank',                 # 0%
+    'is_starter',               # 0%
+    # V31: Behavioral features with ~0 correlation but high importance = overfitting
+    'player_under_rate',        # 8.7% importance but 0 correlation - noise
+    'player_bias',              # 4.7% importance but causes wrong direction predictions
+    'market_under_rate',        # 4.1% importance but lags 5-6% behind actual
+    'LVT_x_player_tendency',    # Interaction with noisy player_under_rate
+    'LVT_x_player_bias',        # Interaction with noisy player_bias
+    'LVT_x_regime',             # Interaction with lagging market_under_rate
+    'market_bias_strength',     # Derived from noisy market_under_rate
+    'player_market_aligned',    # Cross-product of two noisy features
+}
+
+# Additional zero-importance features for PASS_COMPLETIONS market (16 zero features)
+# V31: Added behavioral features - correlation with outcome is ~0, causes overfitting
+_PASS_COMPLETIONS_ZERO_FEATURES = {
+    'pressure_rate',            # 0%
+    'vegas_agreement',          # 0%
+    'practice_status_encoded',  # 0%
+    'ybc_proxy',                # 0%
+    'position_role_x_opp_yards',# 0%
+    'has_position_context',     # 0%
+    'opp_pressure_rate',        # 0%
+    'man_coverage_adjustment',  # 0%
+    'opp_man_coverage_rate_trailing',  # 0%
+    'opp_position_volume_allowed_trailing', # 0%
+    'opp_position_yards_allowed_trailing',  # 0%
+    'slot_funnel_score',        # 0%
+    'slot_alignment_pct',       # 0%
+    'is_slot_receiver',         # 0%
+    'pos_rank',                 # 0%
+    'is_starter',               # 0%
+    # V31: Behavioral features with ~0 correlation but high importance = overfitting
+    'player_under_rate',        # 7.1% importance but 0 correlation - noise
+    'player_bias',              # 3.8% importance but causes wrong direction predictions
+    'market_under_rate',        # 4.4% importance but lags 5-6% behind actual
+    'LVT_x_player_tendency',    # Interaction with noisy player_under_rate
+    'LVT_x_player_bias',        # Interaction with noisy player_bias
+    'LVT_x_regime',             # Interaction with lagging market_under_rate
+    'market_bias_strength',     # Derived from noisy market_under_rate
+    'player_market_aligned',    # Cross-product of two noisy features
+}
+
 # Define which features to EXCLUDE for each market
+# V30: Now includes market-specific zero-importance features from audit
 MARKET_FEATURE_EXCLUSIONS: dict = {
-    # Receiving markets - exclude rushing features
-    'player_receptions': _RUSHING_ONLY_FEATURES,
-    'player_reception_yds': _RUSHING_ONLY_FEATURES,
+    # Receiving markets - exclude rushing features + market-specific zeros
+    'player_receptions': _RUSHING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES | _RECEPTIONS_ZERO_FEATURES,
+    'player_reception_yds': _RUSHING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES | _RECEPTION_YDS_ZERO_FEATURES,
 
-    # Rushing markets - exclude receiving features
-    'player_rush_yds': _RECEIVING_ONLY_FEATURES,
-    'player_rush_attempts': _RECEIVING_ONLY_FEATURES,
+    # Rushing markets - exclude receiving features + market-specific zeros
+    'player_rush_yds': _RECEIVING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES | _RUSH_YDS_ZERO_FEATURES,
+    'player_rush_attempts': _RECEIVING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES | _RUSH_ATTEMPTS_ZERO_FEATURES,
 
-    # Passing markets - exclude receiving and rushing specific features
-    'player_pass_yds': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES,
-    'player_pass_completions': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES,
-    'player_pass_attempts': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES,
+    # Passing markets - exclude receiving/rushing + market-specific zeros (MOST exclusions)
+    'player_pass_yds': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES,
+    'player_pass_completions': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES | _PASS_COMPLETIONS_ZERO_FEATURES,
+    'player_pass_attempts': _RECEIVING_ONLY_FEATURES | _RUSHING_ONLY_FEATURES | _GLOBALLY_WEAK_FEATURES | _PASS_ATTEMPTS_ZERO_FEATURES,
 }
 
 
@@ -383,17 +505,30 @@ def get_market_filter(market: str) -> Optional[MarketFilter]:
     return MARKET_FILTERS.get(market)
 
 
-# Markets for XGBoost classifier training (volume-based only, no TD props)
-# TD props are binary and need different modeling (Poisson/logistic)
+# Markets for XGBoost classifier TRAINING (volume-based only, no TD props)
+# Note: Training includes all markets, but BETTING is filtered by bet_filters.py
+#
+# V31 Walk-Forward Validated Results:
+#   PROFITABLE (enabled in bet_filters.py):
+#   - player_receptions: 72.6% WR, +38.6% ROI
+#   - player_reception_yds: 65.1% WR, +24.2% ROI
+#   - player_pass_completions: 55.2% WR UNDER-only (50.4% overall)
+#   - player_pass_attempts: 55.8% WR UNDER-only (48.4% overall)
+#
+#   UNPROFITABLE (disabled in bet_filters.py):
+#   - player_rush_yds: 51.6% WR, -1.5% ROI
+#   - player_rush_attempts: 48.3% WR, -7.8% ROI
+#   - player_pass_yds: excluded entirely, -15.8% ROI
+#
 CLASSIFIER_MARKETS = [
-    'player_receptions',
-    'player_rush_yds',
-    'player_reception_yds',
-    'player_rush_attempts',
-    'player_pass_attempts',      # Re-enabled Dec 2025: Adding full edge support
-    'player_pass_completions',   # Re-enabled Dec 2025: Adding full edge support
-    # player_pass_yds excluded: -15.8% ROI in holdout, failing both directions (Dec 14 2025)
-    # player_pass_tds excluded: -18.2% ROI, binary distribution wrong for XGBoost
+    'player_receptions',         # ✅ Profitable
+    'player_rush_yds',           # ❌ -1.5% ROI (filtered by bet_filters)
+    'player_reception_yds',      # ✅ Profitable
+    'player_rush_attempts',      # ❌ -7.8% ROI (filtered by bet_filters)
+    'player_pass_attempts',      # ✅ Profitable with UNDER_ONLY constraint
+    'player_pass_completions',   # ✅ Profitable with UNDER_ONLY constraint
+    # player_pass_yds excluded: -15.8% ROI in holdout
+    # player_pass_tds excluded: binary distribution wrong for XGBoost
 ]
 
 # =============================================================================
@@ -412,19 +547,31 @@ CLASSIFIER_MARKETS = [
 #   - player_rush_yds: 87% OVER rate (lines consistently under-estimate)
 #
 # Valid values: 'UNDER_ONLY', 'OVER_ONLY', 'BOTH'
-# FIXED Dec 2025: Changed to BOTH for markets where constraint was suppressing wins
-# Previous UNDER_ONLY on pass_attempts, pass_completions, rush_attempts was wrong
-MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = {
+# V31: Re-enabled UNDER_ONLY for pass markets based on walk-forward analysis:
+# - player_pass_attempts: Model 48.4% WR, UNDER-only 55.8% WR (+7.4% gap!)
+# - player_pass_completions: Model 50.4% WR, UNDER-only 52.1% WR (+1.7% gap)
+# When model picks UNDER, it wins more (54-55% vs 42-49% for OVER)
+DISABLE_DIRECTION_CONSTRAINTS = False  # V31: Enabled - UNDER_ONLY helps pass markets
+
+# Direction constraints (only applied if DISABLE_DIRECTION_CONSTRAINTS = False)
+_MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = {
     'player_receptions': 'UNDER_ONLY',       # Validated: 56.8% UNDER in true OOS
     'player_reception_yds': 'UNDER_ONLY',    # Validated: 52.5% UNDER in true OOS
-    'player_rush_yds': 'BOTH',               # Changed: Let model decide direction
-    'player_rush_attempts': 'BOTH',          # FIXED: Was UNDER_ONLY (wrong)
-    'player_pass_attempts': 'BOTH',          # FIXED: Was UNDER_ONLY (wrong)
-    'player_pass_completions': 'BOTH',       # FIXED: Was UNDER_ONLY (wrong)
+    'player_rush_yds': 'BOTH',               # Let model decide direction
+    'player_rush_attempts': 'BOTH',          # Model doesn't help, but UNDER not strong either
+    'player_pass_attempts': 'UNDER_ONLY',    # V31: UNDER 54.3% WR vs OVER 42.6%
+    'player_pass_completions': 'UNDER_ONLY', # V31: UNDER 55.2% WR vs OVER 48.9%
     # TD props - can only bet YES (player scores), never NO
     'player_anytime_td': 'OVER_ONLY',        # Anytime TD = YES only
     'player_1st_td': 'OVER_ONLY',            # First TD = YES only
 }
+
+# Export: Returns 'BOTH' for all markets if constraints disabled
+MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = (
+    {k: 'BOTH' for k in _MARKET_DIRECTION_CONSTRAINTS}
+    if DISABLE_DIRECTION_CONSTRAINTS
+    else _MARKET_DIRECTION_CONSTRAINTS
+)
 
 # Markets for Monte Carlo simulation (all markets)
 SIMULATOR_MARKETS = SUPPORTED_MARKETS
@@ -562,7 +709,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         snr_pct=20.8,
         tier='HIGH',
         min_edge_pct=5.0,        # V30: Lowered - holdout shows confidence doesn't predict wins
-        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.58
+        confidence_threshold=0.60,  # V32: Walk-forward 61.5% WR @ 0.60, +17.4% ROI (n=1034)
         min_line_deviation=0.0,
     ),
 
@@ -572,7 +719,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         snr_pct=12.5,
         tier='HIGH',
         min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
-        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5)
+        confidence_threshold=0.65,  # V32: Walk-forward 73.0% WR @ 0.65 (n=460)
         min_line_deviation=0.0,
     ),
 
@@ -582,7 +729,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         snr_pct=10.0,
         tier='HIGH',
         min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
-        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.60
+        confidence_threshold=0.65,  # V32: Walk-forward 76.4% WR @ 0.65 (n=364)
         min_line_deviation=0.0,  # V30: Removed - not validated
         enabled=True,
     ),
@@ -593,7 +740,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         snr_pct=8.3,
         tier='HIGH',
         min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
-        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.70
+        confidence_threshold=0.60,  # V32: Walk-forward 85.6% WR @ 0.60 (n=320)
         min_line_deviation=0.0,  # V30: Removed - not validated
         enabled=True,
     ),
@@ -609,7 +756,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         snr_pct=1.4,
         tier='HIGH',
         min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
-        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.54
+        confidence_threshold=0.60,  # V32: Walk-forward 75.8% WR @ 0.60 (n=807)
         min_line_deviation=0.0,
     ),
 
@@ -619,7 +766,7 @@ MARKET_SNR_CONFIG: Dict[str, MarketSNRConfig] = {
         snr_pct=1.5,
         tier='HIGH',  # V30: Upgraded - holdout shows 51.6% but confidence filter was limiting volume
         min_edge_pct=5.0,   # V30: Lowered - holdout shows confidence doesn't predict wins
-        confidence_threshold=0.50,  # V30: Match holdout validation (clf>0.5), was 0.55
+        confidence_threshold=0.70,  # V32: Walk-forward 59.8% WR @ 0.70, +14.2% ROI (n=403)
         min_line_deviation=0.0,
     ),
 

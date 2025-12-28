@@ -171,24 +171,27 @@ ELITE_FILTER = BetFilterConfig(
     allow_under=True,
 )
 
-# CONSERVATIVE: >50% confidence, all XGBoost classifier markets
-# Updated 2025-12-08: Added player_reception_yds to allowed markets
-# Updated 2025-12-08: Relaxed volatility filter from 0.50 to 0.65
-# Updated 2025-12-08: Lowered confidence threshold from 60% to 50%
-# Updated 2025-12-08: Enabled OVER bets in 60-65% confidence range (+5.5% ROI in backtest)
-# Updated 2025-12-28: Aligned with CLASSIFIER_MARKETS from model_config.py
-# - pass_attempts and pass_completions: RE-ENABLED (Dec 2025)
-# - pass_yds: EXCLUDED (-15.8% ROI in holdout, failing both directions)
+# CONSERVATIVE: >50% confidence, V31 walk-forward validated markets
+# Updated 2025-12-28: Based on V31 walk-forward backtest results
+#
+# ENABLED (positive ROI):
+#   - player_receptions: 72.6% win, +38.6% ROI ✅
+#   - player_reception_yds: 65.1% win, +24.2% ROI ✅
+#   - player_pass_completions: UNDER-only 55.2% WR (vs 50.4% overall) ✅
+#   - player_pass_attempts: UNDER-only 55.8% WR (vs 48.4% overall) ✅
+#     ^ These are profitable with UNDER_ONLY constraint from MARKET_DIRECTION_CONSTRAINTS
+#
+# DISABLED (negative ROI even with constraints):
+#   - player_rush_yds: 51.6% win, -1.5% ROI
+#   - player_rush_attempts: 48.3% win, -7.8% ROI
+#   - player_pass_yds: excluded from classifier entirely (-15.8% ROI)
 CONSERVATIVE_FILTER = BetFilterConfig(
     min_confidence=0.50,
     allowed_markets=(
-        'player_receptions',
-        'player_reception_yds',
-        # player_rush_yds DISABLED for now
-        'player_rush_attempts',
-        'player_pass_attempts',      # Re-enabled Dec 2025 per model_config.py
-        'player_pass_completions',   # Re-enabled Dec 2025 per model_config.py
-        # player_pass_yds EXCLUDED: -15.8% ROI in holdout
+        'player_receptions',         # 72.6% win, +38.6% ROI
+        'player_reception_yds',      # 65.1% win, +24.2% ROI
+        'player_pass_completions',   # UNDER-only: 55.2% WR (MARKET_DIRECTION_CONSTRAINTS enforces UNDER)
+        'player_pass_attempts',      # UNDER-only: 55.8% WR (MARKET_DIRECTION_CONSTRAINTS enforces UNDER)
     ),
     receptions_min_line=0.5,
     receptions_max_line=15.0,  # Effectively no line restriction

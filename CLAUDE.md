@@ -116,12 +116,19 @@ python scripts/train/train_td_poisson_edge.py
 ### TD Props (Poisson)
 - `player_pass_tds` - **Poisson model** (62% hit rate on OVER @ 58%+ conf)
 
-**Disabled:**
-- `player_pass_yds` - -15.8% ROI in holdout, failing both directions (Dec 2025)
+**V31 Walk-Forward Validated Markets:**
 
-**Re-enabled (Dec 2025):**
-- `player_pass_completions` - Added back to CLASSIFIER_MARKETS with filters
-- `player_pass_attempts` - Added back to CLASSIFIER_MARKETS with filters
+| Market | Win Rate | ROI | Constraint |
+|--------|----------|-----|------------|
+| `player_receptions` | 72.6% | +38.6% | None |
+| `player_reception_yds` | 65.1% | +24.2% | None |
+| `player_pass_completions` | 55.2% | Profitable | **UNDER only** |
+| `player_pass_attempts` | 55.8% | Profitable | **UNDER only** |
+
+**Disabled (Negative ROI):**
+- `player_pass_yds` - -15.8% ROI, excluded from classifier
+- `player_rush_yds` - -1.5% ROI
+- `player_rush_attempts` - -7.8% ROI
 
 ### Market Direction Constraints (V27)
 
