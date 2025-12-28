@@ -578,26 +578,26 @@ def extract_prediction_features(row: dict, market: str, season: int, week: int) 
     # V23 FEATURES (4 features) - Opponent Context
     # ==========================================================================
 
-    # Opponent pass defense vs league average
+    # Opponent pass defense vs league average (FIXED: correct feature name)
     try:
         pass_def_epa = engine.get_pass_defense_epa(opponent, season, week)
         # Convert to z-score (positive = bad defense, negative = good defense)
-        features['opp_pass_def_vs_avg'] = pass_def_epa / 0.05 if pass_def_epa else 0.0
+        features['opp_pass_yds_def_vs_avg'] = pass_def_epa / 0.05 if pass_def_epa else 0.0
     except Exception:
-        features['opp_pass_def_vs_avg'] = 0.0
+        features['opp_pass_yds_def_vs_avg'] = 0.0
 
-    # Opponent rush defense vs league average
+    # Opponent rush defense vs league average (FIXED: correct feature name)
     try:
         rush_def_epa = engine.get_rush_defense_epa(opponent, season, week)
-        features['opp_rush_def_vs_avg'] = rush_def_epa / 0.05 if rush_def_epa else 0.0
+        features['opp_rush_yds_def_vs_avg'] = rush_def_epa / 0.05 if rush_def_epa else 0.0
     except Exception:
-        features['opp_rush_def_vs_avg'] = 0.0
+        features['opp_rush_yds_def_vs_avg'] = 0.0
 
     # Opponent defense EPA (raw)
     features['opp_def_epa'] = row.get('opponent_def_epa_vs_position', def_epa if 'def_epa' in dir() else 0.0)
 
     # Flag for opponent context availability
-    has_opp_data = features['opp_pass_def_vs_avg'] != 0 or features['opp_rush_def_vs_avg'] != 0
+    has_opp_data = features['opp_pass_yds_def_vs_avg'] != 0 or features['opp_rush_yds_def_vs_avg'] != 0
     features['has_opponent_context'] = 1 if has_opp_data else 0
 
     # ==========================================================================
@@ -621,6 +621,111 @@ def extract_prediction_features(row: dict, market: str, season: int, week: int) 
     # Teammate injuries (opportunity boost flags)
     features['team_wr1_out'] = 1 if row.get('injury_wr1_status', '') in ['out', 'ir'] else 0
     features['team_rb1_out'] = 1 if row.get('injury_rb1_status', '') in ['out', 'ir'] else 0
+
+    # ==========================================================================
+    # V29 FEATURES (21 features) - Missing features for model alignment
+    # CRITICAL: These were missing, causing 21/45 features to default to 0.0
+    # ==========================================================================
+
+    # 1. Rest days (raw value, not normalized)
+    features['rest_days'] = row.get('rest_days', 7)
+
+    # 2. LVT direction indicator (-1 = under, +1 = over, 0 = neutral)
+    features['lvt_direction'] = 1 if lvt > 0.05 else (-1 if lvt < -0.05 else 0)
+
+    # 3. Vegas agreement: does Vegas line agree with trailing stat direction?
+    # If line > trailing and spread favors team, that's agreement
+    features['vegas_agreement'] = 1 if (lvt > 0 and vegas_spread < 0) or (lvt < 0 and vegas_spread > 0) else 0
+
+    # 4-6. ELO ratings (use defaults if not available)
+    # Home team ELO, away team ELO, and difference
+    home_elo = row.get('elo_rating_home', 1500)
+    away_elo = row.get('elo_rating_away', 1500)
+    features['elo_rating_home'] = home_elo if home_elo else 1500
+    features['elo_rating_away'] = away_elo if away_elo else 1500
+    features['elo_diff'] = features['elo_rating_home'] - features['elo_rating_away']
+
+    # 7. Home field advantage adjustment
+    # Positive if player's team is home, negative if away
+    is_home = row.get('is_home', row.get('home_team', '') == team)
+    features['hfa_adjustment'] = 2.5 if is_home else -2.5
+
+    # 8-9. Position context
+    # pos_rank: 1=WR1/RB1, 2=WR2/RB2, 3=WR3/flex
+    pos_rank = row.get('pos_rank', row.get('position_rank', 2))
+    features['pos_rank'] = pos_rank if pos_rank else 2
+    features['is_starter'] = 1 if features['pos_rank'] <= 2 else 0
+
+    # 10. Has position context flag
+    features['has_position_context'] = 1 if row.get('position_rank') or row.get('pos_rank') else 0
+
+    # 11-12. Opponent position-specific defense
+    # Yards allowed to position (trailing)
+    try:
+        if 'rush' in market:
+            opp_yards = engine.get_position_yards_allowed(opponent, 'RB', season, week)
+        elif 'pass' in market:
+            opp_yards = engine.get_position_yards_allowed(opponent, 'QB', season, week)
+        else:
+            opp_yards = engine.get_position_yards_allowed(opponent, position, season, week)
+        features['opp_position_yards_allowed_trailing'] = opp_yards if opp_yards else 0.0
+    except Exception:
+        features['opp_position_yards_allowed_trailing'] = 0.0
+
+    # Volume allowed to position (receptions/attempts)
+    try:
+        if 'receptions' in market or 'reception' in market:
+            opp_vol = engine.get_position_receptions_allowed(opponent, position, season, week)
+        elif 'rush' in market:
+            opp_vol = engine.get_position_attempts_allowed(opponent, 'RB', season, week)
+        else:
+            opp_vol = 0.0
+        features['opp_position_volume_allowed_trailing'] = opp_vol if opp_vol else 0.0
+    except Exception:
+        features['opp_position_volume_allowed_trailing'] = 0.0
+
+    # 13-14. Coverage metrics
+    try:
+        man_rate = engine.get_man_coverage_rate(opponent, season, week)
+        features['opp_man_coverage_rate_trailing'] = man_rate if man_rate else 0.35
+    except Exception:
+        features['opp_man_coverage_rate_trailing'] = 0.35  # League average
+
+    # Man coverage adjustment based on receiver type
+    # Slot receivers do better vs man, outside receivers vs zone
+    is_slot = features['slot_snap_pct'] > 0.5
+    features['man_coverage_adjustment'] = 0.1 if is_slot else -0.1
+
+    # 15. Position role interaction with opponent yards
+    # Higher pos_rank (WR1) against bad defense = bigger boost
+    features['position_role_x_opp_yards'] = (3 - features['pos_rank']) * features['opp_position_yards_allowed_trailing'] / 100
+
+    # 16. YBC proxy (yards before contact for RBs, yards after catch proxy for WRs)
+    # Use aDOT as proxy for WRs, default for RBs
+    if 'rush' in market:
+        features['ybc_proxy'] = row.get('ybc', row.get('yards_before_contact', 2.5))
+    else:
+        features['ybc_proxy'] = features.get('adot', 8.5) * 0.3  # YAC proxy
+
+    # 17-18. Injury designation encoding
+    # injury_status_encoded: 0=healthy, 0.25=probable, 0.5=questionable, 0.75=doubtful, 1=out
+    injury_designation = row.get('injury_designation', row.get('status', 'healthy'))
+    if isinstance(injury_designation, str):
+        injury_encode_map = {'healthy': 0, 'probable': 0.25, 'questionable': 0.5, 'doubtful': 0.75, 'out': 1.0}
+        features['injury_status_encoded'] = injury_encode_map.get(injury_designation.lower(), 0)
+    else:
+        features['injury_status_encoded'] = 0
+
+    # practice_status_encoded: based on practice participation
+    practice_status = row.get('practice_status', 'full')
+    if isinstance(practice_status, str):
+        practice_encode_map = {'full': 0, 'limited': 0.5, 'dnp': 1.0, 'did not practice': 1.0}
+        features['practice_status_encoded'] = practice_encode_map.get(practice_status.lower(), 0)
+    else:
+        features['practice_status_encoded'] = 0
+
+    # 19. Has injury designation flag
+    features['has_injury_designation'] = 1 if features['injury_status_encoded'] > 0 or features['practice_status_encoded'] > 0 else 0
 
     return features
 
@@ -2441,7 +2546,6 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
             # Load roster and injury data
             rosters_path = DATA_DIR / 'nflverse' / 'rosters.parquet'
             injuries_path = DATA_DIR / 'nflverse' / 'injuries.parquet'
-            depth_path = DATA_DIR / 'nflverse' / 'depth_charts.parquet'
 
             rosters_df = None
             injuries_df = None
@@ -2462,8 +2566,13 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
                 if injuries_csv.exists():
                     injuries_df = pd.read_csv(injuries_csv)
 
-            if depth_path.exists():
-                depth_df = pd.read_parquet(depth_path)
+            # Use canonical depth chart loader
+            try:
+                from nfl_quant.data.depth_chart_loader import get_depth_charts
+                depth_df = get_depth_charts(season=season, week=week)
+            except Exception as e:
+                logger.warning(f"Failed to load depth charts: {e}")
+                depth_df = None
 
             if rosters_df is not None:
                 # Get unique teams from predictions
@@ -3144,6 +3253,7 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
     # Filter 5: SNR-BASED MARKET FILTER (ADDED 2025-12-05)
     # Key insight: 0.5 units is 25% of std for receptions but only 1.5% for yards
     # This filters out low-SNR markets where random variance swamps any edge
+    # NOTE: Skip confidence check for CLASSIFIER_MARKETS - XGBoost model applies validated thresholds later
     try:
         before_snr = len(df)
         snr_filter = SNRFilter()
@@ -3153,14 +3263,21 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
         df['snr_conf_threshold'] = df['market'].apply(get_confidence_threshold)
 
         # Apply SNR filter: must pass confidence and line deviation thresholds
+        # SKIP confidence check for classifier markets - XGBoost model handles this with walk-forward validated thresholds
         snr_passed = []
         snr_rejections = []
 
         for idx, row in df.iterrows():
             market = row['market']
-            confidence = row.get('model_prob', row.get('confidence', 0.5))
             line = row.get('line', 0)
             trailing = row.get('trailing_stat', row.get('model_projection', line))
+
+            # For classifier markets, use 0.99 confidence to bypass SNR confidence check
+            # The XGBoost model will apply its own validated thresholds later
+            if market in CLASSIFIER_MARKETS:
+                confidence = 0.99  # Bypass - XGBoost model validates later
+            else:
+                confidence = row.get('model_prob', row.get('confidence', 0.5))
 
             decision = snr_filter.evaluate_bet(
                 market=market,
@@ -3180,6 +3297,7 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
         # Log summary
         logger.info(f"After SNR filter: {len(df)} bets (removed {before_snr - len(df)})")
         logger.info(f"  SNR Tiers: HIGH={len(df[df['snr_tier']=='HIGH'])}, MEDIUM={len(df[df['snr_tier']=='MEDIUM'])}, LOW={len(df[df['snr_tier']=='LOW'])}")
+        logger.info(f"  Note: Classifier markets ({len(CLASSIFIER_MARKETS)}) bypass SNR confidence - XGBoost validates later")
 
         # Log top rejection reasons
         if snr_rejections:
@@ -3659,38 +3777,43 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
         if v14_model:
             # Get BOTH rush and pass defense EPA data for this week
             from pathlib import Path
-            pbp_path = project_root / 'data' / 'nflverse' / f'pbp_2025.parquet'
+            # No fallback - require fresh pbp.parquet
+            pbp_path = project_root / 'data' / 'nflverse' / 'pbp.parquet'
+            if not pbp_path.exists():
+                raise FileNotFoundError(
+                    f"PBP file not found: {pbp_path}. "
+                    "Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data."
+                )
 
             rush_def_epa_lookup = {}
             pass_def_epa_lookup = {}
-            if pbp_path.exists():
-                pbp = pd.read_parquet(pbp_path)
+            pbp = pd.read_parquet(pbp_path)
 
-                # Calculate trailing RUSH defense EPA per team
-                rush_def = pbp[pbp['play_type'] == 'run'].groupby(['defteam', 'week']).agg(
-                    rush_def_epa=('epa', 'mean')
-                ).reset_index()
-                rush_def = rush_def.sort_values(['defteam', 'week'])
-                rush_def['trailing_def_epa'] = rush_def.groupby('defteam')['rush_def_epa'].transform(
-                    lambda x: x.shift(1).rolling(4, min_periods=1).mean()
-                )
-                for team in rush_def['defteam'].unique():
-                    team_data = rush_def[rush_def['defteam'] == team]
-                    if len(team_data) > 0:
-                        rush_def_epa_lookup[team] = team_data['trailing_def_epa'].iloc[-1]
+            # Calculate trailing RUSH defense EPA per team
+            rush_def = pbp[pbp['play_type'] == 'run'].groupby(['defteam', 'week']).agg(
+                rush_def_epa=('epa', 'mean')
+            ).reset_index()
+            rush_def = rush_def.sort_values(['defteam', 'week'])
+            rush_def['trailing_def_epa'] = rush_def.groupby('defteam')['rush_def_epa'].transform(
+                lambda x: x.shift(1).rolling(4, min_periods=1).mean()
+            )
+            for team in rush_def['defteam'].unique():
+                team_data = rush_def[rush_def['defteam'] == team]
+                if len(team_data) > 0:
+                    rush_def_epa_lookup[team] = team_data['trailing_def_epa'].iloc[-1]
 
-                # Calculate trailing PASS defense EPA per team
-                pass_def = pbp[pbp['play_type'] == 'pass'].groupby(['defteam', 'week']).agg(
-                    pass_def_epa=('epa', 'mean')
-                ).reset_index()
-                pass_def = pass_def.sort_values(['defteam', 'week'])
-                pass_def['trailing_def_epa'] = pass_def.groupby('defteam')['pass_def_epa'].transform(
-                    lambda x: x.shift(1).rolling(4, min_periods=1).mean()
-                )
-                for team in pass_def['defteam'].unique():
-                    team_data = pass_def[pass_def['defteam'] == team]
-                    if len(team_data) > 0:
-                        pass_def_epa_lookup[team] = team_data['trailing_def_epa'].iloc[-1]
+            # Calculate trailing PASS defense EPA per team
+            pass_def = pbp[pbp['play_type'] == 'pass'].groupby(['defteam', 'week']).agg(
+                pass_def_epa=('epa', 'mean')
+            ).reset_index()
+            pass_def = pass_def.sort_values(['defteam', 'week'])
+            pass_def['trailing_def_epa'] = pass_def.groupby('defteam')['pass_def_epa'].transform(
+                lambda x: x.shift(1).rolling(4, min_periods=1).mean()
+            )
+            for team in pass_def['defteam'].unique():
+                team_data = pass_def[pass_def['defteam'] == team]
+                if len(team_data) > 0:
+                    pass_def_epa_lookup[team] = team_data['trailing_def_epa'].iloc[-1]
 
             # Apply V14 to ALL markets (using appropriate defense EPA type)
             v14_results = []

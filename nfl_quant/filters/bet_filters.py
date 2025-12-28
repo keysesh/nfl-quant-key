@@ -171,14 +171,22 @@ ELITE_FILTER = BetFilterConfig(
     allow_under=True,
 )
 
-# CONSERVATIVE: >50% confidence, any receptions line
+# CONSERVATIVE: >50% confidence, all XGBoost classifier markets
 # Updated 2025-12-08: Added player_reception_yds to allowed markets
 # Updated 2025-12-08: Relaxed volatility filter from 0.50 to 0.65
 # Updated 2025-12-08: Lowered confidence threshold from 60% to 50%
 # Updated 2025-12-08: Enabled OVER bets in 60-65% confidence range (+5.5% ROI in backtest)
+# Updated 2025-12-28: Added all CLASSIFIER_MARKETS (rush_yds, rush_attempts, pass_attempts, pass_completions)
 CONSERVATIVE_FILTER = BetFilterConfig(
     min_confidence=0.50,
-    allowed_markets=('player_receptions', 'player_reception_yds'),
+    allowed_markets=(
+        'player_receptions',
+        'player_reception_yds',
+        'player_rush_yds',
+        'player_rush_attempts',
+        'player_pass_attempts',
+        'player_pass_completions',
+    ),
     receptions_min_line=0.5,
     receptions_max_line=15.0,  # Effectively no line restriction
     max_player_cv=0.65,
