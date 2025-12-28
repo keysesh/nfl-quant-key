@@ -872,6 +872,7 @@ def generate_td_recommendations(
                         'market': market,
                         'line': line,
                         'direction': result['direction'],
+                        'pick': result['direction'],  # Copy direction to pick for dashboard compatibility
                         'units': 1.0,  # Base unit for TD props
                         'source': 'TD_POISSON',
                         'lvt_confidence': 0.0,
@@ -1865,12 +1866,17 @@ def generate_recommendations(
                     # Fallback if team doesn't match either (shouldn't happen with proper data)
                     opponent = home_team if player_team else ''
 
+                # Get trailing stat for this market (used as projection in dashboard)
+                trailing_col = EDGE_TRAILING_COL_MAP.get(market)
+                trailing_stat = row.get(trailing_col, None) if trailing_col else None
+
                 recommendations.append({
                     'player': row.get('player', 'Unknown'),
                     'team': player_team,
                     'market': market,
                     'line': row.get('line', 0),
                     'direction': decision.direction,
+                    'pick': decision.direction,  # Copy direction to pick for dashboard compatibility
                     'units': decision.units,
                     'source': decision.source.value,
                     'lvt_confidence': decision.lvt_confidence,
@@ -1887,6 +1893,8 @@ def generate_recommendations(
                     'home_team': home_team,
                     'away_team': away_team,
                     'commence_time': row.get('commence_time', ''),
+                    # Trailing stat for dashboard projection (prevents UNDER picks from being filtered)
+                    'trailing_stat': trailing_stat,
                 })
 
         return market, len(market_df), recommendations, no_data_count
@@ -2051,13 +2059,40 @@ def generate_recommendations(
     return recs_df
 
 
-def save_recommendations(recs_df: pd.DataFrame, week: int, season: int = 2025):
-    """Save recommendations to file."""
+def save_recommendations(recs_df: pd.DataFrame, week: int, season: int = 2025, merge: bool = True):
+    """Save recommendations to file, merging with existing if present.
+
+    Args:
+        recs_df: New recommendations to save
+        week: NFL week
+        season: NFL season
+        merge: If True, merge with existing file instead of overwriting
+    """
     # Ensure reports directory exists
     REPORTS_DIR.mkdir(exist_ok=True)
 
     # Save CSV
     csv_path = REPORTS_DIR / f'edge_recommendations_week{week}_{season}.csv'
+
+    # Merge with existing recommendations if file exists
+    if merge and csv_path.exists():
+        existing_df = pd.read_csv(csv_path)
+        print(f"\n  Merging with existing {len(existing_df)} recommendations...")
+
+        # Create composite key for deduplication
+        recs_df['_key'] = recs_df['player'].str.lower() + '|' + recs_df['market']
+        existing_df['_key'] = existing_df['player'].str.lower() + '|' + existing_df['market']
+
+        # Keep new recommendations that don't overlap with existing
+        new_only = recs_df[~recs_df['_key'].isin(existing_df['_key'])]
+
+        # Combine: existing + new non-overlapping
+        combined_df = pd.concat([existing_df, new_only], ignore_index=True)
+        combined_df = combined_df.drop(columns=['_key'])
+
+        print(f"  Merged: {len(existing_df)} existing + {len(new_only)} new = {len(combined_df)} total")
+        recs_df = combined_df
+
     recs_df.to_csv(csv_path, index=False)
     print(f"\nSaved to: {csv_path}")
 

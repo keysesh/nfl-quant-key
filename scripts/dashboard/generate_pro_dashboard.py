@@ -102,14 +102,20 @@ def get_projection(row, market: str = '', game_history: dict = None) -> float:
 
     Priority:
     1. model_projection (if exists)
-    2. expected_tds (for TD markets from Poisson model)
-    3. Market-specific mean (receiving_yards_mean, rushing_yards_mean, etc.)
-    4. trailing_stat
+    2. trailing_stat (if exists - from Edge LVT model, this is the basis for the pick)
+    3. expected_tds (for TD markets from Poisson model)
+    4. Market-specific mean (receiving_yards_mean, rushing_yards_mean, etc.)
     5. Game history average (loads from data if not provided)
     6. 0 as last resort
     """
     # Try model_projection first
     proj = safe_float(row.get('model_projection', 0))
+    if proj > 0:
+        return proj
+
+    # Try trailing_stat early - this is the projection basis for Edge LVT picks
+    # Must check this before market-specific means to avoid filtering LVT picks
+    proj = safe_float(row.get('trailing_stat', 0))
     if proj > 0:
         return proj
 
@@ -154,10 +160,7 @@ def get_projection(row, market: str = '', game_history: dict = None) -> float:
     if proj > 0:
         return proj
 
-    # Try trailing_stat
-    proj = safe_float(row.get('trailing_stat', 0))
-    if proj > 0:
-        return proj
+    # trailing_stat already checked earlier (priority #2)
 
     # Try game history average - load from data if not provided
     if game_history is None:
@@ -17378,12 +17381,18 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
         # Skip conflicting picks:
         # - OVER picks where projection < line (model says under-perform)
         # - UNDER picks where projection > line (model says over-perform)
-        if pick_direction in ['OVER', 'YES'] and projection < line:
-            filtered_count += 1
-            continue
-        if pick_direction in ['UNDER', 'NO'] and projection > line:
-            filtered_count += 1
-            continue
+        # EXCEPTION: LVT and TD picks already incorporate directional logic in their models,
+        # so we trust their direction even if projection doesn't align
+        source = str(row.get('source', '')).upper()
+        is_edge_pick = 'LVT' in source or 'TD_ENHANCED' in source or 'TD_POISSON' in source
+
+        if not is_edge_pick:
+            if pick_direction in ['OVER', 'YES'] and projection < line:
+                filtered_count += 1
+                continue
+            if pick_direction in ['UNDER', 'NO'] and projection > line:
+                filtered_count += 1
+                continue
 
         # Get player_id from dataframe or lookup by name
         player_id = str(row.get('player_id', '')) if pd.notna(row.get('player_id')) else ''
