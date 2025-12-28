@@ -41,8 +41,10 @@ export default function Dashboard() {
     return (gamesMetadata || []).filter(game => {
       if (!game.gameday || !game.gametime) return true; // Keep if no time info
       try {
-        // Parse game datetime (gameday is YYYY-MM-DD, gametime is HH:MM)
-        const gameDateTime = new Date(`${game.gameday}T${game.gametime}:00`);
+        // Parse game datetime - gametime is in US Eastern Time
+        // Append EST/EDT offset to handle timezone correctly on Vercel (UTC)
+        // Use -05:00 (EST) as conservative default (games are later in EDT -04:00)
+        const gameDateTime = new Date(`${game.gameday}T${game.gametime}:00-05:00`);
         // Keep games that haven't started yet (with 5 min buffer)
         return gameDateTime > new Date(now.getTime() - 5 * 60 * 1000);
       } catch {
