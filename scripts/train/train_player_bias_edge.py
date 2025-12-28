@@ -30,10 +30,14 @@ from configs.edge_config import EDGE_MARKETS, get_player_bias_threshold
 
 def load_training_data() -> pd.DataFrame:
     """Load historical odds/actuals data for training."""
-    # Use enriched training data
+    # Prefer MARKET_ENRICHED (has RB-specific features for rush_attempts)
+    market_enriched_path = DATA_DIR / 'backtest' / 'combined_odds_actuals_MARKET_ENRICHED.csv'
     enriched_path = DATA_DIR / 'backtest' / 'combined_odds_actuals_ENRICHED.csv'
 
-    if enriched_path.exists():
+    if market_enriched_path.exists():
+        print(f"Loading market-enriched data: {market_enriched_path}")
+        df = pd.read_csv(market_enriched_path, low_memory=False)
+    elif enriched_path.exists():
         print(f"Loading enriched data: {enriched_path}")
         df = pd.read_csv(enriched_path, low_memory=False)
     else:

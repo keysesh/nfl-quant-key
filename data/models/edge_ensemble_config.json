@@ -1,92 +1,59 @@
 {
   "version": "edge_v1",
-  "trained_date": "2025-12-28T02:46:00.765158",
+  "trained_date": "2025-12-28T15:27:17.706514",
   "validation_results": {
-    "player_receptions": {
+    "player_pass_attempts": {
       "BOTH": {
-        "n": 184,
-        "hits": 145,
-        "hit_rate": 0.7880434782608695,
-        "roi": 50.43749999999999
+        "n": 102,
+        "hits": 76,
+        "hit_rate": 0.7450980392156863,
+        "roi": 42.23921568627451
       },
       "LVT_ONLY": {
-        "n": 745,
-        "hits": 456,
-        "hit_rate": 0.6120805369127517,
-        "roi": 16.846174496644295
+        "n": 27,
+        "hits": 12,
+        "hit_rate": 0.4444444444444444,
+        "roi": -15.15555555555556
       },
       "PLAYER_BIAS_ONLY": {
-        "n": 450,
-        "hits": 308,
-        "hit_rate": 0.6844444444444444,
-        "roi": 30.660444444444433
+        "n": 35,
+        "hits": 28,
+        "hit_rate": 0.8,
+        "roi": 52.72000000000001
       }
     },
     "player_rush_yds": {
       "BOTH": {
-        "n": 618,
-        "hits": 422,
-        "hit_rate": 0.6828478964401294,
-        "roi": 30.35566343042071
+        "n": 250,
+        "hits": 200,
+        "hit_rate": 0.8,
+        "roi": 52.72000000000001
       },
       "LVT_ONLY": {
-        "n": 1456,
-        "hits": 725,
-        "hit_rate": 0.49793956043956045,
-        "roi": -4.943337912087909
+        "n": 1900,
+        "hits": 1014,
+        "hit_rate": 0.5336842105263158,
+        "roi": 1.88031578947368
       },
       "PLAYER_BIAS_ONLY": {
-        "n": 248,
-        "hits": 181,
-        "hit_rate": 0.7298387096774194,
-        "roi": 39.326209677419364
+        "n": 101,
+        "hits": 92,
+        "hit_rate": 0.9108910891089109,
+        "roi": 73.8891089108911
       }
     },
-    "player_reception_yds": {
-      "BOTH": {
-        "n": 19,
-        "hits": 14,
-        "hit_rate": 0.7368421052631579,
-        "roi": 40.663157894736834
-      },
+    "player_rush_attempts": {
       "LVT_ONLY": {
-        "n": 129,
-        "hits": 41,
-        "hit_rate": 0.3178294573643411,
-        "roi": -39.32635658914728
-      },
-      "PLAYER_BIAS_ONLY": {
-        "n": 220,
-        "hits": 191,
-        "hit_rate": 0.8681818181818182,
-        "roi": 65.73590909090909
-      }
-    },
-    "player_pass_attempts": {
-      "BOTH": {
-        "n": 83,
-        "hits": 66,
-        "hit_rate": 0.7951807228915663,
-        "roi": 51.800000000000004
-      },
-      "LVT_ONLY": {
-        "n": 94,
-        "hits": 42,
-        "hit_rate": 0.44680851063829785,
-        "roi": -14.70425531914894
-      },
-      "PLAYER_BIAS_ONLY": {
-        "n": 20,
-        "hits": 18,
-        "hit_rate": 0.9,
-        "roi": 71.81
+        "n": 4,
+        "hits": 2,
+        "hit_rate": 0.5,
+        "roi": -4.549999999999999
       }
     }
   },
   "markets": [
-    "player_receptions",
+    "player_pass_attempts",
     "player_rush_yds",
-    "player_reception_yds",
-    "player_pass_attempts"
+    "player_rush_attempts"
   ]
 }

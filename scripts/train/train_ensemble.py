@@ -95,13 +95,19 @@ def validate_ensemble():
         print(f"Failed to load ensemble: {e}")
         return None
 
-    # Load holdout data (2025 season)
+    # Load holdout data (2025 season) - prefer MARKET_ENRICHED for RB features
+    market_enriched_path = DATA_DIR / 'backtest' / 'combined_odds_actuals_MARKET_ENRICHED.csv'
     enriched_path = DATA_DIR / 'backtest' / 'combined_odds_actuals_ENRICHED.csv'
-    if not enriched_path.exists():
+
+    if market_enriched_path.exists():
+        print(f"Loading market-enriched data: {market_enriched_path}")
+        df = pd.read_csv(market_enriched_path, low_memory=False)
+    elif enriched_path.exists():
+        print(f"Loading enriched data: {enriched_path}")
+        df = pd.read_csv(enriched_path, low_memory=False)
+    else:
         print("No enriched data for validation")
         return None
-
-    df = pd.read_csv(enriched_path, low_memory=False)
     holdout = df[df['season'] == 2025].copy()
 
     if len(holdout) < 100:
@@ -233,6 +239,16 @@ def validate_ensemble():
 
         # Add lvt_x_defense interaction (V28 feature)
         market_df['lvt_x_defense'] = market_df['line_vs_trailing'] * market_df['opp_def_epa']
+
+        # Add RB-specific features for rush_attempts market
+        if market == 'player_rush_attempts':
+            # These should already be in the data from merge_edge_trailing_stats
+            # Fill missing with 0 to avoid feature mismatch
+            for col in ['trailing_carries', 'trailing_ypc', 'trailing_cv_carries', 'trailing_rb_snap_share']:
+                if col not in market_df.columns:
+                    market_df[col] = 0.0
+                else:
+                    market_df[col] = market_df[col].fillna(0.0)
 
         print(f"\n{market}:")
         print(f"  Total samples: {len(market_df)}")
