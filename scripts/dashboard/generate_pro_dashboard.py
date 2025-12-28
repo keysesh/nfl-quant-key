@@ -29,7 +29,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Use centralized path configuration
-from nfl_quant.config_paths import PROJECT_ROOT, REPORTS_DIR, DATA_DIR
+from nfl_quant.config_paths import PROJECT_ROOT, REPORTS_DIR, DATA_DIR, NFLVERSE_DIR
 
 from nfl_quant.config import settings
 from nfl_quant.utils.season_utils import get_current_season
@@ -17015,23 +17015,73 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
     }
 
     # Load depth charts to get player depth positions (WR1, RB2, etc.)
-    # Create lookup: (player_id, team, week) -> pos_rank OR (player_name, team) -> pos_rank (fallback)
-    player_depth_lookup = {}  # player_id -> pos_rank (most recent)
-    player_name_depth = {}    # (player_name, team) -> pos_rank (fallback)
+    # IMPORTANT: Use WEEK-SPECIFIC depth charts for historical defense calculation
+    player_depth_lookup = {}  # player_id -> pos_rank (for current week picks)
+    player_name_depth = {}    # (player_name, team) -> pos_rank (for current week picks)
+    week_team_depth = {}      # {week: {team: {position: [(player_name, pos_rank), ...]}}}
+
     try:
-        # Use canonical depth chart loader
+        # Load raw 2025 depth charts with timestamps for week-specific lookups
+        depth_path = NFLVERSE_DIR / 'depth_charts_2025.parquet'
+        if depth_path.exists():
+            raw_depth = pd.read_parquet(depth_path)
+            raw_depth['dt_parsed'] = pd.to_datetime(raw_depth['dt'], utc=True)
+
+            # Get schedule to map dates -> weeks
+            sched_path = NFLVERSE_DIR / 'schedules.parquet'
+            if sched_path.exists():
+                sched = pd.read_parquet(sched_path)
+                sched_2025 = sched[sched['season'] == 2025].copy()
+
+                # Build week boundaries from schedule
+                week_dates = {}
+                for week in sorted(sched_2025['week'].unique()):
+                    week_games = sched_2025[sched_2025['week'] == week]
+                    if 'gameday' in week_games.columns:
+                        min_date = pd.to_datetime(week_games['gameday'].min())
+                        week_dates[week] = min_date
+
+                # For each week, get depth chart snapshot from that week
+                for week, game_date in week_dates.items():
+                    game_dt = pd.Timestamp(game_date, tz='UTC')
+                    # Get snapshots before this week's games
+                    valid_snapshots = raw_depth[raw_depth['dt_parsed'] <= game_dt]
+
+                    if len(valid_snapshots) == 0:
+                        continue
+
+                    week_team_depth[week] = {}
+
+                    for team in valid_snapshots['team'].unique():
+                        team_data = valid_snapshots[valid_snapshots['team'] == team]
+                        # Get most recent snapshot for this team before the game
+                        latest_dt = team_data['dt_parsed'].max()
+                        team_latest = team_data[team_data['dt_parsed'] == latest_dt]
+
+                        week_team_depth[week][team] = {}
+
+                        for pos in ['TE', 'WR', 'RB', 'QB']:
+                            pos_players = team_latest[team_latest['pos_abb'] == pos]
+                            if len(pos_players) > 0:
+                                pos_players = pos_players.sort_values('pos_rank')
+                                week_team_depth[week][team][pos] = [
+                                    (row['player_name'], int(row['pos_rank']))
+                                    for _, row in pos_players.iterrows()
+                                ]
+
+                print(f"  Built week-specific depth charts for {len(week_team_depth)} weeks")
+
+        # Also load current depth chart for pick display
         from nfl_quant.data.depth_chart_loader import get_depth_charts
         depth_df = get_depth_charts()
 
         if not depth_df.empty:
-            # Filter to skill positions
             pos_map = {'Wide Receiver': 'WR', 'Running Back': 'RB', 'Tight End': 'TE', 'Quarterback': 'QB'}
             if 'pos_name' in depth_df.columns:
                 depth_df = depth_df[depth_df['pos_name'].isin(pos_map.keys())]
             if 'player_name' in depth_df.columns and 'pos_rank' in depth_df.columns:
                 depth_df = depth_df[depth_df['player_name'].notna() & depth_df['pos_rank'].notna()]
 
-            # Build lookups - most recent entry wins
             for _, row in depth_df.iterrows():
                 pid = row.get('gsis_id', '')
                 pname = row.get('player_name', '')
@@ -17039,28 +17089,54 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                 pos_rank = int(row['pos_rank']) if pd.notna(row.get('pos_rank')) else 1
                 pos = pos_map.get(row.get('pos_name', ''), '')
 
-                # Primary lookup by player_id
                 if pid and pid not in player_depth_lookup:
                     player_depth_lookup[pid] = {'pos_rank': pos_rank, 'position': pos}
-
-                # Fallback lookup by name+team
                 key = (pname, team)
                 if key not in player_name_depth:
                     player_name_depth[key] = {'pos_rank': pos_rank, 'position': pos}
 
             print(f"  Loaded depth positions for {len(player_depth_lookup)} players (by ID), {len(player_name_depth)} (by name)")
     except Exception as e:
-        print(f"  Warning: Could not load depth charts for defense calc: {e}")
+        import traceback
+        print(f"  Warning: Could not load depth charts: {e}")
+        traceback.print_exc()
 
-    # Add pos_rank to weekly_stats for depth-filtered defense calculation
+    def get_player_depth_for_week(player_name, team, position, week):
+        """Get player's depth position for a specific week based on THAT week's depth chart."""
+        if week not in week_team_depth:
+            return None
+        if team not in week_team_depth[week]:
+            return None
+        if position not in week_team_depth[week][team]:
+            return None
+
+        # Find this player in that week's depth chart
+        for pname, rank in week_team_depth[week][team][position]:
+            if player_name and pname:
+                # Match on last name
+                p_last = player_name.split()[-1].lower()
+                d_last = pname.split()[-1].lower()
+                if p_last == d_last:
+                    return rank
+        return None
+
+    # Add pos_rank to weekly_stats using WEEK-SPECIFIC depth charts
     def get_player_depth(row):
-        """Get player's depth position (1=starter, 2=backup, etc.)"""
+        """Get player's depth position for their specific week."""
+        pname = row.get('player_display_name', row.get('player_name', ''))
+        team = row.get('team', '')
+        position = row.get('position', '')
+        week = row.get('week', 0)
+
+        # Use week-specific depth chart
+        week_rank = get_player_depth_for_week(pname, team, position, week)
+        if week_rank is not None:
+            return week_rank
+
+        # Fallback to current depth chart only for current week
         pid = row.get('player_id', '')
         if pid and pid in player_depth_lookup:
             return player_depth_lookup[pid]['pos_rank']
-        # Fallback to name+team
-        pname = row.get('player_display_name', row.get('player_name', ''))
-        team = row.get('team', '')
         key = (pname, team)
         if key in player_name_depth:
             return player_name_depth[key]['pos_rank']
@@ -17089,12 +17165,16 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                     if len(pos_stats) == 0:
                         continue
 
+                    # Get all weeks this opponent played
+                    opp_weeks = set(pos_stats['week'].unique())
+
                     # For each depth position (1, 2, 3), calculate defense allowed
                     for depth_rank in [1, 2, 3]:
                         # Filter to this depth position only
                         depth_stats = pos_stats[pos_stats['pos_rank'] == depth_rank]
-                        if len(depth_stats) == 0:
-                            continue
+
+                        # Get weeks where this depth rank had stats
+                        weeks_with_stats = set(depth_stats['week'].unique()) if len(depth_stats) > 0 else set()
 
                         # Market key includes depth: "player_receptions_WR_1" for WR1s
                         # For position-specific markets, include position in key
@@ -17104,9 +17184,18 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                             # For multi-position markets (receptions: WR/TE/RB), need position in key
                             for pos in positions:
                                 pos_depth_stats = depth_stats[depth_stats['position'] == pos]
-                                if len(pos_depth_stats) == 0:
-                                    continue
                                 depth_market_key = f"{market}_{pos}_{depth_rank}"
+
+                                # If depth1 had no stats but the position had players, record 0
+                                if len(pos_depth_stats) == 0:
+                                    if depth_rank == 1:
+                                        pos_played_weeks = set(pos_stats[pos_stats['position'] == pos]['week'].unique())
+                                        for wk in pos_played_weeks:
+                                            if wk not in defense_weekly[opp_team]:
+                                                defense_weekly[opp_team][wk] = {}
+                                            if depth_market_key not in defense_weekly[opp_team][wk]:
+                                                defense_weekly[opp_team][wk][depth_market_key] = 0.0
+                                    continue
 
                                 if aggregate_cols:
                                     valid_cols = [c for c in aggregate_cols if c in pos_depth_stats.columns]
@@ -17125,6 +17214,20 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                                         if wk not in defense_weekly[opp_team]:
                                             defense_weekly[opp_team][wk] = {}
                                         defense_weekly[opp_team][wk][depth_market_key] = round(float(total), 1)
+
+                                # For weeks where this team played but depth1 had no stats, record 0
+                                # (Only for depth_rank=1, as starter should have played)
+                                if depth_rank == 1:
+                                    pos_weeks_with_stats = set(weekly_totals.keys()) if len(weekly_totals) > 0 else set()
+                                    # Get weeks where this position had ANY stats (someone played)
+                                    pos_played_weeks = set(pos_stats[pos_stats['position'] == pos]['week'].unique())
+                                    for wk in pos_played_weeks:
+                                        if wk not in pos_weeks_with_stats:
+                                            # Week where position had players but TE1 had no stats = 0
+                                            if wk not in defense_weekly[opp_team]:
+                                                defense_weekly[opp_team][wk] = {}
+                                            if depth_market_key not in defense_weekly[opp_team][wk]:
+                                                defense_weekly[opp_team][wk][depth_market_key] = 0.0
                             continue  # Already handled multi-position case
 
                         # Single position case
