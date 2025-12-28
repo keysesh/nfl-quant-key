@@ -8,6 +8,7 @@ This solves the feature mismatch problem:
 """
 
 import pandas as pd
+import numpy as np
 import logging
 import os
 from pathlib import Path
@@ -585,6 +586,46 @@ def compute_edge_trailing_stats(
             stats_df.groupby('player_norm')[stat_col]
             .transform(lambda x: x.ewm(span=span, min_periods=1).mean().shift(1))
         )
+
+    # =========================================================================
+    # RB-SPECIFIC FEATURES for player_rush_attempts (V32 Dec 2025)
+    # These are required by the LVT Edge model trained with RB features
+    # =========================================================================
+    if 'player_rush_attempts' in markets:
+        # trailing_ypc: yards per carry
+        if 'rushing_yards' in stats_df.columns and 'carries' in stats_df.columns:
+            # Compute YPC per game first
+            stats_df['_ypc'] = stats_df['rushing_yards'] / stats_df['carries'].replace(0, np.nan)
+            stats_df['trailing_ypc'] = (
+                stats_df.groupby('player_norm')['_ypc']
+                .transform(lambda x: x.shift(1).ewm(span=6, min_periods=1).mean())
+            )
+            stats_df.drop(columns=['_ypc'], inplace=True)
+        else:
+            stats_df['trailing_ypc'] = 0.0
+
+        # trailing_cv_carries: coefficient of variation of carries
+        if 'carries' in stats_df.columns:
+            def compute_cv(x):
+                shifted = x.shift(1)
+                roll_mean = shifted.rolling(6, min_periods=2).mean()
+                roll_std = shifted.rolling(6, min_periods=2).std()
+                return roll_std / roll_mean.replace(0, np.nan)
+            stats_df['trailing_cv_carries'] = (
+                stats_df.groupby('player_norm')['carries']
+                .transform(compute_cv)
+            )
+        else:
+            stats_df['trailing_cv_carries'] = 0.0
+
+        # trailing_rb_snap_share: requires snap count data (use default if unavailable)
+        if 'offense_pct' in stats_df.columns:
+            stats_df['trailing_rb_snap_share'] = (
+                stats_df.groupby('player_norm')['offense_pct']
+                .transform(lambda x: x.shift(1).ewm(span=6, min_periods=1).mean())
+            )
+        else:
+            stats_df['trailing_rb_snap_share'] = 0.0
 
     return stats_df
 

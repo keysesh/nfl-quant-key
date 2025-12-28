@@ -208,7 +208,7 @@ def load_injury_data(week: int) -> Dict[str, Dict[str, Any]]:
                     injured_by_name[player_name] = row.get(status_col, 'active')
 
             # Try to load depth chart / roster info to identify WR1/2/3, RB1/2, TE1
-            depth_chart = _load_team_depth_charts()
+            depth_chart = _load_team_depth_charts(week=week)
 
             # Group by team
             for team in injury_df['team'].dropna().unique():
@@ -401,7 +401,7 @@ def load_injury_data(week: int) -> Dict[str, Dict[str, Any]]:
     return injury_data
 
 
-def _load_team_depth_charts(week: int = 18, season: int = 2025) -> Dict[str, Dict[str, str]]:
+def _load_team_depth_charts(week: int = None, season: int = 2025) -> Dict[str, Dict[str, str]]:
     """
     Load team depth charts to identify WR1/2/3, RB1/2, TE1, QB1.
 
@@ -410,7 +410,7 @@ def _load_team_depth_charts(week: int = 18, season: int = 2025) -> Dict[str, Dic
     Uses module-level cache to avoid repeated file reads.
 
     Args:
-        week: NFL week (for 2025+ schema derivation)
+        week: NFL week (for 2025+ schema derivation). If None, uses current week.
         season: NFL season
 
     Returns:
@@ -421,6 +421,12 @@ def _load_team_depth_charts(week: int = 18, season: int = 2025) -> Dict[str, Dic
     # Return cached result if available
     if _DEPTH_CHART_CACHE is not None:
         return _DEPTH_CHART_CACHE
+
+    # Determine week if not provided
+    if week is None:
+        from nfl_quant.utils.season_utils import get_current_week
+        week = get_current_week()
+        logger.info(f"No week provided to _load_team_depth_charts, using current week: {week}")
 
     depth_charts = {}
 
