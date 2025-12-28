@@ -1,6 +1,6 @@
 {
   "week": "18",
-  "generated_at": "2025-12-28T14:58:44.819884",
+  "generated_at": "2025-12-28T15:04:30.714097",
   "stats": {
     "total_picks": 17,
     "avg_edge": 7.7,
@@ -1209,10 +1209,31 @@
           0,
           0
         ],
-        "defense_allowed": [],
-        "defense_weeks": [],
-        "defense_opponent": "LAR",
-        "defense_opponents": []
+        "defense_allowed": [
+          1.0,
+          null,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "defense_weeks": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "defense_opponent": "LA",
+        "defense_opponents": [
+          "SEA",
+          "TB",
+          "CAR",
+          "ARI",
+          "DET",
+          "SEA"
+        ]
       }
     },
     {
@@ -2125,7 +2146,7 @@
           11,
           12,
           13,
-          "14",
+          14,
           15,
           16
         ],
@@ -2280,7 +2301,7 @@
           11,
           12,
           13,
-          "14",
+          14,
           15,
           16
         ],
@@ -2588,7 +2609,7 @@
         ],
         "defense_weeks": [
           10,
-          "11",
+          11,
           12,
           13,
           15,
@@ -2743,7 +2764,7 @@
         ],
         "defense_weeks": [
           10,
-          "11",
+          11,
           12,
           13,
           15,
@@ -3210,7 +3231,7 @@
           11,
           12,
           13,
-          "14",
+          14,
           15,
           16
         ],
