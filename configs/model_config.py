@@ -560,8 +560,8 @@ DISABLE_DIRECTION_CONSTRAINTS = False  # V31: Enabled - UNDER_ONLY helps pass ma
 _MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = {
     'player_receptions': 'UNDER_ONLY',       # Validated: 56.8% UNDER in true OOS
     'player_reception_yds': 'UNDER_ONLY',    # Validated: 52.5% UNDER in true OOS
-    'player_rush_yds': 'BOTH',               # Let model decide direction
-    'player_rush_attempts': 'BOTH',          # Model doesn't help, but UNDER not strong either
+    'player_rush_yds': 'UNDER_ONLY',         # V32: UNDER 54.0% WR, +3.1% ROI vs OVER -11.5% ROI
+    'player_rush_attempts': 'UNDER_ONLY',    # V32: UNDER 54.8% WR, +4.6% ROI with RB features
     'player_pass_attempts': 'UNDER_ONLY',    # V31: UNDER 54.3% WR vs OVER 42.6%
     'player_pass_completions': 'UNDER_ONLY', # V31: UNDER 55.2% WR vs OVER 48.9%
     # TD props
@@ -595,7 +595,9 @@ SIMULATOR_MARKETS = SUPPORTED_MARKETS
 #
 # DISABLE (negative ROI everywhere):
 #   - player_pass_completions: Edge -9.4%, XGB -10.5% ROI
-#   - player_rush_attempts: Edge -9.1%, XGB -7.0% ROI
+#
+# ENABLED with RB-specific features (Dec 28, 2025):
+#   - player_rush_attempts: +7.6% ROI, 59.6% WR (UNDER_ONLY with RB features)
 #
 MARKET_MODEL_ROUTING = {
     # XGBoost markets (highly profitable)
@@ -605,10 +607,10 @@ MARKET_MODEL_ROUTING = {
     # Edge markets (Edge outperforms XGBoost)
     'player_pass_attempts': 'EDGE',
     'player_rush_yds': 'EDGE',
+    'player_rush_attempts': 'EDGE',  # V32: +7.6% ROI with RB-specific features
 
     # Disabled markets (negative ROI in both models)
     'player_pass_completions': 'DISABLED',
-    'player_rush_attempts': 'DISABLED',
 
     # TD markets (separate models for different use cases)
     'player_anytime_td': 'TD_ENHANCED',  # Binary: Did RB/WR/TE score TD? (RB @ 60%: 58.2% WR, +6.6% ROI)

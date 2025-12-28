@@ -256,8 +256,21 @@ def train_simple_edge_model(train_df: pd.DataFrame, market: str, edge_type: str)
     if len(market_train) < 100:
         return None
 
+    # MARKET-SPECIFIC FEATURES: Use RB features for rush_attempts
+    if market == 'player_rush_attempts':
+        # RB-specific features (validated: +7.6% ROI vs +0.5% with generic)
+        features = [
+            'line_vs_trailing',
+            'line_level',
+            'trailing_carries',           # RB volume
+            'trailing_ypc',               # RB efficiency
+            'trailing_cv_carries',        # RB consistency
+            'trailing_rb_snap_share',     # RB playing time
+            'vegas_spread',
+            'vegas_total',
+        ]
     # ENHANCED FEATURES: Add target_share, air_yards, CV, vegas features
-    if edge_type == 'lvt':
+    elif edge_type == 'lvt':
         features = [
             'line_vs_trailing',
             'line_level',

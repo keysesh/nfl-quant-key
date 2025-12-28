@@ -47,6 +47,29 @@ LVT_FEATURES: List[str] = [
 LVT_FEATURE_COUNT = len(LVT_FEATURES)  # 12 (was 7)
 
 
+# =============================================================================
+# MARKET-SPECIFIC FEATURES (Dec 2025)
+# =============================================================================
+# RB-specific features for rush_attempts market (validated: +7.6% ROI)
+RB_SPECIFIC_FEATURES: List[str] = [
+    'trailing_carries',           # RB volume
+    'trailing_ypc',               # RB efficiency
+    'trailing_cv_carries',        # RB consistency
+    'trailing_rb_snap_share',     # RB playing time
+]
+
+
+def get_lvt_features_for_market(market: str) -> List[str]:
+    """Get LVT features for a specific market, including market-specific features."""
+    base_features = LVT_FEATURES.copy()
+
+    # Add RB-specific features for rush_attempts
+    if market == 'player_rush_attempts':
+        return base_features + RB_SPECIFIC_FEATURES
+
+    return base_features
+
+
 @dataclass(frozen=True)
 class LVTThreshold:
     """Threshold configuration for LVT edge per market."""
@@ -211,6 +234,7 @@ PLAYER_BIAS_MODEL_PARAMS = {
 EDGE_MARKETS: List[str] = [
     'player_pass_attempts',  # Edge: 55.0% WR, +4.9% ROI (XGB: -7.2% ROI)
     'player_rush_yds',       # Edge: 55.2% WR, +5.4% ROI (XGB: -3.6% ROI)
+    'player_rush_attempts',  # V32: 59.6% WR, +7.6% ROI with RB-specific features
     # Moved to XGBoost (more profitable there):
     # 'player_receptions',     # XGB: 74.0% WR, +41.3% ROI (Edge: +0.6% ROI)
     # 'player_reception_yds',  # XGB: 67.5% WR, +28.8% ROI (Edge: +2.9% ROI)

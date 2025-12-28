@@ -1,47 +1,47 @@
 {
   "model": "edge_ensemble_walk_forward",
-  "total_bets": 6881,
-  "win_rate": 51.9,
-  "roi": -0.93,
+  "total_bets": 7299,
+  "win_rate": 52.1,
+  "roi": -0.54,
   "by_source": {
     "LVT+PB": {
-      "bets": 6881,
-      "win_rate": 51.9,
-      "roi": -0.9
+      "bets": 7299,
+      "win_rate": 52.1,
+      "roi": -0.5
     }
   },
   "by_market": {
     "player_receptions": {
-      "bets": 2316,
-      "win_rate": 52.5,
-      "roi": 0.3
+      "bets": 2315,
+      "win_rate": 51.9,
+      "roi": -0.9
     },
     "player_rush_yds": {
       "bets": 1824,
-      "win_rate": 50.9,
-      "roi": -2.8
+      "win_rate": 51.5,
+      "roi": -1.7
     },
     "player_reception_yds": {
-      "bets": 2221,
-      "win_rate": 52.4,
-      "roi": -0.0
+      "bets": 2232,
+      "win_rate": 51.5,
+      "roi": -1.6
     },
     "player_pass_attempts": {
-      "bets": 189,
-      "win_rate": 55.6,
-      "roi": 6.1
+      "bets": 200,
+      "win_rate": 57.0,
+      "roi": 8.8
     },
     "player_pass_completions": {
-      "bets": 99,
-      "win_rate": 47.5,
-      "roi": -9.4
+      "bets": 100,
+      "win_rate": 54.0,
+      "roi": 3.1
     },
     "player_rush_attempts": {
-      "bets": 232,
-      "win_rate": 47.4,
-      "roi": -9.5
+      "bets": 628,
+      "win_rate": 54.8,
+      "roi": 4.6
     }
   },
-  "timestamp": "2025-12-28T03:19:34.683705",
-  "runtime_seconds": 128.4
+  "timestamp": "2025-12-28T15:21:15.698087",
+  "runtime_seconds": 130.8
 }

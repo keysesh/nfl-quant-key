@@ -31,6 +31,7 @@ from configs.edge_config import (
     LVT_THRESHOLDS,
     LVT_MODEL_PARAMS,
     get_lvt_threshold,
+    get_lvt_features_for_market,
 )
 from configs.model_config import (
     SWEET_SPOT_PARAMS,
@@ -183,7 +184,17 @@ class LVTEdge(BaseEdge):
         # 12. lvt_x_defense - Interaction: LVT signal * defense quality
         result['lvt_x_defense'] = result['line_vs_trailing'] * result['opp_def_epa']
 
-        return result[LVT_FEATURES]
+        # 13-16. RB-specific features for rush_attempts market
+        if market == 'player_rush_attempts':
+            result['trailing_carries'] = df.get('trailing_carries', 0.0)
+            result['trailing_ypc'] = df.get('trailing_ypc', 0.0)
+            result['trailing_cv_carries'] = df.get('trailing_cv_carries', 0.0)
+            result['trailing_rb_snap_share'] = df.get('trailing_rb_snap_share', 0.0)
+
+        # Return market-specific features
+        market_features = get_lvt_features_for_market(market)
+        available_features = [f for f in market_features if f in result.columns]
+        return result[available_features]
 
     def should_trigger(
         self,
@@ -238,7 +249,10 @@ class LVTEdge(BaseEdge):
 
         # Use trained model
         model = self.models[market]
-        features = row[LVT_FEATURES].values.reshape(1, -1)
+        # Use market-specific features
+        market_features = get_lvt_features_for_market(market)
+        available_features = [f for f in market_features if f in row.index]
+        features = row[available_features].values.reshape(1, -1)
 
         # Apply preprocessing
         if market in self.imputers:
@@ -295,9 +309,15 @@ class LVTEdge(BaseEdge):
                 f"{len(filtered_data)} (need 50+)"
             )
 
-        # Prepare features and target
-        X = filtered_data[LVT_FEATURES]
+        # Prepare features and target (use market-specific features for rush_attempts)
+        market_features = get_lvt_features_for_market(market)
+        available_features = [f for f in market_features if f in filtered_data.columns]
+        X = filtered_data[available_features]
         y = filtered_data['under_hit']
+
+        # Store feature list for this market
+        self.market_features = getattr(self, 'market_features', {})
+        self.market_features[market] = available_features
 
         # Create preprocessing pipeline
         imputer = SimpleImputer(strategy='median')
