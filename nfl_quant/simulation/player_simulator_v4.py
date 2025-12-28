@@ -370,22 +370,49 @@ class PlayerSimulatorV4:
                 predictions['carries_variance'] = variance_carries
 
             if position == 'QB':
-                # For QB, 'targets' key actually contains passing attempts
-                attempts_array = usage_preds.get('targets', np.array([0.0]))
-                mean_attempts = float(attempts_array[0] if len(attempts_array) > 0 else 0.0)
+                # ROOT CAUSE FIX (Dec 26, 2025): Use trailing_attempts DIRECTLY for QB
+                #
+                # WHY: XGBoost usage_predictor over-regresses to population mean (~20-22 attempts)
+                # for high-volume QBs (28+ attempts). The previous constraint (±20%) still allowed
+                # systematic 20% under-projection, causing P(UNDER) to be artificially high (99%+).
+                #
+                # QB pass attempts are highly predictable from trailing average:
+                # - Game script dependent (which XGBoost can't model without knowing score)
+                # - Trailing average is the best baseline for projection
+                # - Opponent defense provides small adjustment (pass-heavy vs run-heavy)
+                #
+                # This is a principled fix: trailing is a better estimator than XGBoost for QB attempts.
 
-                # FIX (Dec 7, 2025): Constrain attempts to prevent excessive regression
-                # trailing_attempts holds pass attempts for QB
                 if trailing_attempts > 0:
-                    min_attempts = trailing_attempts * 0.80  # -20% (QB more stable)
-                    max_attempts = trailing_attempts * 1.20  # +20%
-                    original_attempts = mean_attempts
-                    mean_attempts = np.clip(mean_attempts, min_attempts, max_attempts)
-                    if abs(mean_attempts - original_attempts) > 0.1:
-                        logger.debug(
-                            f"Constrained QB attempts: {original_attempts:.1f} -> {mean_attempts:.1f} "
-                            f"(trailing={trailing_attempts:.1f})"
-                        )
+                    # Use trailing directly as base
+                    mean_attempts = trailing_attempts
+
+                    # Apply small opponent-based adjustment (±10% max)
+                    # Good pass defense (negative EPA) → slightly more attempts (playing from behind)
+                    # Bad pass defense (positive EPA) → slightly fewer attempts (game control)
+                    opp_pass_def_epa = getattr(player_input, 'opp_pass_def_epa', None)
+                    if opp_pass_def_epa is None:
+                        opp_pass_def_epa = getattr(player_input, 'opponent_def_epa_vs_position', 0.0) or 0.0
+
+                    # Each 0.1 EPA shifts attempts by ~2% (capped at ±10%)
+                    # Negative EPA (good defense) → positive adjustment (garbage time/catch-up)
+                    adjustment_factor = 1.0 - (opp_pass_def_epa * 0.2)  # ±10% range for typical EPA values
+                    adjustment_factor = np.clip(adjustment_factor, 0.90, 1.10)
+
+                    mean_attempts = trailing_attempts * adjustment_factor
+
+                    logger.debug(
+                        f"QB attempts: trailing={trailing_attempts:.1f}, "
+                        f"opp_epa={opp_pass_def_epa:.3f}, adj={adjustment_factor:.3f}, "
+                        f"final={mean_attempts:.1f}"
+                    )
+                else:
+                    # Fallback to XGBoost predictor if no trailing data
+                    attempts_array = usage_preds.get('targets', np.array([0.0]))
+                    mean_attempts = float(attempts_array[0] if len(attempts_array) > 0 else 28.0)
+                    logger.warning(
+                        f"No trailing pass attempts for QB - using XGBoost predictor: {mean_attempts:.1f}"
+                    )
 
                 # QB attempts less overdispersed (more predictable)
                 variance_attempts = estimate_target_variance(
@@ -500,11 +527,37 @@ class PlayerSimulatorV4:
                 predictions['yards_per_completion_mean'] = mean_ypc
                 predictions['yards_per_completion_cv'] = cv_ypc
 
-                # Completion percentage (not lognormal, stays as mean)
-                comp_pct_array = efficiency_preds.get('completion_pct', np.array([0.0]))
-                predictions['completion_pct_mean'] = float(
-                    comp_pct_array[0] if len(comp_pct_array) > 0 else 0.0
-                )
+                # ROOT CAUSE FIX (Dec 26, 2025): Use trailing_comp_pct directly for QB
+                # Same reasoning as pass attempts: XGBoost over-regresses to population mean
+                # QB completion % is highly stable week-to-week (±3-5% variance)
+                trailing_comp_pct = getattr(player_input, 'trailing_comp_pct', None)
+                if trailing_comp_pct and trailing_comp_pct > 0.3:  # Sanity check (30%+ is valid)
+                    # Use trailing directly with small opponent adjustment
+                    opp_pass_def_epa = getattr(player_input, 'opp_pass_def_epa', None)
+                    if opp_pass_def_epa is None:
+                        opp_pass_def_epa = getattr(player_input, 'opponent_def_epa_vs_position', 0.0) or 0.0
+
+                    # Good defense (neg EPA) → lower completion % (tighter coverage)
+                    # Bad defense (pos EPA) → higher completion % (easier throws)
+                    # Each 0.1 EPA shifts completion % by ~1.5% (capped at ±5%)
+                    adjustment = opp_pass_def_epa * 0.15
+                    adjustment = np.clip(adjustment, -0.05, 0.05)
+
+                    comp_pct = trailing_comp_pct + adjustment
+                    comp_pct = np.clip(comp_pct, 0.50, 0.80)  # Realistic bounds
+
+                    logger.debug(
+                        f"QB comp%: trailing={trailing_comp_pct:.3f}, "
+                        f"opp_epa={opp_pass_def_epa:.3f}, adj={adjustment:.3f}, "
+                        f"final={comp_pct:.3f}"
+                    )
+                    predictions['completion_pct_mean'] = comp_pct
+                else:
+                    # Fallback to XGBoost predictor if no trailing data
+                    comp_pct_array = efficiency_preds.get('completion_pct', np.array([0.0]))
+                    predictions['completion_pct_mean'] = float(
+                        comp_pct_array[0] if len(comp_pct_array) > 0 else 0.65
+                    )
 
         except Exception as e:
             logger.error(f"Efficiency prediction failed: {e}")

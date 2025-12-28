@@ -57,6 +57,201 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 
+# =============================================================================
+# CLV (CLOSING LINE VALUE) INTEGRATION
+# =============================================================================
+
+def load_closing_lines() -> pd.DataFrame:
+    """
+    Load historical closing lines for CLV calculation.
+
+    Returns:
+        DataFrame with closing lines or empty DataFrame if not available
+    """
+    closing_lines_path = PROJECT_ROOT / 'data' / 'odds' / 'historical_closing_lines_2025.csv'
+
+    if not closing_lines_path.exists():
+        logger.warning(f"Closing lines not found at {closing_lines_path}")
+        logger.warning("Run: python scripts/fetch/fetch_historical_closing_lines.py --weeks 1-17")
+        return pd.DataFrame()
+
+    df = pd.read_csv(closing_lines_path)
+
+    # Normalize player names for matching
+    from nfl_quant.utils.player_names import normalize_player_name
+    df['player_norm'] = df['player_name'].apply(normalize_player_name)
+
+    logger.info(f"Loaded {len(df)} closing lines for CLV")
+    return df
+
+
+def calculate_bet_clv(
+    player_norm: str,
+    market: str,
+    week: int,
+    pick: str,
+    model_prob: float,
+    closing_lines: pd.DataFrame
+) -> dict:
+    """
+    Calculate Closing Line Value for a single bet.
+
+    CLV = Model Probability - Closing Line Implied Probability
+    Positive CLV = We beat the efficient closing market
+
+    Args:
+        player_norm: Normalized player name
+        market: Market type (e.g., 'player_receptions')
+        week: NFL week
+        pick: 'OVER' or 'UNDER'
+        model_prob: Our model's probability for this pick
+        closing_lines: DataFrame of closing lines
+
+    Returns:
+        dict with CLV metrics or empty dict if no match
+    """
+    if closing_lines.empty:
+        return {}
+
+    # Find matching closing line
+    match = closing_lines[
+        (closing_lines['player_norm'] == player_norm) &
+        (closing_lines['market'] == market) &
+        (closing_lines['week'] == week)
+    ]
+
+    if match.empty:
+        return {}
+
+    closing = match.iloc[0]
+
+    # Get closing probability for our side
+    if pick == 'UNDER':
+        closing_prob = closing['no_vig_under']
+    else:
+        closing_prob = closing['no_vig_over']
+
+    # CLV = our probability - closing probability
+    clv = model_prob - closing_prob
+
+    return {
+        'clv': round(clv, 4),
+        'clv_pct': round(clv * 100, 2),
+        'closing_prob': round(closing_prob, 4),
+        'closing_line': closing['line'],
+    }
+
+
+def print_clv_summary(results_df: pd.DataFrame):
+    """Print CLV summary statistics."""
+    if 'clv' not in results_df.columns or results_df['clv'].isna().all():
+        print("\nCLV ANALYSIS: No closing line data available")
+        print("  Run: python scripts/fetch/fetch_historical_closing_lines.py --weeks 1-17")
+        return
+
+    clv_data = results_df.dropna(subset=['clv'])
+
+    if len(clv_data) == 0:
+        print("\nCLV ANALYSIS: No bets matched with closing lines")
+        return
+
+    print("\n" + "=" * 70)
+    print("CLOSING LINE VALUE (CLV) ANALYSIS")
+    print("=" * 70)
+    print(f"Bets with CLV data: {len(clv_data)} / {len(results_df)}")
+    print()
+
+    # Overall CLV stats
+    avg_clv = clv_data['clv_pct'].mean()
+    median_clv = clv_data['clv_pct'].median()
+    positive_pct = (clv_data['clv'] > 0).mean() * 100
+
+    print(f"Average CLV:    {avg_clv:+.2f}%")
+    print(f"Median CLV:     {median_clv:+.2f}%")
+    print(f"Positive CLV:   {positive_pct:.1f}% of bets")
+    print(f"Best CLV:       {clv_data['clv_pct'].max():+.2f}%")
+    print(f"Worst CLV:      {clv_data['clv_pct'].min():+.2f}%")
+    print()
+
+    if avg_clv > 0:
+        print("  Positive average CLV indicates REAL EDGE")
+        print("  (Model consistently beats efficient closing market)")
+    elif avg_clv > -1.0:
+        print("  Near-zero CLV - edge may be marginal")
+    else:
+        print("  Negative CLV - model may be following market noise")
+
+    # CLV by market
+    print("\nCLV by Market:")
+    for market in clv_data['market'].unique():
+        market_clv = clv_data[clv_data['market'] == market]
+        avg = market_clv['clv_pct'].mean()
+        n = len(market_clv)
+        pos_pct = (market_clv['clv'] > 0).mean() * 100
+        print(f"  {market}: avg={avg:+.2f}%, positive={pos_pct:.1f}%, n={n}")
+
+
+# =============================================================================
+# WEEKLY RECALIBRATION
+# =============================================================================
+
+from sklearn.isotonic import IsotonicRegression
+
+def create_weekly_calibrator(
+    prior_results: pd.DataFrame,
+    market: str,
+    min_samples: int = 50
+) -> IsotonicRegression:
+    """
+    Create a calibrator using predictions from prior weeks.
+
+    This implements the scientific approach: recalibrate each week
+    using the most recent completed predictions.
+
+    Args:
+        prior_results: Results from weeks < current test week
+        market: Market to calibrate
+        min_samples: Minimum samples needed for calibration
+
+    Returns:
+        Fitted IsotonicRegression calibrator or None if insufficient data
+    """
+    market_data = prior_results[prior_results['market'] == market].dropna(
+        subset=['clf_prob_under', 'under_hit']
+    )
+
+    if len(market_data) < min_samples:
+        return None
+
+    calibrator = IsotonicRegression(out_of_bounds='clip', y_min=0.01, y_max=0.99)
+    calibrator.fit(
+        market_data['clf_prob_under'].values,
+        market_data['under_hit'].values
+    )
+
+    return calibrator
+
+
+def apply_weekly_calibration(
+    raw_probs: np.ndarray,
+    calibrator: IsotonicRegression
+) -> np.ndarray:
+    """
+    Apply calibration to raw probabilities.
+
+    Args:
+        raw_probs: Raw model probabilities
+        calibrator: Fitted calibrator
+
+    Returns:
+        Calibrated probabilities
+    """
+    if calibrator is None:
+        return raw_probs
+
+    return calibrator.predict(raw_probs)
+
+
 def load_production_model():
     """Load the production XGBoost model."""
     model_path = PROJECT_ROOT / 'data' / 'models' / 'active_model.joblib'
@@ -356,7 +551,7 @@ def calculate_model_features_for_prop(row, stats, test_global_week, trailing):
     }
 
 
-def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
+def run_unified_validation(test_weeks, trials=5000, use_production_model=True, use_weekly_recalibration=False):
     """
     Run unified walk-forward validation.
 
@@ -377,6 +572,9 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
     # Load data
     props = load_historical_props()
     stats = load_player_stats()
+
+    # Load closing lines for CLV calculation
+    closing_lines = load_closing_lines()
 
     # Load production model if requested
     production_model = None
@@ -414,8 +612,23 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
 
     all_results = []
 
+    # Track weekly calibrators (DISABLED by default - production calibration is better)
+    # Pass use_weekly_recalibration=True or --recalibrate flag to enable
+    weekly_calibrators = {}  # {market: IsotonicRegression}
+    if use_weekly_recalibration:
+        print("Weekly recalibration ENABLED")
+
     for test_week in test_weeks:
         print(f"\n--- Testing Week {test_week} ---")
+
+        # Build calibrators from prior weeks' results (if enabled and enough data)
+        if use_weekly_recalibration and len(all_results) >= 50:
+            prior_df = pd.DataFrame(all_results)
+            for m in markets:
+                calibrator = create_weekly_calibrator(prior_df, m, min_samples=30)
+                if calibrator is not None:
+                    weekly_calibrators[m] = calibrator
+                    print(f"  Built calibrator for {m} ({len(prior_df[prior_df['market']==m])} samples)")
 
         # Convert to global week (current season)
         test_global_week = (get_current_season() - 2023) * 18 + test_week
@@ -446,16 +659,33 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
                 # Process results from production model
                 if 'clf_prob_under' in features_df.columns:
                     for _, row in features_df.iterrows():
-                        clf_prob_under = row.get('clf_prob_under', 0.5)
+                        raw_clf_prob_under = row.get('clf_prob_under', 0.5)
                         trailing_stat = row.get(f'trailing_{market_stat_map[market]}', row.get('line', 0) * 0.9)
                         line_vs_trailing = row.get('line_vs_trailing', 0)
+
+                        # Apply weekly recalibration if calibrator exists
+                        if market in weekly_calibrators:
+                            clf_prob_under = apply_weekly_calibration(
+                                np.array([raw_clf_prob_under]),
+                                weekly_calibrators[market]
+                            )[0]
+                        else:
+                            clf_prob_under = raw_clf_prob_under
 
                         pick = 'UNDER' if clf_prob_under > 0.5 else 'OVER'
                         actual_hit = row['under_hit'] if pick == 'UNDER' else (1 - row['under_hit'])
 
+                        # Calculate CLV if closing lines available
+                        model_prob = clf_prob_under if pick == 'UNDER' else (1 - clf_prob_under)
+                        clv_data = calculate_bet_clv(
+                            row.get('player_norm', ''),
+                            market, test_week, pick, model_prob, closing_lines
+                        )
+
                         all_results.append({
                             'week': test_week,
                             'player': row.get('player', row.get('player_display_name', 'Unknown')),
+                            'player_norm': row.get('player_norm', ''),
                             'market': market,
                             'line': row['line'],
                             'trailing_stat': trailing_stat,
@@ -464,10 +694,16 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
                             'line_vs_trailing': line_vs_trailing,
                             'mc_prob_under': clf_prob_under,  # Use same as clf for production
                             'clf_prob_under': clf_prob_under,
+                            'raw_clf_prob_under': raw_clf_prob_under,  # Before recalibration
+                            'calibrated': market in weekly_calibrators,  # Track if calibration was applied
                             'pick': pick,
                             'actual_stat': row.get('actual_stat', None),
                             'actual_hit': actual_hit,
                             'under_hit': row['under_hit'],
+                            # CLV fields
+                            'clv': clv_data.get('clv'),
+                            'clv_pct': clv_data.get('clv_pct'),
+                            'closing_prob': clv_data.get('closing_prob'),
                         })
                     continue  # Skip legacy processing for this market
 
@@ -544,11 +780,20 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
                             'line': row['line'],
                             'trailing_stat': trailing_stat,
                         }])
-                        clf_prob_under = classifier.predict_proba(X_test)[0][1]
+                        raw_clf_prob_under = classifier.predict_proba(X_test)[0][1]
                     except:
-                        clf_prob_under = mc_prob_under
+                        raw_clf_prob_under = mc_prob_under
                 else:
-                    clf_prob_under = mc_prob_under
+                    raw_clf_prob_under = mc_prob_under
+
+                # Apply weekly recalibration if calibrator exists
+                if market in weekly_calibrators:
+                    clf_prob_under = apply_weekly_calibration(
+                        np.array([raw_clf_prob_under]),
+                        weekly_calibrators[market]
+                    )[0]
+                else:
+                    clf_prob_under = raw_clf_prob_under
 
                 # Determine pick
                 pick = 'UNDER' if clf_prob_under > 0.5 else 'OVER'
@@ -576,9 +821,17 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
 
                 actual_hit = row['under_hit'] if pick == 'UNDER' else (1 - row['under_hit'])
 
+                # Calculate CLV if closing lines available
+                model_prob = clf_prob_under if pick == 'UNDER' else (1 - clf_prob_under)
+                clv_data = calculate_bet_clv(
+                    row.get('player_norm', row['player']),
+                    market, test_week, pick, model_prob, closing_lines
+                )
+
                 all_results.append({
                     'week': test_week,
                     'player': row['player'],
+                    'player_norm': row.get('player_norm', ''),
                     'market': market,
                     'line': row['line'],
                     'trailing_stat': trailing_stat,
@@ -587,10 +840,16 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
                     'line_vs_trailing': line_vs_trailing,
                     'mc_prob_under': mc_prob_under,
                     'clf_prob_under': clf_prob_under,
+                    'raw_clf_prob_under': raw_clf_prob_under,  # Before recalibration
+                    'calibrated': market in weekly_calibrators,  # Track if calibration was applied
                     'pick': pick,
                     'actual_stat': row['actual_stat'],
                     'actual_hit': actual_hit,
                     'under_hit': row['under_hit'],
+                    # CLV fields
+                    'clv': clv_data.get('clv'),
+                    'clv_pct': clv_data.get('clv_pct'),
+                    'closing_prob': clv_data.get('closing_prob'),
                 })
 
         # Summary for this week
@@ -656,6 +915,48 @@ def run_unified_validation(test_weeks, trials=5000, use_production_model=True):
             roi = (win_rate * 0.909 - (1 - win_rate)) * 100
 
             print(f"  {threshold:.0%}: n={total}, win_rate={win_rate*100:.1f}%, ROI={roi:+.1f}%")
+
+    # Weekly Recalibration Impact Analysis
+    if 'calibrated' in results_df.columns and 'raw_clf_prob_under' in results_df.columns:
+        print("\n" + "=" * 70)
+        print("WEEKLY RECALIBRATION IMPACT")
+        print("=" * 70)
+
+        calibrated_df = results_df[results_df['calibrated'] == True]
+        uncalibrated_df = results_df[results_df['calibrated'] == False]
+
+        if len(calibrated_df) > 0:
+            cal_wins = calibrated_df['actual_hit'].sum()
+            cal_total = len(calibrated_df)
+            cal_wr = cal_wins / cal_total
+            cal_roi = (cal_wr * 0.909 - (1 - cal_wr)) * 100
+            print(f"\nCalibrated bets:   {cal_total} bets, {cal_wr*100:.1f}% win rate, {cal_roi:+.1f}% ROI")
+        else:
+            print("\nNo calibrated bets (first few weeks)")
+
+        if len(uncalibrated_df) > 0:
+            uncal_wins = uncalibrated_df['actual_hit'].sum()
+            uncal_total = len(uncalibrated_df)
+            uncal_wr = uncal_wins / uncal_total
+            uncal_roi = (uncal_wr * 0.909 - (1 - uncal_wr)) * 100
+            print(f"Uncalibrated bets: {uncal_total} bets, {uncal_wr*100:.1f}% win rate, {uncal_roi:+.1f}% ROI")
+
+        # Compare what pick would have been with vs without calibration
+        if len(calibrated_df) > 0:
+            # Check how many picks changed due to calibration
+            calibrated_df = calibrated_df.copy()
+            calibrated_df['raw_pick'] = calibrated_df['raw_clf_prob_under'].apply(lambda x: 'UNDER' if x > 0.5 else 'OVER')
+            picks_changed = (calibrated_df['pick'] != calibrated_df['raw_pick']).sum()
+            print(f"\nPicks changed by calibration: {picks_changed}/{len(calibrated_df)} ({picks_changed/len(calibrated_df)*100:.1f}%)")
+
+            # Compare accuracy of changed picks
+            changed = calibrated_df[calibrated_df['pick'] != calibrated_df['raw_pick']]
+            if len(changed) > 0:
+                changed_hits = changed['actual_hit'].sum()
+                print(f"Changed picks win rate: {changed_hits/len(changed)*100:.1f}% (n={len(changed)})")
+
+    # CLV Analysis
+    print_clv_summary(results_df)
 
     return results_df
 
@@ -892,6 +1193,7 @@ if __name__ == '__main__':
     parser.add_argument('--holdout', action='store_true', help='Run TRUE holdout validation (weeks 12+)')
     parser.add_argument('--holdout-weeks', default='12-14', help='Holdout week range (e.g., 12-14)')
     parser.add_argument('--bootstrap', action='store_true', help='Include bootstrap confidence intervals')
+    parser.add_argument('--recalibrate', action='store_true', help='Enable weekly recalibration (disabled by default)')
     args = parser.parse_args()
 
     if args.holdout:
@@ -911,7 +1213,11 @@ if __name__ == '__main__':
         else:
             test_weeks = [int(args.weeks)]
 
-        results_df = run_unified_validation(test_weeks, trials=args.trials)
+        results_df = run_unified_validation(
+            test_weeks,
+            trials=args.trials,
+            use_weekly_recalibration=args.recalibrate
+        )
 
         # Add bootstrap CI if requested
         if args.bootstrap and len(results_df) > 0:

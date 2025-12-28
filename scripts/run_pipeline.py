@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
 """
-NFL QUANT Parallel Pipeline Runner
+NFL QUANT Pipeline Runner
 
-Optimized version of run_pipeline.py that runs independent steps in parallel.
-Safely parallelizes data fetching and recommendation generation.
+Runs independent steps in parallel for faster execution (~25-30 min).
 
 Parallelization Strategy:
 - Group 1 (PARALLEL): NFLverse, Injuries, Live Odds, Player Props
 - Group 2 (SEQUENTIAL): Freshness Check, Model Predictions
 - Group 3 (PARALLEL): Player Prop Recommendations, Game Line Recommendations
-- Group 4 (SEQUENTIAL): Dashboard
-
-Expected speedup: ~30-40% reduction in total runtime
+- Group 4 (SEQUENTIAL): Dashboard, Deploy
 
 Usage:
-    python scripts/run_pipeline_parallel.py <WEEK>
-    python scripts/run_pipeline_parallel.py 15
+    python scripts/run_pipeline.py <WEEK>
+    python scripts/run_pipeline.py 17
 
-    # Force sequential mode (same as original)
-    python scripts/run_pipeline_parallel.py 15 --sequential
+    # Edge mode (LVT + Player Bias + TD Poisson)
+    python scripts/run_pipeline.py 17 --edge-mode
 """
 
 import subprocess
@@ -33,7 +30,7 @@ import argparse
 
 # Use centralized path configuration
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from nfl_quant.config_paths import PROJECT_ROOT
+from nfl_quant.config_paths import PROJECT_ROOT, set_run_context, clear_run_context
 
 os.chdir(PROJECT_ROOT)
 
@@ -171,13 +168,79 @@ def run_sequential_step(
     return (success, duration, error_msg)
 
 
+def run_phase0(week: int, season: int, run_id: str) -> Tuple[bool, str]:
+    """
+    Run Phase 0: Fetch all network inputs and create snapshots.
+
+    Returns:
+        Tuple of (success, run_id)
+    """
+    venv_python = str(PROJECT_ROOT / ".venv" / "bin" / "python")
+
+    print(f"\n{'='*80}")
+    print("PHASE 0: Fetching Network Inputs")
+    print(f"{'='*80}")
+
+    cmd = [
+        venv_python,
+        "scripts/fetch/fetch_run_inputs.py",
+        "--week", str(week),
+        "--season", str(season),
+        "--run-id", run_id
+    ]
+
+    try:
+        result = subprocess.run(cmd, check=True, timeout=300)
+        print(f"\n✅ Phase 0 complete - inputs saved to runs/{run_id}/inputs/")
+        return (True, run_id)
+    except subprocess.CalledProcessError as e:
+        print(f"\n❌ Phase 0 failed (exit code {e.returncode})")
+        return (False, run_id)
+    except subprocess.TimeoutExpired:
+        print(f"\n❌ Phase 0 timeout (5 min)")
+        return (False, run_id)
+
+
+def setup_run_resolver(run_id: str) -> bool:
+    """
+    Set up the run-specific resolver from Phase 0 snapshots.
+
+    Returns True if resolver is available, False otherwise.
+    """
+    from nfl_quant.data.player_resolver import (
+        PlayerResolver, ResolverMode, set_run_resolver, ResolverNotAvailableError
+    )
+
+    inputs_dir = PROJECT_ROOT / "runs" / run_id / "inputs"
+    snapshot_path = inputs_dir / "players.parquet"
+
+    if not snapshot_path.exists():
+        print(f"  ⚠️  No player snapshot found at {snapshot_path}")
+        return False
+
+    try:
+        resolver = PlayerResolver.from_snapshot(snapshot_path, strict=False)
+        set_run_resolver(resolver)
+        print(f"  ✅ Run resolver loaded from {snapshot_path}")
+        return resolver.is_available
+    except ResolverNotAvailableError as e:
+        print(f"  ⚠️  Resolver not available: {e}")
+        return False
+
+
 def main():
-    parser = argparse.ArgumentParser(description='NFL QUANT Parallel Pipeline')
+    parser = argparse.ArgumentParser(description='NFL QUANT Pipeline')
     parser.add_argument('week', type=int, help='NFL week number (1-18)')
-    parser.add_argument('--sequential', action='store_true',
-                        help='Run in sequential mode (no parallelization)')
     parser.add_argument('--edge-mode', action='store_true',
-                        help='Use edge-based ensemble (LVT + Player Bias) instead of unified model')
+                        help='Use edge-based ensemble (LVT + Player Bias + TD Poisson)')
+    parser.add_argument('--unified-mode', action='store_true', default=True,
+                        help='Use unified XGBoost model - DEFAULT')
+    parser.add_argument('--run-id', type=str, default=None,
+                        help='Run ID for Phase 0 snapshots (auto-generated if not provided)')
+    parser.add_argument('--skip-phase0', action='store_true',
+                        help='Skip Phase 0 input collection (use existing snapshots with --run-id)')
+    parser.add_argument('--season', type=int, default=2025,
+                        help='NFL season (default: 2025)')
     args = parser.parse_args()
 
     week = args.week
@@ -185,14 +248,23 @@ def main():
         print(f"Error: Week must be 1-18, got {week}")
         sys.exit(1)
 
-    mode = "SEQUENTIAL" if args.sequential else "PARALLEL"
-    model_mode = "EDGE ENSEMBLE" if args.edge_mode else "UNIFIED MODEL"
+    # Generate run ID if not provided
+    if args.run_id:
+        run_id = args.run_id
+    else:
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        run_id = f"week{week}_{timestamp}"
+
+    # XGBoost unified mode is default unless --edge-mode is explicitly set
+    use_edge_mode = args.edge_mode
+    model_mode = "EDGE ENSEMBLE + TD POISSON" if use_edge_mode else "XGBOOST CLASSIFIER"
 
     print(f"""
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║                    NFL QUANT PIPELINE ({mode} MODE)                       ║
+║                           NFL QUANT PIPELINE                                 ║
 ║                         Week {week:2d} - {datetime.now().strftime('%Y-%m-%d %H:%M')}                              ║
 ║                         Model: {model_mode:<18}                              ║
+║                         Run ID: {run_id:<35}               ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
     """)
 
@@ -201,8 +273,44 @@ def main():
     all_results = []
 
     # =========================================================================
+    # PHASE 0: Network Input Collection (Optional)
+    # Fetches all network-dependent data and saves to runs/<run_id>/inputs/
+    # =========================================================================
+    snapshot_mode_active = False
+
+    if not args.skip_phase0:
+        phase0_success, run_id = run_phase0(week, args.season, run_id)
+        if phase0_success:
+            # Enable snapshot mode - all path functions will use run-specific paths
+            set_run_context(run_id)
+            snapshot_mode_active = True
+            print(f"  ✅ Snapshot isolation enabled: runs/{run_id}/inputs/")
+
+            # Set up run-specific resolver from snapshots
+            resolver_available = setup_run_resolver(run_id)
+            if not resolver_available:
+                print("  ⚠️  Resolver unavailable - player matching may be degraded")
+        else:
+            print("  ⚠️  Phase 0 failed - continuing with legacy data fetching")
+    else:
+        print(f"\n  Skipping Phase 0 - using existing snapshots for run {run_id}")
+        # Enable snapshot mode if using existing snapshots
+        inputs_dir = PROJECT_ROOT / "runs" / run_id / "inputs"
+        if inputs_dir.exists():
+            set_run_context(run_id)
+            snapshot_mode_active = True
+            print(f"  ✅ Snapshot isolation enabled: runs/{run_id}/inputs/")
+        else:
+            print(f"  ⚠️  Snapshot directory not found: {inputs_dir}")
+
+        resolver_available = setup_run_resolver(run_id)
+        if not resolver_available:
+            print("  ⚠️  No existing snapshots found - data freshness not guaranteed")
+
+    # =========================================================================
     # GROUP 1: Data Fetching (PARALLEL)
     # These are independent API calls that write to different files
+    # Note: With Phase 0, these may overlap with snapshots but provide latest data
     # =========================================================================
     data_fetch_steps = [
         (
@@ -227,25 +335,16 @@ def main():
         ),
     ]
 
-    if args.sequential:
-        # Sequential mode
-        for desc, cmd, req in data_fetch_steps:
-            success, duration, error = run_sequential_step(desc, cmd, req)
-            all_results.append((desc, success, duration, error))
-            if not success and req:
-                print(f"\n❌ Pipeline failed at: {desc}")
-                sys.exit(1)
-    else:
-        # Parallel mode
-        success, results = run_parallel_group(
-            data_fetch_steps,
-            "Data Fetching (NFLverse + Injuries + Odds + Props)",
-            max_workers=4
-        )
-        all_results.extend(results)
-        if not success:
-            print(f"\n❌ Pipeline failed during data fetching")
-            sys.exit(1)
+    # Run data fetching in parallel
+    success, results = run_parallel_group(
+        data_fetch_steps,
+        "Data Fetching (NFLverse + Injuries + Odds + Props)",
+        max_workers=4
+    )
+    all_results.extend(results)
+    if not success:
+        print(f"\n❌ Pipeline failed during data fetching")
+        sys.exit(1)
 
     # =========================================================================
     # GROUP 2: Validation & Predictions (SEQUENTIAL)
@@ -253,9 +352,11 @@ def main():
     # =========================================================================
 
     # Freshness check (optional - warning only)
+    # Freshness check - use --no-refresh to prevent interactive prompts
+    # Data was already fetched in Group 1, this is just validation
     success, duration, error = run_sequential_step(
         "Check Data Freshness",
-        [venv_python, "scripts/fetch/check_data_freshness.py"],
+        [venv_python, "scripts/fetch/check_data_freshness.py", "--no-refresh"],
         required=False
     )
     all_results.append(("Check Data Freshness", success, duration, error))
@@ -277,18 +378,41 @@ def main():
     # Player props and game lines are independent
     # =========================================================================
 
-    # Choose player prop recommendations script based on mode
-    if args.edge_mode:
+    # V32 HYBRID MODEL ROUTING (Dec 28, 2025)
+    # Walk-forward validated: use best model for each market
+    # - XGBoost: player_receptions (74% WR), player_reception_yds (68% WR)
+    # - Edge: player_pass_attempts (55% WR), player_rush_yds (55% WR)
+    # - TD Enhanced: anytime TD (RB @ 60% = 58% WR)
+    # - DISABLED: player_pass_completions, player_rush_attempts (negative ROI)
+
+    if use_edge_mode:
+        # Legacy edge-only mode (not recommended)
         player_prop_step = (
+            f"Generate Edge Recommendations + TD Props (Week {week})",
+            [venv_python, "scripts/predict/generate_edge_recommendations.py", "--week", str(week), "--include-td"],
+            True
+        )
+        edge_step = None
+        td_enhanced_step = None
+    else:
+        # V32 HYBRID MODE (default) - Run both XGBoost and Edge for their respective markets
+        # 1. XGBoost for receptions/reception_yds (outputs to CURRENT_WEEK_RECOMMENDATIONS.csv)
+        player_prop_step = (
+            f"Generate XGBoost Recommendations (Week {week})",
+            [venv_python, "scripts/predict/generate_unified_recommendations_v3.py", "--week", str(week)],
+            True
+        )
+        # 2. Edge for pass_attempts/rush_yds (outputs to edge_recommendations_weekX.csv)
+        edge_step = (
             f"Generate Edge Recommendations (Week {week})",
             [venv_python, "scripts/predict/generate_edge_recommendations.py", "--week", str(week)],
             True
         )
-    else:
-        player_prop_step = (
-            f"Generate Player Prop Recommendations (Week {week})",
-            [venv_python, "scripts/predict/generate_unified_recommendations_v3.py", "--week", str(week)],
-            True
+        # 3. TD Enhanced for anytime TD (appends to edge_recommendations_weekX.csv)
+        td_enhanced_step = (
+            f"Generate TD Enhanced Recommendations (Week {week})",
+            [venv_python, "scripts/predict/generate_edge_recommendations.py", "--week", str(week), "--include-td-enhanced"],
+            False  # Not required - TD Enhanced is optional
         )
 
     recommendation_steps = [
@@ -300,23 +424,24 @@ def main():
         ),
     ]
 
-    if args.sequential:
-        for desc, cmd, req in recommendation_steps:
-            success, duration, error = run_sequential_step(desc, cmd, req)
-            all_results.append((desc, success, duration, error))
-            if not success and req:
-                print(f"\n❌ Pipeline failed at: {desc}")
-                sys.exit(1)
-    else:
-        success, results = run_parallel_group(
-            recommendation_steps,
-            "Recommendations (Player Props + Game Lines)",
-            max_workers=2
-        )
-        all_results.extend(results)
-        if not success:
-            print(f"\n❌ Pipeline failed during recommendation generation")
-            sys.exit(1)
+    # Add Edge step for hybrid mode
+    if edge_step:
+        recommendation_steps.append(edge_step)
+
+    # Add TD Enhanced step
+    if td_enhanced_step:
+        recommendation_steps.append(td_enhanced_step)
+
+    # Run recommendations in parallel
+    success, results = run_parallel_group(
+        recommendation_steps,
+        "Recommendations (Player Props + Game Lines)",
+        max_workers=2
+    )
+    all_results.extend(results)
+    if not success:
+        print(f"\n❌ Pipeline failed during recommendation generation")
+        sys.exit(1)
 
     # =========================================================================
     # GROUP 3.5: Parlay Recommendations (SEQUENTIAL - needs v3 or edge recommendations)
@@ -364,7 +489,7 @@ def main():
     total_duration = time.time() - pipeline_start
 
     print(f"\n{'='*80}")
-    print(f"PIPELINE COMPLETE - {mode} MODE")
+    print(f"PIPELINE COMPLETE")
     print(f"{'='*80}")
     print(f"\nStep Timings:")
     print(f"{'-'*60}")
@@ -376,13 +501,6 @@ def main():
     print(f"{'-'*60}")
     print(f"  {'TOTAL':<45} {total_duration:>6.1f}s")
     print(f"  {'(minutes)':<45} {total_duration/60:>6.1f}m")
-
-    # Calculate theoretical sequential time for comparison
-    if not args.sequential:
-        sequential_estimate = sum(d for _, _, d, _ in all_results)
-        savings = sequential_estimate - total_duration
-        if savings > 0:
-            print(f"\n⚡ Parallel mode saved approximately {savings:.0f}s ({savings/60:.1f}m)")
 
     print(f"\n📊 Check reports/ directory for output files")
     print(f"📁 Latest recommendations: reports/recommendations_week{week}_*.csv")

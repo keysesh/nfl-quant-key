@@ -173,51 +173,45 @@ def load_depth_charts(season: int = 2025) -> pd.DataFrame:
     Returns:
         DataFrame with columns: team, position, depth_rank, player_name, gsis_id
     """
-    # Try 2025 ESPN format first
-    dc_path_2025 = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts_2025.parquet'
-    dc_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
+    # Use canonical depth chart loader
+    from nfl_quant.data.depth_chart_loader import get_depth_charts
+    dc = get_depth_charts(season=season, mode='BETTING')
 
-    try:
-        if dc_path_2025.exists() and season >= 2025:
-            dc = pd.read_parquet(dc_path_2025)
-            # ESPN format: pos_abb, pos_rank, player_name, team, gsis_id
-            # Get most recent depth chart
-            latest_dt = dc['dt'].max()
-            dc = dc[dc['dt'] == latest_dt]
+    if dc.empty:
+        raise ValueError("Empty depth chart data returned from canonical loader")
 
-            # Filter to skill positions
-            skill_pos = ['QB', 'RB', 'WR', 'TE', 'FB']
-            dc = dc[dc['pos_abb'].isin(skill_pos)]
+    # Filter to skill positions
+    skill_pos = ['QB', 'RB', 'WR', 'TE', 'FB']
+    pos_col = 'pos_abb' if 'pos_abb' in dc.columns else 'position'
+    dc = dc[dc[pos_col].isin(skill_pos)]
 
-            # Normalize to common format
-            result = dc[['team', 'pos_abb', 'pos_rank', 'player_name', 'gsis_id']].copy()
-            result.columns = ['team', 'position', 'depth_rank', 'player_name', 'gsis_id']
+    # Normalize to common format
+    required_cols = ['team', 'player_name']
+    for col in required_cols:
+        if col not in dc.columns:
+            raise ValueError(f"Missing required column: {col}")
 
-            logger.info(f"Loaded {len(result)} depth chart entries from ESPN 2025 data ({latest_dt})")
-            return result
+    # Build result with available columns
+    result_cols = {
+        'team': 'team',
+        'position': pos_col,
+        'depth_rank': 'pos_rank' if 'pos_rank' in dc.columns else 'depth_team',
+        'player_name': 'player_name',
+        'gsis_id': 'gsis_id' if 'gsis_id' in dc.columns else None
+    }
 
-        elif dc_path.exists():
-            dc = pd.read_parquet(dc_path)
-            # NFLverse format: club_code, position, depth_team, football_name, gsis_id, week, season
-            dc = dc[dc['season'] == season]
-            latest_week = dc['week'].max()
-            dc = dc[dc['week'] == latest_week]
+    result_data = {}
+    for new_col, old_col in result_cols.items():
+        if old_col and old_col in dc.columns:
+            result_data[new_col] = dc[old_col]
+        else:
+            result_data[new_col] = None
 
-            # Filter to skill positions
-            skill_pos = ['QB', 'RB', 'WR', 'TE', 'FB']
-            dc = dc[dc['position'].isin(skill_pos)]
+    result = pd.DataFrame(result_data)
+    result = result.dropna(subset=['team', 'player_name'])
 
-            # Normalize to common format
-            result = dc[['club_code', 'position', 'depth_team', 'football_name', 'gsis_id']].copy()
-            result.columns = ['team', 'position', 'depth_rank', 'player_name', 'gsis_id']
-
-            logger.info(f"Loaded {len(result)} depth chart entries from NFLverse Week {int(latest_week)}")
-            return result
-
-    except Exception as e:
-        logger.warning(f"Could not load depth charts: {e}")
-
-    return pd.DataFrame(columns=['team', 'position', 'depth_rank', 'player_name', 'gsis_id'])
+    logger.info(f"Loaded {len(result)} depth chart entries from canonical loader")
+    return result
 
 
 def get_team_starters(depth_charts: pd.DataFrame, team: str) -> Dict[str, dict]:

@@ -30,6 +30,10 @@ def compute_rz_opportunity_features(
     These features track a player's historical red zone usage,
     which strongly predicts future TD scoring.
 
+    CRITICAL FIX (2025-12-28): Now tracks ALL weeks each player played,
+    not just weeks with RZ plays. This ensures trailing averages properly
+    decay to 0 when a player has no recent RZ opportunities.
+
     Args:
         season: Season year
         ewma_span: EWMA span for trailing average
@@ -61,6 +65,21 @@ def compute_rz_opportunity_features(
     if pbp is None or len(pbp) == 0:
         logger.warning(f"No PBP data for {season}")
         return pd.DataFrame()
+
+    # CRITICAL FIX: Load weekly_stats to get ALL weeks each player played
+    # This ensures we track weeks with 0 RZ plays, not just weeks with RZ plays
+    player_weeks = pd.DataFrame()
+    stats_path = Path('data/nflverse/weekly_stats.parquet')
+    if stats_path.exists():
+        try:
+            stats = pd.read_parquet(stats_path)
+            stats = stats[stats['season'] == season]
+            # Get all (player_id, week) combinations where player had any stats
+            player_weeks = stats[['player_id', 'week']].drop_duplicates()
+            player_weeks = player_weeks.dropna(subset=['player_id'])
+            logger.info(f"  Loaded {len(player_weeks)} player-week records from weekly_stats")
+        except Exception as e:
+            logger.warning(f"  Could not load weekly_stats: {e}")
 
     # Filter to red zone plays
     rz = pbp[
@@ -98,12 +117,34 @@ def compute_rz_opportunity_features(
     else:
         rz_targets = pd.DataFrame(columns=['player_id', 'week', 'rz_targets'])
 
-    # Combine
+    # Combine RZ carries and targets
     rz_data = pd.merge(rz_carries, rz_targets, on=['player_id', 'week'], how='outer')
     rz_data = rz_data.fillna(0)
+
+    # CRITICAL FIX: Merge with ALL player weeks to include weeks with 0 RZ plays
+    if len(player_weeks) > 0:
+        # Get all unique players who had any RZ involvement
+        rz_players = set(rz_data['player_id'].unique())
+
+        # Filter player_weeks to only players with some RZ history
+        player_weeks_rz = player_weeks[player_weeks['player_id'].isin(rz_players)]
+
+        # Merge: left join on player_weeks to get ALL weeks
+        rz_data = pd.merge(
+            player_weeks_rz,
+            rz_data,
+            on=['player_id', 'week'],
+            how='left'
+        )
+        # Fill weeks with no RZ plays with 0
+        rz_data['rz_carries'] = rz_data['rz_carries'].fillna(0)
+        rz_data['rz_targets'] = rz_data['rz_targets'].fillna(0)
+        logger.info(f"  Expanded to {len(rz_data)} player-week records (including 0 RZ weeks)")
+
     rz_data = rz_data.sort_values(['player_id', 'week'])
 
     # Compute trailing features with shift(1) to prevent leakage
+    # Now properly decays because we include weeks with 0 RZ plays
     rz_data['trailing_rz_carries'] = (
         rz_data.groupby('player_id')['rz_carries']
         .transform(lambda x: x.shift(1).ewm(span=ewma_span, min_periods=1).mean())

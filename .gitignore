@@ -74,3 +74,5 @@ reports/*.json
 # Logs
 *.log
 logs/
+.vercel
+.env*.local

@@ -330,10 +330,14 @@ def calculate_opponent_target_share_allowed(
     from pathlib import Path
 
     if pbp_df is None:
-        pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+        # Use FRESH generic PBP - not stale season-specific files
+        pbp_path = Path('data/nflverse/pbp.parquet')
         if not pbp_path.exists():
             return {'opp_target_share': 0.20, 'opp_targets_per_game': 5.0}
         pbp_df = pd.read_parquet(pbp_path)
+        # Filter to season if needed
+        if 'season' in pbp_df.columns:
+            pbp_df = pbp_df[pbp_df['season'] == season]
 
     # Filter to games against this opponent and before max_week
     # Opponent was the defense, so we want plays where defteam == opponent

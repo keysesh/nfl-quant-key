@@ -1,0 +1,361 @@
+season,week,event_id,home_team,away_team,commence_time,market,player,outcome_type,line,odds,player_norm,actual,under_hit
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_attempts,Aaron Rodgers,Over,32.5,-120,aaron rodgers,54,0
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_attempts,Aaron Rodgers,Under,32.5,-110,aaron rodgers,54,0
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_attempts,Sam Darnold,Over,29.5,-125,sam darnold,31,0
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_attempts,Sam Darnold,Under,29.5,-105,sam darnold,31,0
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_completions,Aaron Rodgers,Over,20.5,-130,aaron rodgers,29,0
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_completions,Aaron Rodgers,Under,20.5,100,aaron rodgers,29,0
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_completions,Sam Darnold,Over,19.5,-110,sam darnold,14,1
+2024,5,b782886bcc4874123d3bb50e5d1e88c3,Minnesota Vikings,New York Jets,2024-10-06T13:30:00Z,player_pass_completions,Sam Darnold,Under,19.5,-120,sam darnold,14,1
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_attempts,Joe Burrow,Over,36.5,-115,joe burrow,39,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_attempts,Joe Burrow,Under,36.5,-115,joe burrow,39,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_attempts,Lamar Jackson,Over,28.5,-115,lamar jackson,42,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_attempts,Lamar Jackson,Under,28.5,-115,lamar jackson,42,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_completions,Joe Burrow,Over,24.5,105,joe burrow,30,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_completions,Joe Burrow,Under,24.5,-135,joe burrow,30,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_completions,Lamar Jackson,Over,18.5,-130,lamar jackson,26,0
+2024,5,73da5785865b6ab0852df1aa0c47994e,Cincinnati Bengals,Baltimore Ravens,2024-10-06T17:00:00Z,player_pass_completions,Lamar Jackson,Under,18.5,100,lamar jackson,26,0
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_attempts,C.J. Stroud,Over,35.5,-105,cj stroud,38,0
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_attempts,C.J. Stroud,Under,35.5,-125,cj stroud,38,0
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_attempts,Josh Allen,Over,31.5,-115,josh allen,30,1
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_attempts,Josh Allen,Under,31.5,-115,josh allen,30,1
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_completions,C.J. Stroud,Over,23.5,-120,cj stroud,28,0
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_completions,C.J. Stroud,Under,23.5,-110,cj stroud,28,0
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_completions,Josh Allen,Over,20.5,-115,josh allen,9,1
+2024,5,2eb8e0798cb1b1f9d0f0d414253b4e37,Houston Texans,Buffalo Bills,2024-10-06T17:00:00Z,player_pass_completions,Josh Allen,Under,20.5,-115,josh allen,9,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_attempts,Andy Dalton,Over,32.5,-110,andy dalton,28,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_attempts,Andy Dalton,Under,32.5,-120,andy dalton,28,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_attempts,Caleb Williams,Over,31.5,-105,caleb williams,29,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_attempts,Caleb Williams,Under,31.5,-125,caleb williams,29,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_completions,Andy Dalton,Over,20.5,-105,andy dalton,18,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_completions,Andy Dalton,Under,20.5,-125,andy dalton,18,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_completions,Caleb Williams,Over,20.5,-105,caleb williams,20,1
+2024,5,b727380f1b93218185ba53da28e0f6a7,Chicago Bears,Carolina Panthers,2024-10-06T17:00:00Z,player_pass_completions,Caleb Williams,Under,20.5,-125,caleb williams,20,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_attempts,Deshaun Watson,Over,33.5,100,deshaun watson,28,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_attempts,Deshaun Watson,Under,33.5,-130,deshaun watson,28,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_attempts,Jayden Daniels,Over,27.5,-125,jayden daniels,25,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_attempts,Jayden Daniels,Under,27.5,-105,jayden daniels,25,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_completions,Deshaun Watson,Over,20.5,-115,deshaun watson,15,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_completions,Deshaun Watson,Under,20.5,-115,deshaun watson,15,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_completions,Jayden Daniels,Over,18.5,-130,jayden daniels,14,1
+2024,5,43f21c8e455914cc71d00ca0001ae85b,Washington Commanders,Cleveland Browns,2024-10-06T17:00:00Z,player_pass_completions,Jayden Daniels,Under,18.5,100,jayden daniels,14,1
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_attempts,Joe Flacco,Over,34.5,-105,joe flacco,44,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_attempts,Joe Flacco,Under,34.5,-125,joe flacco,44,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_attempts,Trevor Lawrence,Over,33.5,-115,trevor lawrence,34,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_attempts,Trevor Lawrence,Under,33.5,-115,trevor lawrence,34,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_completions,Joe Flacco,Over,22.5,-115,joe flacco,33,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_completions,Joe Flacco,Under,22.5,-115,joe flacco,33,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_completions,Trevor Lawrence,Over,21.5,-105,trevor lawrence,28,0
+2024,5,dba45197b1cd2dbafe7f83ebffd2be90,Jacksonville Jaguars,Indianapolis Colts,2024-10-06T17:00:00Z,player_pass_completions,Trevor Lawrence,Under,21.5,-125,trevor lawrence,28,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_attempts,Jacoby Brissett,Over,27.5,-105,jacoby brissett,34,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_attempts,Jacoby Brissett,Under,27.5,-125,jacoby brissett,34,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_attempts,Tyler Huntley,Over,26.5,100,tyler huntley,31,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_attempts,Tyler Huntley,Under,26.5,-130,tyler huntley,31,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_completions,Jacoby Brissett,Over,16.5,-115,jacoby brissett,18,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_completions,Jacoby Brissett,Under,16.5,-115,jacoby brissett,18,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_completions,Tyler Huntley,Over,16.5,-105,tyler huntley,18,0
+2024,5,5cb3b58ed90ecfac2acac9115e08c017,New England Patriots,Miami Dolphins,2024-10-06T17:00:00Z,player_pass_completions,Tyler Huntley,Under,16.5,-125,tyler huntley,18,0
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_attempts,Brock Purdy,Over,30.5,-110,brock purdy,35,0
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_attempts,Brock Purdy,Under,30.5,-120,brock purdy,35,0
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_attempts,Kyler Murray,Over,32.5,-115,kyler murray,30,1
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_attempts,Kyler Murray,Under,32.5,-115,kyler murray,30,1
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_completions,Brock Purdy,Over,21.5,-105,brock purdy,19,1
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_completions,Brock Purdy,Under,21.5,-125,brock purdy,19,1
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_completions,Kyler Murray,Over,21.5,-110,kyler murray,19,1
+2024,5,a0877d6a0f0a97e5790884008b9974c9,San Francisco 49ers,Arizona Cardinals,2024-10-06T20:05:00Z,player_pass_completions,Kyler Murray,Under,21.5,-120,kyler murray,19,1
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_attempts,Bo Nix,Over,29.5,-120,bo nix,27,1
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_attempts,Bo Nix,Under,29.5,-110,bo nix,27,1
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_attempts,Gardner Minshew,Over,29.5,-110,gardner minshew,17,1
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_attempts,Gardner Minshew,Under,29.5,-120,gardner minshew,17,1
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_completions,Bo Nix,Over,18.5,-105,bo nix,19,0
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_completions,Bo Nix,Under,18.5,-125,bo nix,19,0
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_completions,Gardner Minshew,Over,18.5,-120,gardner minshew,12,1
+2024,5,9a9219cd7180fe6481e6bd9e460a7622,Denver Broncos,Las Vegas Raiders,2024-10-06T20:05:00Z,player_pass_completions,Gardner Minshew,Under,18.5,-110,gardner minshew,12,1
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_attempts,Jordan Love,Over,33.5,-130,jordan love,26,1
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_attempts,Jordan Love,Under,33.5,100,jordan love,26,1
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_attempts,Matthew Stafford,Over,32.5,-125,matthew stafford,45,0
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_attempts,Matthew Stafford,Under,32.5,-105,matthew stafford,45,0
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_completions,Jordan Love,Over,22.5,-115,jordan love,15,1
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_completions,Jordan Love,Under,22.5,-115,jordan love,15,1
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_completions,Matthew Stafford,Over,21.5,-120,matthew stafford,29,0
+2024,5,f555a965152f8896b1cf418205724508,Los Angeles Rams,Green Bay Packers,2024-10-06T20:25:00Z,player_pass_completions,Matthew Stafford,Under,21.5,-110,matthew stafford,29,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_attempts,Daniel Jones,Over,30.5,-125,daniel jones,34,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_attempts,Daniel Jones,Under,30.5,-105,daniel jones,34,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_attempts,Geno Smith,Over,34.5,105,geno smith,40,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_attempts,Geno Smith,Under,34.5,-135,geno smith,40,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_completions,Daniel Jones,Over,19.5,-110,daniel jones,23,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_completions,Daniel Jones,Under,19.5,-120,daniel jones,23,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_completions,Geno Smith,Over,23.5,-130,geno smith,28,0
+2024,5,777e65cf50b4517465cea9ac9d686227,Seattle Seahawks,New York Giants,2024-10-06T20:25:00Z,player_pass_completions,Geno Smith,Under,23.5,100,geno smith,28,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_attempts,Dak Prescott,Over,34.5,-110,dak prescott,42,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_attempts,Dak Prescott,Under,34.5,-120,dak prescott,42,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_attempts,Justin Fields,Over,25.5,-130,justin fields,27,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_attempts,Justin Fields,Under,25.5,100,justin fields,27,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_completions,Dak Prescott,Over,22.5,-115,dak prescott,29,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_completions,Dak Prescott,Under,22.5,-115,dak prescott,29,0
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_completions,Justin Fields,Over,17.5,100,justin fields,15,1
+2024,5,504a7b09264059083346ab086141da30,Pittsburgh Steelers,Dallas Cowboys,2024-10-07T00:20:00Z,player_pass_completions,Justin Fields,Under,17.5,-130,justin fields,15,1
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_attempts,Derek Carr,Over,31.5,-110,derek carr,28,1
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_attempts,Derek Carr,Under,31.5,-120,derek carr,28,1
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_attempts,Patrick Mahomes,Over,33.5,-120,patrick mahomes,39,0
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_attempts,Patrick Mahomes,Under,33.5,-110,patrick mahomes,39,0
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_completions,Derek Carr,Over,20.5,-110,derek carr,18,1
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_completions,Derek Carr,Under,20.5,-120,derek carr,18,1
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_completions,Patrick Mahomes,Over,22.5,-120,patrick mahomes,28,0
+2024,5,5e0d59f75b7f9056461e2970aca2a6cb,Kansas City Chiefs,New Orleans Saints,2024-10-08T00:15:00Z,player_pass_completions,Patrick Mahomes,Under,22.5,-110,patrick mahomes,28,0
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_attempts,Brock Purdy,Over,30.5,-115,brock purdy,35,0
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_attempts,Brock Purdy,Under,30.5,-115,brock purdy,35,0
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_attempts,Geno Smith,Over,34.5,-110,geno smith,40,0
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_attempts,Geno Smith,Under,34.5,-120,geno smith,40,0
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_completions,Brock Purdy,Over,20.5,105,brock purdy,19,1
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_completions,Brock Purdy,Under,20.5,-135,brock purdy,19,1
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_completions,Geno Smith,Over,23.5,-110,geno smith,28,0
+2024,5,0dac14546d6008893a8b3b6c417472a6,Seattle Seahawks,San Francisco 49ers,2024-10-11T00:15:00Z,player_pass_completions,Geno Smith,Under,23.5,-120,geno smith,28,0
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Caleb Williams,Over,33.5,-110,caleb williams,29,1
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Caleb Williams,Under,33.5,-120,caleb williams,29,1
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Trevor Lawrence,Over,33.5,-115,trevor lawrence,34,0
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Trevor Lawrence,Under,33.5,-115,trevor lawrence,34,0
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Caleb Williams,Over,21.5,-125,caleb williams,20,1
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Caleb Williams,Under,21.5,-105,caleb williams,20,1
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Trevor Lawrence,Over,20.5,-115,trevor lawrence,28,0
+2024,5,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Trevor Lawrence,Under,20.5,-115,trevor lawrence,28,0
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Jordan Love,Over,32.5,-135,jordan love,26,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Jordan Love,Under,32.5,105,jordan love,26,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Kyler Murray,Over,31.5,-105,kyler murray,30,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Kyler Murray,Under,31.5,-125,kyler murray,30,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Jordan Love,Over,22.5,100,jordan love,15,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Jordan Love,Under,22.5,-130,jordan love,15,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Kyler Murray,Over,20.5,-110,kyler murray,19,1
+2024,5,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Kyler Murray,Under,20.5,-120,kyler murray,19,1
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Jayden Daniels,Over,31.5,105,jayden daniels,25,1
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Jayden Daniels,Under,31.5,-135,jayden daniels,25,1
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Lamar Jackson,Over,29.5,-105,lamar jackson,42,0
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Lamar Jackson,Under,29.5,-125,lamar jackson,42,0
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Jayden Daniels,Over,20.5,-110,jayden daniels,14,1
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Jayden Daniels,Under,20.5,-120,jayden daniels,14,1
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Lamar Jackson,Over,19.5,-120,lamar jackson,26,0
+2024,5,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Lamar Jackson,Under,19.5,-110,lamar jackson,26,0
+2024,5,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_attempts,Deshaun Watson,Over,33.5,-110,deshaun watson,28,1
+2024,5,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_attempts,Deshaun Watson,Under,33.5,-120,deshaun watson,28,1
+2024,5,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_completions,Deshaun Watson,Over,19.5,-105,deshaun watson,15,1
+2024,5,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_completions,Deshaun Watson,Under,19.5,-125,deshaun watson,15,1
+2024,5,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_attempts,C.J. Stroud,Over,31.5,-120,cj stroud,38,0
+2024,5,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_attempts,C.J. Stroud,Under,31.5,-110,cj stroud,38,0
+2024,5,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_completions,C.J. Stroud,Over,21.5,-125,cj stroud,28,0
+2024,5,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_completions,C.J. Stroud,Under,21.5,-105,cj stroud,28,0
+2024,5,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_attempts,Bo Nix,Over,29.5,-115,bo nix,27,1
+2024,5,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_attempts,Bo Nix,Under,29.5,-115,bo nix,27,1
+2024,5,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_completions,Bo Nix,Over,18.5,-115,bo nix,19,0
+2024,5,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_completions,Bo Nix,Under,18.5,-115,bo nix,19,0
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Aidan O'Connell,Over,28.5,-120,aidan o'connell,20,1
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Aidan O'Connell,Under,28.5,-110,aidan o'connell,20,1
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Justin Fields,Over,25.5,-125,justin fields,27,0
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Justin Fields,Under,25.5,-105,justin fields,27,0
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Aidan O'Connell,Over,18.5,-110,aidan o'connell,10,1
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Aidan O'Connell,Under,18.5,-120,aidan o'connell,10,1
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Justin Fields,Over,17.5,105,justin fields,15,1
+2024,5,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Justin Fields,Under,17.5,-135,justin fields,15,1
+2024,5,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_attempts,Dak Prescott,Over,38.5,-110,dak prescott,42,0
+2024,5,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_attempts,Dak Prescott,Under,38.5,-120,dak prescott,42,0
+2024,5,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_completions,Dak Prescott,Over,25.5,-110,dak prescott,29,0
+2024,5,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_completions,Dak Prescott,Under,25.5,-120,dak prescott,29,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Daniel Jones,Over,31.5,-135,daniel jones,34,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Daniel Jones,Under,31.5,105,daniel jones,34,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Joe Burrow,Over,35.5,-105,joe burrow,39,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Joe Burrow,Under,35.5,-125,joe burrow,39,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Daniel Jones,Over,21.5,-110,daniel jones,23,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Daniel Jones,Under,21.5,-120,daniel jones,23,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Joe Burrow,Over,24.5,-110,joe burrow,30,0
+2024,5,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Joe Burrow,Under,24.5,-120,joe burrow,30,0
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Aaron Rodgers,Over,33.5,100,aaron rodgers,54,0
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Aaron Rodgers,Under,33.5,-130,aaron rodgers,54,0
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Josh Allen,Over,30.5,-110,josh allen,30,1
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Josh Allen,Under,30.5,-120,josh allen,30,1
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Aaron Rodgers,Over,21.5,-110,aaron rodgers,29,0
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Aaron Rodgers,Under,21.5,-120,aaron rodgers,29,0
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Josh Allen,Over,18.5,-115,josh allen,9,1
+2024,5,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Josh Allen,Under,18.5,-115,josh allen,9,1
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Caleb Williams,Over,33.5,-110,caleb williams,29,1
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Caleb Williams,Under,33.5,-120,caleb williams,29,1
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Trevor Lawrence,Over,33.5,-115,trevor lawrence,35,0
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_attempts,Trevor Lawrence,Under,33.5,-115,trevor lawrence,35,0
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Caleb Williams,Over,21.5,-125,caleb williams,23,0
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Caleb Williams,Under,21.5,-105,caleb williams,23,0
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Trevor Lawrence,Over,20.5,-115,trevor lawrence,23,0
+2024,6,c1bcc8bbec33008ae587584b1b3de2d0,Chicago Bears,Jacksonville Jaguars,2024-10-13T13:30:00Z,player_pass_completions,Trevor Lawrence,Under,20.5,-115,trevor lawrence,23,0
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Jordan Love,Over,32.5,-135,jordan love,32,1
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Jordan Love,Under,32.5,105,jordan love,32,1
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Kyler Murray,Over,31.5,-105,kyler murray,32,0
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_attempts,Kyler Murray,Under,31.5,-125,kyler murray,32,0
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Jordan Love,Over,22.5,100,jordan love,22,1
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Jordan Love,Under,22.5,-130,jordan love,22,1
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Kyler Murray,Over,20.5,-110,kyler murray,22,0
+2024,6,fb08594af963cff8fae2f93b2e0f4269,Green Bay Packers,Arizona Cardinals,2024-10-13T17:00:00Z,player_pass_completions,Kyler Murray,Under,20.5,-120,kyler murray,22,0
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Jayden Daniels,Over,31.5,105,jayden daniels,35,0
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Jayden Daniels,Under,31.5,-135,jayden daniels,35,0
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Lamar Jackson,Over,29.5,-105,lamar jackson,26,1
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_attempts,Lamar Jackson,Under,29.5,-125,lamar jackson,26,1
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Jayden Daniels,Over,20.5,-110,jayden daniels,24,0
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Jayden Daniels,Under,20.5,-120,jayden daniels,24,0
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Lamar Jackson,Over,19.5,-120,lamar jackson,20,0
+2024,6,c3b700ee54cf3cb44de965e6cfcb19f9,Baltimore Ravens,Washington Commanders,2024-10-13T17:00:00Z,player_pass_completions,Lamar Jackson,Under,19.5,-110,lamar jackson,20,0
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_attempts,Deshaun Watson,Over,33.5,-110,deshaun watson,23,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_attempts,Deshaun Watson,Under,33.5,-120,deshaun watson,23,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_attempts,Jalen Hurts,Over,29.5,-125,jalen hurts,25,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_attempts,Jalen Hurts,Under,29.5,-105,jalen hurts,25,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_completions,Deshaun Watson,Over,19.5,-105,deshaun watson,16,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_completions,Deshaun Watson,Under,19.5,-125,deshaun watson,16,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_completions,Jalen Hurts,Over,19.5,-120,jalen hurts,16,1
+2024,6,8bd202ca7bacf3396a1b774f12de0fab,Philadelphia Eagles,Cleveland Browns,2024-10-13T17:00:00Z,player_pass_completions,Jalen Hurts,Under,19.5,-110,jalen hurts,16,1
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_attempts,C.J. Stroud,Over,31.5,-120,cj stroud,31,1
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_attempts,C.J. Stroud,Under,31.5,-110,cj stroud,31,1
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_attempts,Drake Maye,Over,28.5,-115,drake maye,33,0
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_attempts,Drake Maye,Under,28.5,-115,drake maye,33,0
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_completions,C.J. Stroud,Over,21.5,-125,cj stroud,20,1
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_completions,C.J. Stroud,Under,21.5,-105,cj stroud,20,1
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_completions,Drake Maye,Over,17.5,105,drake maye,20,0
+2024,6,febb2d674e85a32c8636ff900fffb5d2,New England Patriots,Houston Texans,2024-10-13T17:00:00Z,player_pass_completions,Drake Maye,Under,17.5,-135,drake maye,20,0
+2024,6,bdc58f80a5a9b4515ee631fddc63a2c8,Tennessee Titans,Indianapolis Colts,2024-10-13T17:00:00Z,player_pass_attempts,Will Levis,Over,29.5,-105,will levis,27,1
+2024,6,bdc58f80a5a9b4515ee631fddc63a2c8,Tennessee Titans,Indianapolis Colts,2024-10-13T17:00:00Z,player_pass_attempts,Will Levis,Under,29.5,-125,will levis,27,1
+2024,6,bdc58f80a5a9b4515ee631fddc63a2c8,Tennessee Titans,Indianapolis Colts,2024-10-13T17:00:00Z,player_pass_completions,Will Levis,Over,18.5,-130,will levis,16,1
+2024,6,bdc58f80a5a9b4515ee631fddc63a2c8,Tennessee Titans,Indianapolis Colts,2024-10-13T17:00:00Z,player_pass_completions,Will Levis,Under,18.5,100,will levis,16,1
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_attempts,Baker Mayfield,Over,32.5,-120,baker mayfield,36,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_attempts,Baker Mayfield,Under,32.5,-110,baker mayfield,36,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_attempts,Spencer Rattler,Over,29.5,-115,spencer rattler,40,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_attempts,Spencer Rattler,Under,29.5,-115,spencer rattler,40,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_completions,Baker Mayfield,Over,21.5,-115,baker mayfield,24,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_completions,Baker Mayfield,Under,21.5,-115,baker mayfield,24,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_completions,Spencer Rattler,Over,18.5,-115,spencer rattler,22,0
+2024,6,ba1097486d1edb57bfe2bc22f5c4573e,New Orleans Saints,Tampa Bay Buccaneers,2024-10-13T17:00:00Z,player_pass_completions,Spencer Rattler,Under,18.5,-115,spencer rattler,22,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_attempts,Bo Nix,Over,29.5,-115,bo nix,33,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_attempts,Bo Nix,Under,29.5,-115,bo nix,33,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_attempts,Justin Herbert,Over,28.5,-110,justin herbert,34,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_attempts,Justin Herbert,Under,28.5,-120,justin herbert,34,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_completions,Bo Nix,Over,18.5,-115,bo nix,19,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_completions,Bo Nix,Under,18.5,-115,bo nix,19,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_completions,Justin Herbert,Over,18.5,100,justin herbert,21,0
+2024,6,76fbc0191f917329bad82f76a9a22a2e,Denver Broncos,Los Angeles Chargers,2024-10-13T20:05:00Z,player_pass_completions,Justin Herbert,Under,18.5,-130,justin herbert,21,0
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Aidan O'Connell,Over,28.5,-120,aidan o'connell,40,0
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Aidan O'Connell,Under,28.5,-110,aidan o'connell,40,0
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Justin Fields,Over,25.5,-125,justin fields,24,1
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_attempts,Justin Fields,Under,25.5,-105,justin fields,24,1
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Aidan O'Connell,Over,18.5,-110,aidan o'connell,27,0
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Aidan O'Connell,Under,18.5,-120,aidan o'connell,27,0
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Justin Fields,Over,17.5,105,justin fields,14,1
+2024,6,81df9672b5e68bc84e98641d5de2505b,Las Vegas Raiders,Pittsburgh Steelers,2024-10-13T20:05:00Z,player_pass_completions,Justin Fields,Under,17.5,-135,justin fields,14,1
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_attempts,Andy Dalton,Over,33.5,-125,andy dalton,38,0
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_attempts,Andy Dalton,Under,33.5,-105,andy dalton,38,0
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_attempts,Kirk Cousins,Over,33.5,-110,kirk cousins,30,1
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_attempts,Kirk Cousins,Under,33.5,-120,kirk cousins,30,1
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_completions,Andy Dalton,Over,22.5,100,andy dalton,26,0
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_completions,Andy Dalton,Under,22.5,-130,andy dalton,26,0
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_completions,Kirk Cousins,Over,22.5,-120,kirk cousins,19,1
+2024,6,67c389265b00a40407a23054e45d8e45,Carolina Panthers,Atlanta Falcons,2024-10-13T20:25:00Z,player_pass_completions,Kirk Cousins,Under,22.5,-110,kirk cousins,19,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_attempts,Dak Prescott,Over,38.5,-110,dak prescott,33,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_attempts,Dak Prescott,Under,38.5,-120,dak prescott,33,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_attempts,Jared Goff,Over,33.5,-110,jared goff,25,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_attempts,Jared Goff,Under,33.5,-120,jared goff,25,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_completions,Dak Prescott,Over,25.5,-110,dak prescott,17,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_completions,Dak Prescott,Under,25.5,-120,dak prescott,17,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_completions,Jared Goff,Over,23.5,105,jared goff,18,1
+2024,6,d4d2902446e120ea6f1afafdc0b3d55d,Dallas Cowboys,Detroit Lions,2024-10-13T20:25:00Z,player_pass_completions,Jared Goff,Under,23.5,-135,jared goff,18,1
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Daniel Jones,Over,31.5,-135,daniel jones,41,0
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Daniel Jones,Under,31.5,105,daniel jones,41,0
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Joe Burrow,Over,35.5,-105,joe burrow,28,1
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_attempts,Joe Burrow,Under,35.5,-125,joe burrow,28,1
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Daniel Jones,Over,21.5,-110,daniel jones,22,0
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Daniel Jones,Under,21.5,-120,daniel jones,22,0
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Joe Burrow,Over,24.5,-110,joe burrow,19,1
+2024,6,245c50e05349966d749c7e3f05699647,New York Giants,Cincinnati Bengals,2024-10-14T00:20:00Z,player_pass_completions,Joe Burrow,Under,24.5,-120,joe burrow,19,1
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Aaron Rodgers,Over,33.5,100,aaron rodgers,35,0
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Aaron Rodgers,Under,33.5,-130,aaron rodgers,35,0
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Josh Allen,Over,30.5,-110,josh allen,25,1
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_attempts,Josh Allen,Under,30.5,-120,josh allen,25,1
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Aaron Rodgers,Over,21.5,-110,aaron rodgers,23,0
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Aaron Rodgers,Under,21.5,-120,aaron rodgers,23,0
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Josh Allen,Over,18.5,-115,josh allen,19,0
+2024,6,79b5655b7342104f50bc735a5d838b71,New York Jets,Buffalo Bills,2024-10-15T00:15:00Z,player_pass_completions,Josh Allen,Under,18.5,-115,josh allen,19,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_attempts,Bo Nix,Over,31.5,-110,bo nix,33,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_attempts,Bo Nix,Under,31.5,-120,bo nix,33,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_attempts,Spencer Rattler,Over,29.5,-110,spencer rattler,40,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_attempts,Spencer Rattler,Under,29.5,-120,spencer rattler,40,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_completions,Bo Nix,Over,18.5,-120,bo nix,19,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_completions,Bo Nix,Under,18.5,-110,bo nix,19,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_completions,Spencer Rattler,Over,18.5,100,spencer rattler,22,0
+2024,6,cc1d6e0125f5444f70609ce9e0829fa9,New Orleans Saints,Denver Broncos,2024-10-18T00:15:00Z,player_pass_completions,Spencer Rattler,Under,18.5,-130,spencer rattler,22,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_attempts,Drake Maye,Over,30.5,-120,drake maye,33,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_attempts,Drake Maye,Under,30.5,-110,drake maye,33,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_attempts,Trevor Lawrence,Over,33.5,-110,trevor lawrence,35,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_attempts,Trevor Lawrence,Under,33.5,-120,trevor lawrence,35,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_completions,Drake Maye,Over,18.5,-130,drake maye,20,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_completions,Drake Maye,Under,18.5,100,drake maye,20,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_completions,Trevor Lawrence,Over,20.5,-135,trevor lawrence,23,0
+2024,6,964d089b9bbbf792a705da3b3f355312,Jacksonville Jaguars,New England Patriots,2024-10-20T13:30:00Z,player_pass_completions,Trevor Lawrence,Under,20.5,105,trevor lawrence,23,0
+2024,6,4084732a953c2a15d46aca93da86fe87,Buffalo Bills,Tennessee Titans,2024-10-20T17:00:00Z,player_pass_attempts,Josh Allen,Over,28.5,-110,josh allen,25,1
+2024,6,4084732a953c2a15d46aca93da86fe87,Buffalo Bills,Tennessee Titans,2024-10-20T17:00:00Z,player_pass_attempts,Josh Allen,Under,28.5,-120,josh allen,25,1
+2024,6,4084732a953c2a15d46aca93da86fe87,Buffalo Bills,Tennessee Titans,2024-10-20T17:00:00Z,player_pass_completions,Josh Allen,Over,18.5,-125,josh allen,19,0
+2024,6,4084732a953c2a15d46aca93da86fe87,Buffalo Bills,Tennessee Titans,2024-10-20T17:00:00Z,player_pass_completions,Josh Allen,Under,18.5,-105,josh allen,19,0
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_attempts,Deshaun Watson,Over,30.5,-110,deshaun watson,23,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_attempts,Deshaun Watson,Under,30.5,-120,deshaun watson,23,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_attempts,Joe Burrow,Over,34.5,-105,joe burrow,28,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_attempts,Joe Burrow,Under,34.5,-125,joe burrow,28,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_completions,Deshaun Watson,Over,18.5,-105,deshaun watson,16,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_completions,Deshaun Watson,Under,18.5,-125,deshaun watson,16,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_completions,Joe Burrow,Over,22.5,-120,joe burrow,19,1
+2024,6,63e9b5302666e36b47431100bcb22973,Cleveland Browns,Cincinnati Bengals,2024-10-20T17:00:00Z,player_pass_completions,Joe Burrow,Under,22.5,-110,joe burrow,19,1
+2024,6,497242e77fc7f2e1fa4cc70a2bd37b20,Minnesota Vikings,Detroit Lions,2024-10-20T17:00:00Z,player_pass_attempts,Jared Goff,Over,35.5,-120,jared goff,25,1
+2024,6,497242e77fc7f2e1fa4cc70a2bd37b20,Minnesota Vikings,Detroit Lions,2024-10-20T17:00:00Z,player_pass_attempts,Jared Goff,Under,35.5,-110,jared goff,25,1
+2024,6,497242e77fc7f2e1fa4cc70a2bd37b20,Minnesota Vikings,Detroit Lions,2024-10-20T17:00:00Z,player_pass_completions,Jared Goff,Over,23.5,-125,jared goff,18,1
+2024,6,497242e77fc7f2e1fa4cc70a2bd37b20,Minnesota Vikings,Detroit Lions,2024-10-20T17:00:00Z,player_pass_completions,Jared Goff,Under,23.5,-105,jared goff,18,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_attempts,C.J. Stroud,Over,35.5,-115,cj stroud,31,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_attempts,C.J. Stroud,Under,35.5,-115,cj stroud,31,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_attempts,Jordan Love,Over,33.5,-115,jordan love,32,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_attempts,Jordan Love,Under,33.5,-115,jordan love,32,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_completions,C.J. Stroud,Over,23.5,-120,cj stroud,20,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_completions,C.J. Stroud,Under,23.5,-110,cj stroud,20,1
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_completions,Jordan Love,Over,21.5,-115,jordan love,22,0
+2024,6,15077c31238fbc767b91e73f8068f2a2,Green Bay Packers,Houston Texans,2024-10-20T17:00:00Z,player_pass_completions,Jordan Love,Under,21.5,-115,jordan love,22,0
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_attempts,Daniel Jones,Over,33.5,-110,daniel jones,41,0
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_attempts,Daniel Jones,Under,33.5,-120,daniel jones,41,0
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_attempts,Jalen Hurts,Over,28.5,-125,jalen hurts,25,1
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_attempts,Jalen Hurts,Under,28.5,-105,jalen hurts,25,1
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_completions,Daniel Jones,Over,21.5,-120,daniel jones,22,0
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_completions,Daniel Jones,Under,21.5,-110,daniel jones,22,0
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_completions,Jalen Hurts,Over,19.5,-105,jalen hurts,16,1
+2024,6,a60ecb3c882d09f08b6e194e858aec42,New York Giants,Philadelphia Eagles,2024-10-20T17:00:00Z,player_pass_completions,Jalen Hurts,Under,19.5,-125,jalen hurts,16,1
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_attempts,Andy Dalton,Over,35.5,-105,andy dalton,38,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_attempts,Andy Dalton,Under,35.5,-125,andy dalton,38,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_attempts,Jayden Daniels,Over,28.5,-120,jayden daniels,35,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_attempts,Jayden Daniels,Under,28.5,-110,jayden daniels,35,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_completions,Andy Dalton,Over,22.5,-120,andy dalton,26,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_completions,Andy Dalton,Under,22.5,-110,andy dalton,26,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_completions,Jayden Daniels,Over,20.5,-105,jayden daniels,24,0
+2024,6,205e5260b14ecb55558ddb85f419edaf,Washington Commanders,Carolina Panthers,2024-10-20T20:05:00Z,player_pass_completions,Jayden Daniels,Under,20.5,-125,jayden daniels,24,0
+2024,6,2bc06cb4fb03e96b39448675c1943487,Los Angeles Rams,Las Vegas Raiders,2024-10-20T20:05:00Z,player_pass_attempts,Aidan O'Connell,Over,33.5,-120,aidan o'connell,40,0
+2024,6,2bc06cb4fb03e96b39448675c1943487,Los Angeles Rams,Las Vegas Raiders,2024-10-20T20:05:00Z,player_pass_attempts,Aidan O'Connell,Under,33.5,-110,aidan o'connell,40,0
+2024,6,2bc06cb4fb03e96b39448675c1943487,Los Angeles Rams,Las Vegas Raiders,2024-10-20T20:05:00Z,player_pass_completions,Aidan O'Connell,Over,21.5,-110,aidan o'connell,27,0
+2024,6,2bc06cb4fb03e96b39448675c1943487,Los Angeles Rams,Las Vegas Raiders,2024-10-20T20:05:00Z,player_pass_completions,Aidan O'Connell,Under,21.5,-120,aidan o'connell,27,0
+2024,6,a0b429ad5863438f4550ced4f368d2e2,San Francisco 49ers,Kansas City Chiefs,2024-10-20T20:25:00Z,player_pass_attempts,Brock Purdy,Over,31.5,-125,brock purdy,28,1
+2024,6,a0b429ad5863438f4550ced4f368d2e2,San Francisco 49ers,Kansas City Chiefs,2024-10-20T20:25:00Z,player_pass_attempts,Brock Purdy,Under,31.5,-105,brock purdy,28,1
+2024,6,a0b429ad5863438f4550ced4f368d2e2,San Francisco 49ers,Kansas City Chiefs,2024-10-20T20:25:00Z,player_pass_completions,Brock Purdy,Over,19.5,-120,brock purdy,18,1
+2024,6,a0b429ad5863438f4550ced4f368d2e2,San Francisco 49ers,Kansas City Chiefs,2024-10-20T20:25:00Z,player_pass_completions,Brock Purdy,Under,19.5,-110,brock purdy,18,1
+2024,6,6103604599da91e8a44ce683292242ec,Pittsburgh Steelers,New York Jets,2024-10-21T00:20:00Z,player_pass_attempts,Aaron Rodgers,Over,32.5,-120,aaron rodgers,35,0
+2024,6,6103604599da91e8a44ce683292242ec,Pittsburgh Steelers,New York Jets,2024-10-21T00:20:00Z,player_pass_attempts,Aaron Rodgers,Under,32.5,-110,aaron rodgers,35,0
+2024,6,6103604599da91e8a44ce683292242ec,Pittsburgh Steelers,New York Jets,2024-10-21T00:20:00Z,player_pass_completions,Aaron Rodgers,Over,21.5,-105,aaron rodgers,23,0
+2024,6,6103604599da91e8a44ce683292242ec,Pittsburgh Steelers,New York Jets,2024-10-21T00:20:00Z,player_pass_completions,Aaron Rodgers,Under,21.5,-125,aaron rodgers,23,0
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_attempts,Baker Mayfield,Over,36.5,-105,baker mayfield,36,1
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_attempts,Baker Mayfield,Under,36.5,-125,baker mayfield,36,1
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_attempts,Lamar Jackson,Over,28.5,-120,lamar jackson,26,1
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_attempts,Lamar Jackson,Under,28.5,-110,lamar jackson,26,1
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_completions,Baker Mayfield,Over,24.5,105,baker mayfield,24,1
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_completions,Baker Mayfield,Under,24.5,-135,baker mayfield,24,1
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_completions,Lamar Jackson,Over,19.5,-105,lamar jackson,20,0
+2024,6,269f082de1c875831ceb05c8e0fa6e9e,Tampa Bay Buccaneers,Baltimore Ravens,2024-10-22T00:15:00Z,player_pass_completions,Lamar Jackson,Under,19.5,-125,lamar jackson,20,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_attempts,Justin Herbert,Over,27.5,-125,justin herbert,34,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_attempts,Justin Herbert,Under,27.5,-105,justin herbert,34,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_attempts,Kyler Murray,Over,31.5,100,kyler murray,32,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_attempts,Kyler Murray,Under,31.5,-130,kyler murray,32,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_completions,Justin Herbert,Over,19.5,-115,justin herbert,21,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_completions,Justin Herbert,Under,19.5,-115,justin herbert,21,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_completions,Kyler Murray,Over,21.5,100,kyler murray,22,0
+2024,6,c38d6ebf21ca6194da4757c090eac3a2,Arizona Cardinals,Los Angeles Chargers,2024-10-22T01:00:00Z,player_pass_completions,Kyler Murray,Under,21.5,-130,kyler murray,22,0

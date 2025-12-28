@@ -55,29 +55,19 @@ class QBStarterDetector:
         self._cache: Dict[str, QBStarterInfo] = {}
 
     def _load_depth_charts(self) -> pd.DataFrame:
-        """Load depth chart data."""
+        """Load depth chart data using canonical loader."""
         if self._depth_charts is not None:
             return self._depth_charts
 
-        # Try 2025 depth charts first
-        path_2025 = self.data_dir / "depth_charts_2025.parquet"
-        path_main = self.data_dir / "depth_charts.parquet"
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        df = get_depth_charts()
 
-        if path_2025.exists():
-            df = pd.read_parquet(path_2025)
-            # Filter to QBs
-            if 'pos_abb' in df.columns:
-                df = df[df['pos_abb'] == 'QB'].copy()
-            elif 'position' in df.columns:
-                df = df[df['position'] == 'QB'].copy()
-            self._depth_charts = df
-        elif path_main.exists():
-            df = pd.read_parquet(path_main)
-            if 'position' in df.columns:
-                df = df[df['position'] == 'QB'].copy()
-            self._depth_charts = df
-        else:
-            self._depth_charts = pd.DataFrame()
+        # Filter to QBs
+        if 'pos_abb' in df.columns:
+            df = df[df['pos_abb'] == 'QB'].copy()
+        elif 'position' in df.columns:
+            df = df[df['position'] == 'QB'].copy()
+        self._depth_charts = df
 
         return self._depth_charts
 

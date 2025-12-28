@@ -231,3 +231,13 @@ cat(sprintf("  pbp = pd.read_parquet('data/nflverse/pbp.%s')\n", args$format))
 cat(sprintf("  ngs_receiving = pd.read_parquet('data/nflverse/ngs_receiving.%s')\n", args$format))
 cat(sprintf("  ff_opportunity = pd.read_parquet('data/nflverse/ff_opportunity.%s')\n", args$format))
 cat("================================================================================\n")
+
+# 15. Fetch Team Descriptions (logos, colors)
+cat("\n15. Fetching Team Descriptions (logos, colors)...\n")
+tryCatch({
+  teams <- load_teams(current = TRUE)
+  cat(sprintf("   Loaded %s team records\n", format(nrow(teams), big.mark = ",")))
+  save_data(teams, "teams", args$format)
+}, error = function(e) {
+  cat(sprintf("   ⚠️  Warning: Could not load teams: %s\n", e$message))
+})

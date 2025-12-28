@@ -1,0 +1,8 @@
+{
+  "snapshot_path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_133720/inputs/players.parquet",
+  "saved_at": "2025-12-28T13:37:20.805342",
+  "record_count": 2852,
+  "gsis_coverage": 760,
+  "unique_teams": 33,
+  "mode": "online"
+}

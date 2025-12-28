@@ -36,10 +36,15 @@ class StatsAdapter(ABC):
         Returns:
             DataFrame in canonical format with columns:
                 player_id, player_name, position, team, season, week,
-                passing_yards, passing_attempts, passing_completions, passing_tds, interceptions,
-                rushing_yards, rushing_attempts, rushing_tds,
+                passing_yards, attempts, completions, passing_tds, interceptions,
+                rushing_yards, carries, rushing_tds,
                 receptions, receiving_yards, receiving_tds, targets,
                 opponent (optional), game_id (optional), source
+
+            Note: Uses NFLverse column naming convention:
+                - `attempts` (not `passing_attempts`) for pass attempts
+                - `carries` (not `rushing_attempts`) for rush attempts
+                - `completions` (not `passing_completions`) for completions
         """
         pass
 
@@ -102,6 +107,7 @@ class StatsAdapter(ABC):
         Returns:
             DataFrame with all canonical columns
         """
+        # NFLverse column naming convention
         required_cols = {
             "player_id": str,
             "player_name": str,
@@ -110,12 +116,12 @@ class StatsAdapter(ABC):
             "season": int,
             "week": int,
             "passing_yards": float,
-            "passing_attempts": float,
-            "passing_completions": float,
+            "attempts": float,           # NFLverse uses 'attempts' not 'passing_attempts'
+            "completions": float,        # NFLverse uses 'completions' not 'passing_completions'
             "passing_tds": int,
             "interceptions": int,
             "rushing_yards": float,
-            "rushing_attempts": float,
+            "carries": float,            # NFLverse uses 'carries' not 'rushing_attempts'
             "rushing_tds": int,
             "receptions": int,
             "receiving_yards": float,

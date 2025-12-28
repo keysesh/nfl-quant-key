@@ -130,7 +130,7 @@ def _init_process_worker(seed_base: int):
     worker_seed = seed_base + (_process_worker_id % 1000)  # Unique seed per worker
 
     # Load predictors in this process (each process needs its own)
-    from nfl_quant.simulation.player_simulator import load_predictors
+    from nfl_quant.simulation.player_simulator import PlayerSimulator, load_predictors
     from nfl_quant.simulation.player_simulator_v4 import PlayerSimulatorV4
 
     usage_pred, efficiency_pred = load_predictors()
@@ -139,18 +139,30 @@ def _init_process_worker(seed_base: int):
     # Reduced from 50k to 30k for 40% speedup with <0.5% accuracy loss
     n_simulations = int(os.environ.get('NFL_QUANT_SIMULATIONS', 30000))
 
-    # Create simulator for this process
-    _process_simulator = PlayerSimulatorV4(
-        usage_predictor=usage_pred,
-        efficiency_predictor=efficiency_pred,
-        trials=n_simulations,
-        seed=worker_seed
-    )
+    # Get simulator version from environment (set by main process)
+    simulator_version = os.environ.get('NFL_QUANT_SIMULATOR_VERSION', 'v3')
+
+    # Create simulator for this process - MUST match main process version
+    if simulator_version == 'v4':
+        _process_simulator = PlayerSimulatorV4(
+            usage_predictor=usage_pred,
+            efficiency_predictor=efficiency_pred,
+            trials=n_simulations,
+            seed=worker_seed
+        )
+    else:
+        # V3: Legacy Normal distributions
+        _process_simulator = PlayerSimulator(
+            usage_predictor=usage_pred,
+            efficiency_predictor=efficiency_pred,
+            trials=n_simulations,
+            seed=worker_seed
+        )
 
     # Log initialization (will appear once per worker)
     import logging
     logging.getLogger(__name__).info(
-        f"   Worker {_process_worker_id} initialized with seed {worker_seed}"
+        f"   Worker {_process_worker_id} initialized ({simulator_version}) with seed {worker_seed}"
     )
 
 
@@ -380,6 +392,8 @@ def load_active_players_from_nflverse(week: int, season: int, trailing_stats: Di
     This is the CORRECT architecture: Generate predictions for ALL active players,
     then filter to players with odds during recommendation generation.
 
+    IMPORTANT: Filters out IR/Reserve players and those with no recent game activity.
+
     Args:
         week: Current week number
         season: Current season year
@@ -392,8 +406,57 @@ def load_active_players_from_nflverse(week: int, season: int, trailing_stats: Di
     if trailing_stats is None:
         trailing_stats = load_trailing_stats(week, season)
 
+    # ==========================================================================
+    # CRITICAL FIX (Dec 25, 2025): Filter out IR/Reserve players
+    # Load roster data to check player status
+    # ==========================================================================
+    inactive_statuses = {'RES', 'IR', 'PUP', 'SUS', 'EXE', 'INA', 'NFI', 'COVID', 'DNR'}
+    inactive_players = set()
+
+    roster_file = NFLVERSE_DATA_DIR / 'rosters.parquet'
+    if roster_file.exists():
+        try:
+            rosters = pd.read_parquet(roster_file)
+            # Filter to current season if season column exists
+            if 'season' in rosters.columns:
+                rosters = rosters[rosters['season'] == season]
+
+            # Get players with inactive status
+            if 'status' in rosters.columns:
+                inactive_roster = rosters[rosters['status'].isin(inactive_statuses)]
+                inactive_players = set(inactive_roster['full_name'].dropna().unique())
+                logger.info(f"   🚫 Found {len(inactive_players)} IR/Reserve players to exclude")
+        except Exception as e:
+            logger.warning(f"   ⚠️  Could not load roster status: {e}")
+
+    # ==========================================================================
+    # CRITICAL FIX (Dec 25, 2025): Filter out players with no recent game activity
+    # Players who haven't played in last 3 weeks are likely injured
+    # ==========================================================================
+    recent_weeks_required = 3  # Must have played in at least 1 of last 3 weeks
+    min_recent_week = max(1, week - recent_weeks_required)
+
+    # Load weekly stats to check recent activity
+    weekly_stats_file = NFLVERSE_DATA_DIR / 'weekly_stats.parquet'
+    recently_active_players = set()
+
+    if weekly_stats_file.exists():
+        try:
+            weekly_stats = pd.read_parquet(weekly_stats_file)
+            recent_stats = weekly_stats[
+                (weekly_stats['season'] == season) &
+                (weekly_stats['week'] >= min_recent_week) &
+                (weekly_stats['week'] < week)  # Don't include current week
+            ]
+            recently_active_players = set(recent_stats['player_name'].dropna().unique())
+            logger.info(f"   ✅ Found {len(recently_active_players)} players active in weeks {min_recent_week}-{week-1}")
+        except Exception as e:
+            logger.warning(f"   ⚠️  Could not check recent activity: {e}")
+
     # Extract all unique players from trailing stats
     players_list = []
+    excluded_ir = 0
+    excluded_inactive = 0
 
     for key, stats in trailing_stats.items():
         # Key format: "Player Name_week{week}"
@@ -404,12 +467,41 @@ def load_active_players_from_nflverse(week: int, season: int, trailing_stats: Di
 
         # Only include players who have played this season
         # (weeks_played > 0 means they have recent game data)
-        if position and weeks_played > 0:
-            players_list.append({
-                'player_name': player_name,
-                'team': team,
-                'position': position
-            })
+        if not (position and weeks_played > 0):
+            continue
+
+        # FILTER 1: Exclude IR/Reserve players
+        if player_name in inactive_players:
+            excluded_ir += 1
+            continue
+
+        # FILTER 2: Exclude players with no recent game activity
+        # Use abbreviated name format for matching (S.Barkley vs Saquon Barkley)
+        # Check if ANY variation of the name is in recently_active
+        name_parts = player_name.split()
+        if len(name_parts) >= 2:
+            # Try abbreviated format (first initial + last name)
+            abbrev_name = f"{name_parts[0][0]}.{name_parts[-1]}"
+            is_recent = (
+                player_name in recently_active_players or
+                abbrev_name in recently_active_players
+            )
+        else:
+            is_recent = player_name in recently_active_players
+
+        # For early season (week <= 3), skip this check
+        if week > recent_weeks_required and recently_active_players and not is_recent:
+            excluded_inactive += 1
+            continue
+
+        players_list.append({
+            'player_name': player_name,
+            'team': team,
+            'position': position
+        })
+
+    if excluded_ir > 0 or excluded_inactive > 0:
+        logger.info(f"   🚫 Excluded: {excluded_ir} IR/Reserve, {excluded_inactive} no recent activity")
 
     if not players_list:
         logger.warning("   ⚠️  No active players found in NFLverse trailing stats")
@@ -2365,6 +2457,9 @@ def generate_model_predictions(week: int, season: int = None, simulator_version:
     """
     if season is None:
         season = get_current_season()
+
+    # Set simulator version for worker processes (must be set before spawning)
+    os.environ['NFL_QUANT_SIMULATOR_VERSION'] = simulator_version
 
     logger.info("="*80)
     logger.info(f"GENERATING MODEL PREDICTIONS - WEEK {week} ({season} SEASON)")

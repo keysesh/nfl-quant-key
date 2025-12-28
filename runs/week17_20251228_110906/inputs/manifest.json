@@ -1,0 +1,98 @@
+{
+  "run_id": "week17_20251228_110906",
+  "created_at": "2025-12-28T11:09:07.391554",
+  "season": 2025,
+  "week": 17,
+  "phase": "inputs",
+  "snapshots": {
+    "players": {
+      "success": true,
+      "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/players.parquet",
+      "hash": "5fa7abdc1f30a954",
+      "record_count": 2852,
+      "gsis_coverage": 760,
+      "saved_at": "2025-12-28T11:09:07.036895"
+    },
+    "injuries": {
+      "success": true,
+      "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/injuries.parquet",
+      "hash": "1b2f6829f0c49454",
+      "record_count": 531,
+      "saved_at": "2025-12-28T11:09:07.350177"
+    },
+    "nflverse": {
+      "success": true,
+      "files": {
+        "pbp.parquet": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/pbp.parquet",
+          "hash": "e608e38050749f17",
+          "size_mb": 35.975131034851074,
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/nflverse/pbp.parquet"
+        },
+        "weekly_stats.parquet": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/weekly_stats.parquet",
+          "hash": "85112db674cd1657",
+          "size_mb": 1.2486276626586914,
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/nflverse/weekly_stats.parquet"
+        },
+        "snap_counts.parquet": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/snap_counts.parquet",
+          "hash": "54335c4719c30308",
+          "size_mb": 0.39087772369384766,
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/nflverse/snap_counts.parquet"
+        },
+        "depth_charts.parquet": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/depth_charts.parquet",
+          "hash": "7f5ea4e7003ae21e",
+          "size_mb": 1.524770736694336,
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/nflverse/depth_charts.parquet"
+        },
+        "rosters.parquet": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/rosters.parquet",
+          "hash": "9971e4d232275c30",
+          "size_mb": 0.7949914932250977,
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/nflverse/rosters.parquet"
+        },
+        "schedules.parquet": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/schedules.parquet",
+          "hash": "9ea88ec7c3056623",
+          "size_mb": 0.05777740478515625,
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/nflverse/schedules.parquet"
+        }
+      },
+      "count": 6,
+      "total": 6,
+      "missing_required": []
+    },
+    "odds": {
+      "success": true,
+      "files": {
+        "odds_player_props.csv": {
+          "success": false,
+          "error": "Source file not found: /Users/keyonnesession/Desktop/NFL QUANT/data/odds_player_props_week17.csv",
+          "required": false
+        },
+        "odds_game.csv": {
+          "success": true,
+          "path": "/Users/keyonnesession/Desktop/NFL QUANT/runs/week17_20251228_110906/inputs/odds_game.csv",
+          "hash": "e16ee4f331409eba",
+          "source": "/Users/keyonnesession/Desktop/NFL QUANT/data/odds_week17.csv"
+        }
+      },
+      "count": 1,
+      "total": 2
+    }
+  },
+  "warnings": [],
+  "resolver_available": true,
+  "injuries_available": true,
+  "nflverse_available": true,
+  "odds_available": true,
+  "status": "complete"
+}

@@ -401,14 +401,17 @@ def load_injury_data(week: int) -> Dict[str, Dict[str, Any]]:
     return injury_data
 
 
-def _load_team_depth_charts() -> Dict[str, Dict[str, str]]:
+def _load_team_depth_charts(week: int = 18, season: int = 2025) -> Dict[str, Dict[str, str]]:
     """
     Load team depth charts to identify WR1/2/3, RB1/2, TE1, QB1.
 
-    PRIORITY: Use official NFLverse depth chart data (pos_rank = actual depth chart position).
-    This is the most accurate source, updated weekly.
+    Uses the canonical depth chart loader which handles both 2024 and 2025 schemas.
 
     Uses module-level cache to avoid repeated file reads.
+
+    Args:
+        week: NFL week (for 2025+ schema derivation)
+        season: NFL season
 
     Returns:
         Dictionary mapping team to position depth chart
@@ -421,124 +424,59 @@ def _load_team_depth_charts() -> Dict[str, Dict[str, str]]:
 
     depth_charts = {}
 
-    # FIRST: Try to load official NFLverse depth chart data (MOST ACCURATE)
-    depth_chart_path = Path('data/nflverse/depth_charts_2025.parquet')
-    if depth_chart_path.exists():
-        try:
-            dc_df = pd.read_parquet(depth_chart_path)
+    try:
+        # Use canonical depth chart loader (handles 2024 vs 2025 schema)
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
 
-            # Use the latest depth chart (most recent dt)
-            if 'dt' in dc_df.columns:
-                latest_dt = dc_df['dt'].max()
-                dc_df = dc_df[dc_df['dt'] == latest_dt]
-                logger.info(f"Using official NFLverse depth charts (as of {latest_dt})")
+        # Load depth charts (strict validation - no partial coverage fallbacks)
+        dc_df = get_depth_charts(season=season, week=week)
 
-            # Build depth chart for each team
-            for team in dc_df['team'].dropna().unique():
-                team_dc_data = dc_df[dc_df['team'] == team]
-                team_dc = {}
+        logger.info(f"Loaded depth charts: {len(dc_df)} rows for {dc_df['team'].nunique()} teams")
 
-                # WRs - use pos_rank (actual depth chart position)
-                wrs = team_dc_data[team_dc_data['pos_abb'] == 'WR'].sort_values('pos_rank')
-                wr_names = wrs['player_name'].tolist()
-                if len(wr_names) >= 1:
-                    team_dc['wr1'] = wr_names[0]
-                if len(wr_names) >= 2:
-                    team_dc['wr2'] = wr_names[1]
-                if len(wr_names) >= 3:
-                    team_dc['wr3'] = wr_names[2]
+        # Build depth chart for each team
+        for team in dc_df['team'].dropna().unique():
+            team_dc_data = dc_df[dc_df['team'] == team]
+            team_dc = {}
 
-                # RBs
-                rbs = team_dc_data[team_dc_data['pos_abb'] == 'RB'].sort_values('pos_rank')
-                rb_names = rbs['player_name'].tolist()
-                if len(rb_names) >= 1:
-                    team_dc['rb1'] = rb_names[0]
-                if len(rb_names) >= 2:
-                    team_dc['rb2'] = rb_names[1]
+            # WRs - use pos_rank (actual depth chart position)
+            wrs = team_dc_data[team_dc_data['pos_abb'] == 'WR'].sort_values('pos_rank')
+            wr_names = wrs['player_name'].tolist()
+            if len(wr_names) >= 1:
+                team_dc['wr1'] = wr_names[0]
+            if len(wr_names) >= 2:
+                team_dc['wr2'] = wr_names[1]
+            if len(wr_names) >= 3:
+                team_dc['wr3'] = wr_names[2]
 
-                # TEs
-                tes = team_dc_data[team_dc_data['pos_abb'] == 'TE'].sort_values('pos_rank')
-                te_names = tes['player_name'].tolist()
-                if len(te_names) >= 1:
-                    team_dc['te1'] = te_names[0]
+            # RBs
+            rbs = team_dc_data[team_dc_data['pos_abb'] == 'RB'].sort_values('pos_rank')
+            rb_names = rbs['player_name'].tolist()
+            if len(rb_names) >= 1:
+                team_dc['rb1'] = rb_names[0]
+            if len(rb_names) >= 2:
+                team_dc['rb2'] = rb_names[1]
 
-                # QBs
-                qbs = team_dc_data[team_dc_data['pos_abb'] == 'QB'].sort_values('pos_rank')
-                qb_names = qbs['player_name'].tolist()
-                if len(qb_names) >= 1:
-                    team_dc['qb1'] = qb_names[0]
+            # TEs
+            tes = team_dc_data[team_dc_data['pos_abb'] == 'TE'].sort_values('pos_rank')
+            te_names = tes['player_name'].tolist()
+            if len(te_names) >= 1:
+                team_dc['te1'] = te_names[0]
 
-                depth_charts[team] = team_dc
+            # QBs
+            qbs = team_dc_data[team_dc_data['pos_abb'] == 'QB'].sort_values('pos_rank')
+            qb_names = qbs['player_name'].tolist()
+            if len(qb_names) >= 1:
+                team_dc['qb1'] = qb_names[0]
 
-            logger.info(f"Loaded official depth charts for {len(depth_charts)} teams")
-            _DEPTH_CHART_CACHE = depth_charts
-            return depth_charts
-        except Exception as e:
-            logger.warning(f"Could not load official depth charts: {e}")
+            depth_charts[team] = team_dc
 
-    # FALLBACK: Try to load from rosters file (has depth info based on usage)
-    rosters_path = Path('data/nflverse/rosters.parquet')
-    if rosters_path.exists():
-        try:
-            rosters_df = pd.read_parquet(rosters_path)
+        logger.info(f"Loaded official depth charts for {len(depth_charts)} teams")
+        _DEPTH_CHART_CACHE = depth_charts
+        return depth_charts
 
-            # Filter to current season
-            if 'season' in rosters_df.columns:
-                current_season = rosters_df['season'].max()
-                rosters_df = rosters_df[rosters_df['season'] == current_season]
-
-            # Get depth chart by team
-            for team in rosters_df['team'].dropna().unique():
-                team_roster = rosters_df[rosters_df['team'] == team]
-
-                team_dc = {}
-
-                # WRs - sort by some usage metric if available, otherwise alphabetically
-                wrs = team_roster[team_roster['position'] == 'WR']
-                if 'depth_chart_position' in wrs.columns:
-                    wrs = wrs.sort_values('depth_chart_position')
-                wr_names = wrs['full_name'].tolist() if 'full_name' in wrs.columns else wrs['player_name'].tolist() if 'player_name' in wrs.columns else []
-                if len(wr_names) >= 1:
-                    team_dc['wr1'] = wr_names[0]
-                if len(wr_names) >= 2:
-                    team_dc['wr2'] = wr_names[1]
-                if len(wr_names) >= 3:
-                    team_dc['wr3'] = wr_names[2]
-
-                # RBs
-                rbs = team_roster[team_roster['position'] == 'RB']
-                if 'depth_chart_position' in rbs.columns:
-                    rbs = rbs.sort_values('depth_chart_position')
-                rb_names = rbs['full_name'].tolist() if 'full_name' in rbs.columns else rbs['player_name'].tolist() if 'player_name' in rbs.columns else []
-                if len(rb_names) >= 1:
-                    team_dc['rb1'] = rb_names[0]
-                if len(rb_names) >= 2:
-                    team_dc['rb2'] = rb_names[1]
-
-                # TEs
-                tes = team_roster[team_roster['position'] == 'TE']
-                if 'depth_chart_position' in tes.columns:
-                    tes = tes.sort_values('depth_chart_position')
-                te_names = tes['full_name'].tolist() if 'full_name' in tes.columns else tes['player_name'].tolist() if 'player_name' in tes.columns else []
-                if len(te_names) >= 1:
-                    team_dc['te1'] = te_names[0]
-
-                # QBs
-                qbs = team_roster[team_roster['position'] == 'QB']
-                if 'depth_chart_position' in qbs.columns:
-                    qbs = qbs.sort_values('depth_chart_position')
-                qb_names = qbs['full_name'].tolist() if 'full_name' in qbs.columns else qbs['player_name'].tolist() if 'player_name' in qbs.columns else []
-                if len(qb_names) >= 1:
-                    team_dc['qb1'] = qb_names[0]
-
-                depth_charts[team] = team_dc
-
-        except Exception as e:
-            logger.warning(f"Could not load depth charts from rosters: {e}")
-
-    # Cache before returning
-    _DEPTH_CHART_CACHE = depth_charts
-    return depth_charts
+    except Exception as e:
+        logger.warning(f"Could not load depth charts: {e}")
+        return {}
 
 
 

@@ -1,0 +1,15 @@
+{
+  "no_filters": {
+    "total_bets": 10354,
+    "win_rate": 0.6385937801815723,
+    "roi": 21.907552636662153
+  },
+  "with_filters": {
+    "total_bets": 7913,
+    "win_rate": 0.6231517755592064,
+    "roi": 18.95967395425251
+  },
+  "filter_impact_roi": -2.9478786824096446,
+  "recommendation": "Disable filters",
+  "timestamp": "2025-12-27T15:17:23.013049"
+}

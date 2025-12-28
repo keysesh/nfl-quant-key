@@ -1,0 +1,373 @@
+{
+  "market": "player_rush_attempts",
+  "timestamp": "2025-12-28T14:32:05.494375",
+  "runtime_seconds": 127.6,
+  "strategies_tested": 8,
+  "results": [
+    {
+      "strategy": "baseline",
+      "description": "Current model without any changes",
+      "bets": 82,
+      "hits": "46",
+      "win_rate": 56.1,
+      "roi": 7.1,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        },
+        "OVER": {
+          "bets": 13,
+          "win_rate": 84.6,
+          "roi": 61.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.741,
+        "pred_actual_corr": -0.044,
+        "n": 82
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {}
+    },
+    {
+      "strategy": "starter_only",
+      "description": "Only bet on confirmed starters (pos_rank == 1)",
+      "bets": 82,
+      "hits": "46",
+      "win_rate": 56.1,
+      "roi": 7.1,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        },
+        "OVER": {
+          "bets": 13,
+          "win_rate": 84.6,
+          "roi": 61.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.741,
+        "pred_actual_corr": -0.044,
+        "n": 82
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "require_starter": true
+      }
+    },
+    {
+      "strategy": "high_snap_share",
+      "description": "Only bet on players with 50%+ snap share",
+      "bets": 82,
+      "hits": "46",
+      "win_rate": 56.1,
+      "roi": 7.1,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        },
+        "OVER": {
+          "bets": 13,
+          "win_rate": 84.6,
+          "roi": 61.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.741,
+        "pred_actual_corr": -0.044,
+        "n": 82
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "min_snap_share": 0.5
+      }
+    },
+    {
+      "strategy": "under_only",
+      "description": "UNDER picks only (based on market bias)",
+      "bets": 69,
+      "hits": "35",
+      "win_rate": 50.7,
+      "roi": -3.2,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.75,
+        "pred_actual_corr": -0.115,
+        "n": 69
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": "UNDER_ONLY",
+      "filters": {}
+    },
+    {
+      "strategy": "combined_v2",
+      "description": "High snap + under only + 55% confidence",
+      "bets": 69,
+      "hits": "35",
+      "win_rate": 50.7,
+      "roi": -3.2,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.75,
+        "pred_actual_corr": -0.115,
+        "n": 69
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": "UNDER_ONLY",
+      "filters": {
+        "min_snap_share": 0.45
+      }
+    },
+    {
+      "strategy": "combined_v1",
+      "description": "Starter + close games + 58% confidence",
+      "bets": 58,
+      "hits": "28",
+      "win_rate": 48.3,
+      "roi": -7.8,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 41,
+          "win_rate": 39.0,
+          "roi": -25.5
+        },
+        "OVER": {
+          "bets": 17,
+          "win_rate": 70.6,
+          "roi": 34.8
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.795,
+        "pred_actual_corr": 0.064,
+        "n": 58
+      },
+      "confidence_threshold": 0.58,
+      "direction_constraint": null,
+      "filters": {
+        "require_starter": true,
+        "max_spread": 7.0
+      }
+    },
+    {
+      "strategy": "close_games_only",
+      "description": "Only bet when spread is close (|spread| <= 7)",
+      "bets": 79,
+      "hits": "38",
+      "win_rate": 48.1,
+      "roi": -8.2,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 57,
+          "win_rate": 40.4,
+          "roi": -23.0
+        },
+        "OVER": {
+          "bets": 22,
+          "win_rate": 68.2,
+          "roi": 30.2
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.793,
+        "pred_actual_corr": -0.051,
+        "n": 79
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "max_spread": 7.0
+      }
+    },
+    {
+      "strategy": "high_confidence",
+      "description": "Raise confidence threshold to 60%",
+      "bets": 45,
+      "hits": "21",
+      "win_rate": 46.7,
+      "roi": -10.9,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 39,
+          "win_rate": 41.0,
+          "roi": -21.7
+        },
+        "OVER": {
+          "bets": 6,
+          "win_rate": 83.3,
+          "roi": 59.1
+        }
+      },
+      "leakage_check": {
+        "status": "insufficient_data",
+        "n": 45
+      },
+      "confidence_threshold": 0.6,
+      "direction_constraint": null,
+      "filters": {}
+    }
+  ],
+  "best_strategy": {
+    "strategy": "baseline",
+    "description": "Current model without any changes",
+    "bets": 82,
+    "hits": "46",
+    "win_rate": 56.1,
+    "roi": 7.1,
+    "profitable": "True",
+    "by_direction": {
+      "UNDER": {
+        "bets": 69,
+        "win_rate": 50.7,
+        "roi": -3.2
+      },
+      "OVER": {
+        "bets": 13,
+        "win_rate": 84.6,
+        "roi": 61.5
+      }
+    },
+    "leakage_check": {
+      "status": "ok",
+      "line_actual_corr": 0.741,
+      "pred_actual_corr": -0.044,
+      "n": 82
+    },
+    "confidence_threshold": 0.55,
+    "direction_constraint": null,
+    "filters": {}
+  },
+  "profitable_strategies": [
+    {
+      "strategy": "baseline",
+      "description": "Current model without any changes",
+      "bets": 82,
+      "hits": "46",
+      "win_rate": 56.1,
+      "roi": 7.1,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        },
+        "OVER": {
+          "bets": 13,
+          "win_rate": 84.6,
+          "roi": 61.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.741,
+        "pred_actual_corr": -0.044,
+        "n": 82
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {}
+    },
+    {
+      "strategy": "starter_only",
+      "description": "Only bet on confirmed starters (pos_rank == 1)",
+      "bets": 82,
+      "hits": "46",
+      "win_rate": 56.1,
+      "roi": 7.1,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        },
+        "OVER": {
+          "bets": 13,
+          "win_rate": 84.6,
+          "roi": 61.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.741,
+        "pred_actual_corr": -0.044,
+        "n": 82
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "require_starter": true
+      }
+    },
+    {
+      "strategy": "high_snap_share",
+      "description": "Only bet on players with 50%+ snap share",
+      "bets": 82,
+      "hits": "46",
+      "win_rate": 56.1,
+      "roi": 7.1,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 69,
+          "win_rate": 50.7,
+          "roi": -3.2
+        },
+        "OVER": {
+          "bets": 13,
+          "win_rate": 84.6,
+          "roi": 61.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.741,
+        "pred_actual_corr": -0.044,
+        "n": 82
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "min_snap_share": 0.5
+      }
+    }
+  ]
+}

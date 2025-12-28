@@ -1324,11 +1324,24 @@ def generate_game_line_recommendations():
     print("TOP GAME LINE RECOMMENDATIONS")
     print("=" * 70)
 
-    # Filter to minimum edge threshold
-    min_edge = 2.0
-    strong_picks = results_df[results_df['edge_pct'] >= min_edge]
+    # Filter to minimum edge thresholds (from config)
+    # Apply different thresholds for spreads vs totals
+    spread_picks = results_df[
+        (results_df['bet_type'] == 'spread') &
+        (results_df['edge_pct'] >= MIN_EDGE_SPREAD)
+    ]
+    total_picks = results_df[
+        (results_df['bet_type'] == 'total') &
+        (results_df['edge_pct'] >= MIN_EDGE_TOTAL)
+    ]
+    ml_picks = results_df[
+        (results_df['bet_type'] == 'moneyline') &
+        (results_df['edge_pct'] >= MIN_EDGE_MONEYLINE)
+    ]
+    strong_picks = pd.concat([spread_picks, total_picks, ml_picks])
+    strong_picks = strong_picks.sort_values('edge_pct', ascending=False)
 
-    print(f"\nPicks with ≥{min_edge}% edge: {len(strong_picks)}")
+    print(f"\nFiltered picks (spread≥{MIN_EDGE_SPREAD}%, total≥{MIN_EDGE_TOTAL}%, ML≥{MIN_EDGE_MONEYLINE}%): {len(strong_picks)}")
 
     for i, (_, row) in enumerate(strong_picks.head(15).iterrows(), 1):
         emoji = "🔥" if row['edge_pct'] > 5 else "⭐" if row['edge_pct'] > 3 else "📊"
@@ -1351,7 +1364,7 @@ def generate_game_line_recommendations():
     print(f"LOW confidence: {len(results_df[results_df['confidence_tier'] == 'LOW'])}")
 
     if len(strong_picks) > 0:
-        print(f"\nAverage edge (≥{min_edge}%): {strong_picks['edge_pct'].mean():.2f}%")
+        print(f"\nAverage edge (filtered): {strong_picks['edge_pct'].mean():.2f}%")
         print(f"Expected ROI: {strong_picks['expected_roi'].mean():.2f}%")
 
     return results_df

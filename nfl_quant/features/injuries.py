@@ -609,19 +609,23 @@ def _check_wr1_out(injuries: pd.DataFrame, team: str, season: int) -> int:
         return 0
 
     try:
-        # Load depth charts to identify WR1
-        dc_file = Path("data/nflverse/depth_charts.parquet")
-        if not dc_file.exists():
+        # Load depth charts to identify WR1 using canonical loader
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        depth_charts = get_depth_charts(season=season)
+
+        if depth_charts.empty:
             return 0
 
-        depth_charts = pd.read_parquet(dc_file)
+        # Handle team column naming (club_code or team)
+        team_col = 'club_code' if 'club_code' in depth_charts.columns else 'team'
+        pos_col = 'position' if 'position' in depth_charts.columns else 'pos_name'
 
         # Filter to current season and team
         team_dc = depth_charts[
-            (depth_charts['season'] == season) &
-            (depth_charts['club_code'] == team) &
-            (depth_charts['position'] == 'WR')
+            (depth_charts[team_col] == team)
         ]
+        if pos_col in team_dc.columns:
+            team_dc = team_dc[team_dc[pos_col].str.contains('WR|Wide Receiver', case=False, na=False)]
 
         if team_dc.empty:
             return 0
@@ -670,19 +674,23 @@ def _check_rb1_out(injuries: pd.DataFrame, team: str, season: int) -> int:
         return 0
 
     try:
-        # Load depth charts to identify RB1
-        dc_file = Path("data/nflverse/depth_charts.parquet")
-        if not dc_file.exists():
+        # Load depth charts to identify RB1 using canonical loader
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        depth_charts = get_depth_charts(season=season)
+
+        if depth_charts.empty:
             return 0
 
-        depth_charts = pd.read_parquet(dc_file)
+        # Handle team column naming (club_code or team)
+        team_col = 'club_code' if 'club_code' in depth_charts.columns else 'team'
+        pos_col = 'position' if 'position' in depth_charts.columns else 'pos_name'
 
-        # Filter to current season and team
+        # Filter to team
         team_dc = depth_charts[
-            (depth_charts['season'] == season) &
-            (depth_charts['club_code'] == team) &
-            (depth_charts['position'] == 'RB')
+            (depth_charts[team_col] == team)
         ]
+        if pos_col in team_dc.columns:
+            team_dc = team_dc[team_dc[pos_col].str.contains('RB|Running Back', case=False, na=False)]
 
         if team_dc.empty:
             return 0

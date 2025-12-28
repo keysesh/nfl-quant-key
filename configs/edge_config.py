@@ -204,16 +204,124 @@ PLAYER_BIAS_MODEL_PARAMS = {
 # SHARED CONFIGURATION
 # =============================================================================
 
-# Markets supported by edge system
+# V32 HYBRID ROUTING: Edge only handles markets where it outperforms XGBoost
+# XGBoost handles: player_receptions (74.0% WR), player_reception_yds (67.5% WR)
+# Edge handles: player_pass_attempts (55.0% WR), player_rush_yds (55.2% WR)
+# DISABLED: player_pass_completions, player_rush_attempts (negative ROI everywhere)
 EDGE_MARKETS: List[str] = [
-    'player_receptions',
-    'player_rush_yds',
-    'player_reception_yds',
-    'player_rush_attempts',
-    'player_pass_attempts',  # 58.3% UNDER (uses 50% threshold - exception)
-    'player_pass_completions',  # NEW - testing (55.4% UNDER historical)
-    # player_pass_yds REMOVED - -14.1% ROI in walk-forward
+    'player_pass_attempts',  # Edge: 55.0% WR, +4.9% ROI (XGB: -7.2% ROI)
+    'player_rush_yds',       # Edge: 55.2% WR, +5.4% ROI (XGB: -3.6% ROI)
+    # Moved to XGBoost (more profitable there):
+    # 'player_receptions',     # XGB: 74.0% WR, +41.3% ROI (Edge: +0.6% ROI)
+    # 'player_reception_yds',  # XGB: 67.5% WR, +28.8% ROI (Edge: +2.9% ROI)
+    # DISABLED (no profitable subset found):
+    # 'player_rush_attempts',  # Edge: -9.1%, XGB: -7.0% ROI
+    # 'player_pass_completions',  # Edge: -9.4%, XGB: -10.5% ROI
 ]
+
+
+# =============================================================================
+# MARKET-SPECIFIC FILTERS (V31 - Dec 2025)
+# =============================================================================
+# Based on walk-forward backtest analysis with 10,354 bets
+# These filters turn losing markets into profitable ones
+
+@dataclass(frozen=True)
+class MarketFilter:
+    """Market-specific filters to maximize profitability."""
+    enabled: bool = True           # Whether market is enabled
+    direction: str = 'UNDER'       # Allowed direction: 'UNDER', 'OVER', 'BOTH'
+    min_prob: float = 0.55         # Minimum probability threshold
+    min_line: float = None         # Minimum line value (optional)
+    max_line: float = None         # Maximum line value (optional)
+
+
+# V32 MARKET_FILTERS - Only Edge markets are configured here
+# XGBoost markets (receptions, reception_yds) are handled by unified_recommendations_v3.py
+MARKET_FILTERS: Dict[str, MarketFilter] = {
+    # EDGE MARKETS - Where Edge outperforms XGBoost
+    'player_pass_attempts': MarketFilter(
+        enabled=True,
+        direction='UNDER',
+        min_prob=0.55,  # Edge: 55.0% WR, +4.9% ROI at 55%+
+    ),
+    'player_rush_yds': MarketFilter(
+        enabled=True,
+        direction='UNDER',
+        min_prob=0.55,  # Edge: 55.2% WR, +5.4% ROI at 55%+
+    ),
+
+    # XGBOOST MARKETS - Handled by unified_recommendations_v3.py, disabled here
+    'player_receptions': MarketFilter(
+        enabled=False,  # V32: Moved to XGBoost (74.0% WR, +41.3% ROI)
+        direction='UNDER',
+        min_prob=0.60,
+    ),
+    'player_reception_yds': MarketFilter(
+        enabled=False,  # V32: Moved to XGBoost (67.5% WR, +28.8% ROI)
+        direction='UNDER',
+        min_prob=0.60,
+    ),
+
+    # DISABLED MARKETS - Negative ROI in both Edge and XGBoost
+    'player_pass_completions': MarketFilter(
+        enabled=False,  # Edge: -9.4%, XGB: -10.5% ROI
+        direction='UNDER',
+        min_prob=0.55,
+    ),
+    'player_rush_attempts': MarketFilter(
+        enabled=False,  # Edge: -9.1%, XGB: -7.0% ROI
+        direction='UNDER',
+        min_prob=0.55,
+    ),
+    'player_pass_yds': MarketFilter(
+        enabled=False,  # -14.1% ROI in walk-forward
+        direction='UNDER',
+        min_prob=0.55,
+    ),
+}
+
+
+def get_market_filter(market: str) -> MarketFilter:
+    """Get filter configuration for a market."""
+    return MARKET_FILTERS.get(market, MarketFilter(enabled=False))
+
+
+def should_bet(market: str, direction: str, prob: float, line: float = None) -> bool:
+    """
+    Check if a bet passes market-specific filters.
+
+    Args:
+        market: Market name (e.g., 'player_receptions')
+        direction: Bet direction ('OVER' or 'UNDER')
+        prob: Model probability for the bet
+        line: Betting line (optional, for line filters)
+
+    Returns:
+        True if bet passes all filters, False otherwise
+    """
+    mf = get_market_filter(market)
+
+    # Market disabled
+    if not mf.enabled:
+        return False
+
+    # Direction filter
+    if mf.direction != 'BOTH' and direction != mf.direction:
+        return False
+
+    # Probability filter
+    if prob < mf.min_prob:
+        return False
+
+    # Line filters
+    if line is not None:
+        if mf.min_line is not None and line < mf.min_line:
+            return False
+        if mf.max_line is not None and line > mf.max_line:
+            return False
+
+    return True
 
 # EWMA span for trailing calculations
 EDGE_EWMA_SPAN = 6
@@ -426,3 +534,44 @@ def check_data_quality(
         missing_fields=[],
         reason="Data quality OK"
     )
+
+
+# =============================================================================
+# INJURY POLICY CONFIGURATION
+# =============================================================================
+# Controls how the system handles injury data in the recommendation pipeline.
+#
+# SAFETY POLICY (CRITICAL):
+# - Injuries can ONLY RESTRICT recommendations (block/penalize)
+# - Injuries must NEVER BOOST a player
+# - No automatic role promotion / usage redistribution from Sleeper alone
+# - If injury data is missing, default conservative (block OVERs)
+
+from enum import Enum
+
+class InjuryPolicyMode(str, Enum):
+    """Injury policy mode controlling fail behavior."""
+    STRICT = "STRICT"          # If injury loader fails -> abort pipeline and print error
+    CONSERVATIVE = "CONSERVATIVE"  # If fails -> proceed but block all OVERs, tag as NO_INJURY_DATA
+    OFF = "OFF"                # Ignore injuries entirely (dev/testing only)
+
+
+# Default injury mode - CONSERVATIVE is safest for automation
+INJURY_MODE: InjuryPolicyMode = InjuryPolicyMode.CONSERVATIVE
+
+# Maximum age for stale injury data (hours) before failing in STRICT mode
+INJURY_MAX_STALE_HOURS: int = 24
+
+# Whether to log individual player injury blocks
+INJURY_LOG_INDIVIDUAL_BLOCKS: bool = True
+
+
+def get_injury_mode() -> InjuryPolicyMode:
+    """Get the configured injury policy mode."""
+    return INJURY_MODE
+
+
+def set_injury_mode(mode: InjuryPolicyMode) -> None:
+    """Set the injury policy mode (for testing/configuration)."""
+    global INJURY_MODE
+    INJURY_MODE = mode

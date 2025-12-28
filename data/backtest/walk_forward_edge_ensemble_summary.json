@@ -1,0 +1,47 @@
+{
+  "model": "edge_ensemble_walk_forward",
+  "total_bets": 6881,
+  "win_rate": 51.9,
+  "roi": -0.93,
+  "by_source": {
+    "LVT+PB": {
+      "bets": 6881,
+      "win_rate": 51.9,
+      "roi": -0.9
+    }
+  },
+  "by_market": {
+    "player_receptions": {
+      "bets": 2316,
+      "win_rate": 52.5,
+      "roi": 0.3
+    },
+    "player_rush_yds": {
+      "bets": 1824,
+      "win_rate": 50.9,
+      "roi": -2.8
+    },
+    "player_reception_yds": {
+      "bets": 2221,
+      "win_rate": 52.4,
+      "roi": -0.0
+    },
+    "player_pass_attempts": {
+      "bets": 189,
+      "win_rate": 55.6,
+      "roi": 6.1
+    },
+    "player_pass_completions": {
+      "bets": 99,
+      "win_rate": 47.5,
+      "roi": -9.4
+    },
+    "player_rush_attempts": {
+      "bets": 232,
+      "win_rate": 47.4,
+      "roi": -9.5
+    }
+  },
+  "timestamp": "2025-12-28T03:19:34.683705",
+  "runtime_seconds": 128.4
+}

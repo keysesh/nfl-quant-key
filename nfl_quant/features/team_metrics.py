@@ -28,14 +28,22 @@ class TeamMetricsExtractor:
             pbp_path: Path to play-by-play parquet file
             season: Season to load (defaults to current season)
         """
+        # Use FRESH generic PBP as primary source (not stale season-specific files)
         if pbp_path is None:
-            if season is None:
-                from nfl_quant.utils.season_utils import get_current_season
-                season = get_current_season()
-            pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+            pbp_path = Path('data/nflverse/pbp.parquet')
+            if not pbp_path.exists():
+                raise FileNotFoundError(
+                    f"PBP file not found: {pbp_path}. "
+                    "Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data."
+                )
 
         logger.info(f"Loading PBP data from {pbp_path}")
         self.pbp_df = pd.read_parquet(pbp_path)
+
+        # Filter to requested season if provided
+        if season is not None and 'season' in self.pbp_df.columns:
+            self.pbp_df = self.pbp_df[self.pbp_df['season'] == season]
+            logger.info(f"Filtered to season {season}")
         logger.info(f"Loaded {len(self.pbp_df):,} plays")
 
         # Pre-compute team metrics

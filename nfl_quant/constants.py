@@ -3,6 +3,12 @@ NFL Position Constants for Betting Analytics
 
 These constants prevent position-based bugs by making position logic explicit and centralized.
 Follow the principle: "If it involves position logic, it should reference these constants."
+
+NOTE: Prop type names (e.g., 'rushing_attempts') are BETTING MARKET names, not NFLverse column names.
+For actual NFLverse data columns, use:
+- `carries` (not `rushing_attempts`) for rush attempts
+- `attempts` (not `passing_attempts`) for pass attempts
+- `completions` (not `passing_completions`) for completions
 """
 
 # All positions that can catch passes (receiving positions)

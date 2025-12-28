@@ -100,22 +100,10 @@ def _load_rosters_data(season: int = 2025) -> Optional[pd.DataFrame]:
 
 
 def _load_depth_charts_data(season: int = 2025, week: int = None) -> Optional[pd.DataFrame]:
-    """Load depth chart data from NFLverse."""
-    path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
-
-    if not path.exists():
-        logger.warning("No depth charts data found")
-        return None
-
+    """Load depth chart data using canonical loader."""
     try:
-        df = pd.read_parquet(path)
-        if 'season' in df.columns:
-            df = df[df['season'] == season]
-        if week and 'week' in df.columns:
-            # Use most recent week <= current week
-            available_weeks = df[df['week'] <= week]['week'].unique()
-            if len(available_weeks) > 0:
-                df = df[df['week'] == max(available_weeks)]
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        df = get_depth_charts(season=season, week=week)
         logger.debug(f"Loaded depth charts: {len(df)} rows")
         return df
     except Exception as e:

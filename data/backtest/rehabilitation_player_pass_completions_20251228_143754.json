@@ -1,0 +1,319 @@
+{
+  "market": "player_pass_completions",
+  "timestamp": "2025-12-28T14:37:54.944786",
+  "runtime_seconds": 315.9,
+  "strategies_tested": 6,
+  "results": [
+    {
+      "strategy": "under_only",
+      "description": "UNDER picks only",
+      "bets": 121,
+      "hits": "73",
+      "win_rate": 60.3,
+      "roi": 15.2,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 121,
+          "win_rate": 60.3,
+          "roi": 15.2
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.369,
+        "pred_actual_corr": -0.052,
+        "n": 121
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": "UNDER_ONLY",
+      "filters": {}
+    },
+    {
+      "strategy": "baseline",
+      "description": "Current model without any changes",
+      "bets": 266,
+      "hits": "149",
+      "win_rate": 56.0,
+      "roi": 6.9,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 121,
+          "win_rate": 60.3,
+          "roi": 15.2
+        },
+        "OVER": {
+          "bets": 145,
+          "win_rate": 52.4,
+          "roi": 0.1
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.471,
+        "pred_actual_corr": -0.054,
+        "n": 266
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {}
+    },
+    {
+      "strategy": "combined_v1",
+      "description": "Close games + high confidence + under only",
+      "bets": 47,
+      "hits": "26",
+      "win_rate": 55.3,
+      "roi": 5.6,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 47,
+          "win_rate": 55.3,
+          "roi": 5.6
+        }
+      },
+      "leakage_check": {
+        "status": "insufficient_data",
+        "n": 47
+      },
+      "confidence_threshold": 0.58,
+      "direction_constraint": "UNDER_ONLY",
+      "filters": {
+        "max_spread": 7.0
+      }
+    },
+    {
+      "strategy": "high_confidence",
+      "description": "Raise confidence threshold to 60%",
+      "bets": 184,
+      "hits": "98",
+      "win_rate": 53.3,
+      "roi": 1.7,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 76,
+          "win_rate": 57.9,
+          "roi": 10.5
+        },
+        "OVER": {
+          "bets": 108,
+          "win_rate": 50.0,
+          "roi": -4.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.53,
+        "pred_actual_corr": -0.04,
+        "n": 184
+      },
+      "confidence_threshold": 0.6,
+      "direction_constraint": null,
+      "filters": {}
+    },
+    {
+      "strategy": "high_total_games",
+      "description": "High-scoring games (vegas_total >= 45)",
+      "bets": 52,
+      "hits": "27",
+      "win_rate": 51.9,
+      "roi": -0.9,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 19,
+          "win_rate": 57.9,
+          "roi": 10.5
+        },
+        "OVER": {
+          "bets": 33,
+          "win_rate": 48.5,
+          "roi": -7.4
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.324,
+        "pred_actual_corr": -0.059,
+        "n": 52
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "min_total": 45.0
+      }
+    },
+    {
+      "strategy": "close_games_only",
+      "description": "Only bet when spread is close (|spread| <= 7)",
+      "bets": 109,
+      "hits": "52",
+      "win_rate": 47.7,
+      "roi": -8.9,
+      "profitable": "False",
+      "by_direction": {
+        "UNDER": {
+          "bets": 66,
+          "win_rate": 53.0,
+          "roi": 1.2
+        },
+        "OVER": {
+          "bets": 43,
+          "win_rate": 39.5,
+          "roi": -24.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.314,
+        "pred_actual_corr": 0.245,
+        "n": 109
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {
+        "max_spread": 7.0
+      }
+    }
+  ],
+  "best_strategy": {
+    "strategy": "under_only",
+    "description": "UNDER picks only",
+    "bets": 121,
+    "hits": "73",
+    "win_rate": 60.3,
+    "roi": 15.2,
+    "profitable": "True",
+    "by_direction": {
+      "UNDER": {
+        "bets": 121,
+        "win_rate": 60.3,
+        "roi": 15.2
+      }
+    },
+    "leakage_check": {
+      "status": "ok",
+      "line_actual_corr": 0.369,
+      "pred_actual_corr": -0.052,
+      "n": 121
+    },
+    "confidence_threshold": 0.55,
+    "direction_constraint": "UNDER_ONLY",
+    "filters": {}
+  },
+  "profitable_strategies": [
+    {
+      "strategy": "under_only",
+      "description": "UNDER picks only",
+      "bets": 121,
+      "hits": "73",
+      "win_rate": 60.3,
+      "roi": 15.2,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 121,
+          "win_rate": 60.3,
+          "roi": 15.2
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.369,
+        "pred_actual_corr": -0.052,
+        "n": 121
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": "UNDER_ONLY",
+      "filters": {}
+    },
+    {
+      "strategy": "baseline",
+      "description": "Current model without any changes",
+      "bets": 266,
+      "hits": "149",
+      "win_rate": 56.0,
+      "roi": 6.9,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 121,
+          "win_rate": 60.3,
+          "roi": 15.2
+        },
+        "OVER": {
+          "bets": 145,
+          "win_rate": 52.4,
+          "roi": 0.1
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.471,
+        "pred_actual_corr": -0.054,
+        "n": 266
+      },
+      "confidence_threshold": 0.55,
+      "direction_constraint": null,
+      "filters": {}
+    },
+    {
+      "strategy": "combined_v1",
+      "description": "Close games + high confidence + under only",
+      "bets": 47,
+      "hits": "26",
+      "win_rate": 55.3,
+      "roi": 5.6,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 47,
+          "win_rate": 55.3,
+          "roi": 5.6
+        }
+      },
+      "leakage_check": {
+        "status": "insufficient_data",
+        "n": 47
+      },
+      "confidence_threshold": 0.58,
+      "direction_constraint": "UNDER_ONLY",
+      "filters": {
+        "max_spread": 7.0
+      }
+    },
+    {
+      "strategy": "high_confidence",
+      "description": "Raise confidence threshold to 60%",
+      "bets": 184,
+      "hits": "98",
+      "win_rate": 53.3,
+      "roi": 1.7,
+      "profitable": "True",
+      "by_direction": {
+        "UNDER": {
+          "bets": 76,
+          "win_rate": 57.9,
+          "roi": 10.5
+        },
+        "OVER": {
+          "bets": 108,
+          "win_rate": 50.0,
+          "roi": -4.5
+        }
+      },
+      "leakage_check": {
+        "status": "ok",
+        "line_actual_corr": 0.53,
+        "pred_actual_corr": -0.04,
+        "n": 184
+      },
+      "confidence_threshold": 0.6,
+      "direction_constraint": null,
+      "filters": {}
+    }
+  ]
+}

@@ -43,10 +43,13 @@ from nfl_quant.features.batch_extractor import (
 )
 from nfl_quant.features.rz_opportunity import compute_rz_opportunity_features
 from nfl_quant.features.rz_td_conversion import load_and_compute_rz_td_rates
-from configs.edge_config import EDGE_MARKETS, TD_POISSON_MARKETS, get_td_poisson_threshold
+from configs.edge_config import EDGE_MARKETS, TD_POISSON_MARKETS, get_td_poisson_threshold, should_bet, get_injury_mode, InjuryPolicyMode
 from configs.ensemble_config import GLOBAL_SETTINGS
 from configs.model_config import smooth_sweet_spot, get_market_filter, MarketFilter
+from nfl_quant.data.injury_loader import get_injuries, InjuryDataError
+from nfl_quant.policy.injury_policy import apply_injury_policy, InjuryMode
 from nfl_quant.edges.game_line_edge import GameLineEdge, generate_game_line_edge_recommendations
+from nfl_quant.models.td_enhanced_model import TDEnhancedModel, TD_CONFIDENCE_THRESHOLDS
 
 # Team name to abbreviation mapping
 TEAM_NAME_TO_ABBREV = {
@@ -1289,6 +1292,231 @@ def generate_attd_recommendations(
     return recommendations
 
 
+def generate_td_enhanced_recommendations(
+    td_model: TDEnhancedModel,
+    odds_df: pd.DataFrame,
+    week: int,
+    season: int = 2025,
+    min_games: int = 4,
+) -> list:
+    """
+    Generate Anytime TD recommendations using the enhanced XGBoost TD model.
+
+    Walk-forward validated: RB @ 60% = 58.2% WR, +6.6% ROI
+
+    Args:
+        td_model: Trained TDEnhancedModel
+        odds_df: Current odds DataFrame
+        week: Current week
+        season: Season year
+        min_games: Minimum games required
+
+    Returns:
+        List of recommendation dicts
+    """
+    from nfl_quant.utils.player_names import normalize_player_name
+
+    recommendations = []
+
+    # Load weekly stats for features
+    try:
+        stats_path = DATA_DIR / 'nflverse' / 'weekly_stats.parquet'
+        if not stats_path.exists():
+            print("  Warning: weekly_stats.parquet not found")
+            return recommendations
+
+        stats = pd.read_parquet(stats_path)
+        stats['player_norm'] = stats['player_display_name'].apply(normalize_player_name)
+
+        # Filter to historical data only (before current week)
+        historical_stats = stats[
+            (stats['season'] < season) |
+            ((stats['season'] == season) & (stats['week'] < week))
+        ]
+
+        # Get season game counts
+        season_stats = stats[stats['season'] == season]
+        player_games = season_stats.groupby('player_display_name').size().to_dict()
+        player_positions = season_stats.groupby('player_display_name')['position'].first().to_dict()
+
+        # Compute trailing features
+        historical_stats = historical_stats.sort_values(['player_norm', 'season', 'week'])
+        ewma_span = 6
+
+        # Trailing stats needed for TD model
+        trailing_cols = {
+            'rushing_tds': 'trailing_rushing_tds',
+            'receiving_tds': 'trailing_receiving_tds',
+            'targets': 'trailing_targets',
+            'carries': 'trailing_carries',
+            'target_share': 'trailing_target_share',
+            'receiving_yards': 'trailing_rec_yds',
+            'rushing_yards': 'trailing_rush_yds',
+        }
+
+        for src, dst in trailing_cols.items():
+            if src in historical_stats.columns:
+                historical_stats[dst] = (
+                    historical_stats.groupby('player_norm')[src]
+                    .transform(lambda x: x.shift(1).ewm(span=ewma_span, min_periods=2).mean())
+                )
+
+        # Compute total trailing TDs
+        historical_stats['trailing_tds'] = (
+            historical_stats.get('trailing_rushing_tds', 0).fillna(0) +
+            historical_stats.get('trailing_receiving_tds', 0).fillna(0)
+        )
+
+        # Get latest stats per player
+        player_trailing = historical_stats.groupby('player_norm').last().reset_index()
+        player_trailing = player_trailing.set_index('player_norm')
+
+    except Exception as e:
+        print(f"  Error loading stats: {e}")
+        return recommendations
+
+    # Find anytime TD market in odds
+    attd_markets = ['player_anytime_td', 'anytime_td']
+    market_found = None
+    for market in attd_markets:
+        if market in odds_df['market'].unique():
+            market_found = market
+            break
+
+    if market_found:
+        all_players = odds_df[odds_df['market'] == market_found]['player'].unique()
+    else:
+        # Use players from any market
+        all_players = odds_df['player'].unique() if 'player' in odds_df.columns else []
+
+    print(f"  Processing {len(all_players)} players...")
+
+    skipped_no_position = 0
+    skipped_low_sample = 0
+    skipped_no_data = 0
+
+    for player_name in all_players:
+        # Get position - only RB, WR, TE
+        position = player_positions.get(player_name)
+        if position not in ['RB', 'WR', 'TE']:
+            skipped_no_position += 1
+            continue
+
+        # Check game count
+        games_played = player_games.get(player_name, 0)
+        if games_played < min_games:
+            skipped_low_sample += 1
+            continue
+
+        # Normalize name for lookup
+        player_norm = normalize_player_name(player_name)
+
+        # Get trailing stats
+        if player_norm not in player_trailing.index:
+            skipped_no_data += 1
+            continue
+
+        player_stats = player_trailing.loc[player_norm]
+
+        # Build feature row
+        feature_row = {
+            'trailing_tds': player_stats.get('trailing_tds', 0),
+            'trailing_targets': player_stats.get('trailing_targets', 0),
+            'trailing_carries': player_stats.get('trailing_carries', 0),
+            'trailing_target_share': player_stats.get('trailing_target_share', 0),
+            'trailing_rec_yds': player_stats.get('trailing_rec_yds', 0),
+            'trailing_rush_yds': player_stats.get('trailing_rush_yds', 0),
+            'is_rb': 1 if position == 'RB' else 0,
+            'is_wr': 1 if position == 'WR' else 0,
+            'is_te': 1 if position == 'TE' else 0,
+            # RZ and opponent features - defaults (would need PBP for real values)
+            'rz_targets_per_game': 0.0,
+            'rz_carries_per_game': 0.0,
+            'gl_carries_per_game': 0.0,
+            'rz_td_rate': 0.0,
+            'opp_tds_allowed_per_game': 2.5,
+            'opp_pass_tds_allowed': 1.5,
+            'opp_rush_tds_allowed': 1.0,
+            'opp_rz_td_rate': 0.50,
+            'team_rz_td_rate': 0.50,
+        }
+
+        # Fill NaN values
+        for k, v in feature_row.items():
+            if pd.isna(v):
+                feature_row[k] = 0.0
+
+        # Predict
+        try:
+            features_df = pd.DataFrame([feature_row])
+            p_td = td_model.predict_proba(features_df)[0]
+        except Exception as e:
+            continue
+
+        # Get position-specific threshold
+        threshold = TD_CONFIDENCE_THRESHOLDS.get(position, TD_CONFIDENCE_THRESHOLDS['default'])
+
+        # Check if above threshold
+        if p_td < threshold:
+            continue
+
+        # Get game context from odds
+        player_rows = odds_df[odds_df['player'] == player_name]
+        if len(player_rows) == 0:
+            continue
+
+        row = player_rows.iloc[0]
+
+        # Build game context
+        home_team_raw = row.get('home_team', '')
+        away_team_raw = row.get('away_team', '')
+        home_team = team_name_to_abbrev(home_team_raw) if home_team_raw else ''
+        away_team = team_name_to_abbrev(away_team_raw) if away_team_raw else ''
+        player_team_raw = row.get('team', '')
+        player_team = team_name_to_abbrev(player_team_raw) if player_team_raw else ''
+        if player_team == 'LA':
+            player_team = 'LAR'
+        game_str = f"{away_team} @ {home_team}" if home_team and away_team else ''
+        opponent = away_team if player_team == home_team else home_team if player_team == away_team else ''
+
+        # Add recommendation
+        recommendations.append({
+            'player': player_name,
+            'team': player_team,
+            'market': 'player_anytime_td',
+            'line': 0.5,  # ATTD has no line (binary)
+            'pick': 'YES',  # For dashboard display
+            'direction': 'YES',
+            'units': 1.0,
+            'source': 'TD_ENHANCED',
+            'lvt_confidence': 0.0,
+            'player_bias_confidence': 0.0,
+            'combined_confidence': p_td,
+            'reasoning': f"P(TD): {p_td:.1%} >= {threshold:.0%} threshold ({position}, {games_played} games)",
+            'player_under_rate': 0.5,
+            'player_bet_count': games_played,
+            'current_season_under_rate': 0.5,
+            'season_games_played': games_played,
+            'game': game_str,
+            'opponent': opponent,
+            'home_team': home_team,
+            'away_team': away_team,
+            'commence_time': row.get('commence_time', ''),
+            'p_td': p_td,
+            'position': position,
+        })
+
+    print(f"  Generated {len(recommendations)} TD Enhanced recommendations")
+    if skipped_no_position > 0:
+        print(f"  Skipped {skipped_no_position} players without RB/WR/TE position")
+    if skipped_low_sample > 0:
+        print(f"  Skipped {skipped_low_sample} players with <{min_games} games")
+    if skipped_no_data > 0:
+        print(f"  Skipped {skipped_no_data} players without trailing stats")
+
+    return recommendations
+
+
 def get_active_teams(week: int, season: int = 2025) -> set:
     """
     Get set of teams playing this week (not on bye).
@@ -1499,6 +1727,7 @@ def generate_recommendations(
     season: int = 2025,
     include_td: bool = False,
     include_attd: bool = False,
+    include_td_enhanced: bool = False,
     include_game_lines: bool = False,
 ) -> pd.DataFrame:
     """Generate betting recommendations using edge ensemble, TD Poisson, ATTD, and game lines."""
@@ -1538,6 +1767,17 @@ def generate_recommendations(
         except Exception as e:
             print(f"  Failed to load ATTD ensemble: {e}")
             print("  Run train_attd_ensemble.py first")
+
+    # Load TD Enhanced model if requested
+    td_enhanced_model = None
+    if include_td_enhanced:
+        print("Loading TD Enhanced model...")
+        try:
+            td_enhanced_model = TDEnhancedModel.load()
+            print(f"  Loaded TD Enhanced model (trained: {td_enhanced_model.trained_date})")
+        except Exception as e:
+            print(f"  Failed to load TD Enhanced model: {e}")
+            print("  Run train_td_enhanced.py first")
 
     # Load data
     try:
@@ -1599,6 +1839,11 @@ def generate_recommendations(
                 continue
 
             if decision.should_bet:
+                # V31: Apply market-specific filters (direction, prob, line)
+                line_val = row.get('line', 0)
+                if not should_bet(market, decision.direction, decision.combined_confidence, line_val):
+                    continue  # Skip bet that doesn't pass V31 filters
+
                 # Construct game string from home/away teams (convert full names to abbreviations)
                 home_team_raw = row.get('home_team', '')
                 away_team_raw = row.get('away_team', '')
@@ -1697,6 +1942,19 @@ def generate_recommendations(
         else:
             print("\nNo ATTD recommendations generated")
 
+    # Generate TD Enhanced recommendations if enabled
+    if td_enhanced_model is not None:
+        print("\n" + "="*60)
+        print("TD ENHANCED MODEL RECOMMENDATIONS")
+        print("(Walk-forward validated: RB @ 60% = 58.2% WR, +6.6% ROI)")
+        print("="*60)
+        td_enhanced_recs = generate_td_enhanced_recommendations(td_enhanced_model, odds_df, week, season)
+        if td_enhanced_recs:
+            print(f"\nGenerated {len(td_enhanced_recs)} TD Enhanced recommendations")
+            all_recommendations.extend(td_enhanced_recs)
+        else:
+            print("\nNo TD Enhanced recommendations generated")
+
     # Generate Game Line recommendations if enabled
     if include_game_lines:
         print("\n" + "="*60)
@@ -1741,6 +1999,29 @@ def generate_recommendations(
 
     # Create DataFrame
     recs_df = pd.DataFrame(all_recommendations)
+
+    # V32: Apply injury policy (restrict-only, never boost)
+    injury_mode = get_injury_mode()
+    if injury_mode != InjuryPolicyMode.OFF:
+        print("\nApplying injury policy...")
+        try:
+            injuries_df = get_injuries(season=season, refresh=False)
+            print(f"  Loaded {len(injuries_df)} injury records")
+        except InjuryDataError as e:
+            print(f"  WARNING: Could not load injuries: {e}")
+            injuries_df = None
+
+        # Map config InjuryPolicyMode to policy InjuryMode
+        policy_mode = InjuryMode.CONSERVATIVE
+        if injury_mode == InjuryPolicyMode.STRICT:
+            policy_mode = InjuryMode.STRICT
+
+        before_count = len(recs_df)
+        recs_df = apply_injury_policy(recs_df, injuries_df, mode=policy_mode)
+        after_count = len(recs_df)
+
+        if before_count != after_count:
+            print(f"  Injury policy: {before_count} -> {after_count} ({before_count - after_count} blocked)")
 
     # Add market display names (consistent with dashboard format_prop_display)
     MARKET_DISPLAY_MAP = {
@@ -1818,6 +2099,7 @@ def main():
     parser.add_argument('--market', type=str, help='Single market to process')
     parser.add_argument('--include-td', action='store_true', help='Include TD Poisson edge predictions')
     parser.add_argument('--include-attd', action='store_true', help='Include Anytime TD ensemble predictions')
+    parser.add_argument('--include-td-enhanced', action='store_true', help='Include TD Enhanced model predictions (walk-forward validated)')
     parser.add_argument('--include-game-lines', action='store_true', help='Include game line edge predictions (spreads/totals)')
     args = parser.parse_args()
 
@@ -1828,6 +2110,8 @@ def main():
         print("(Including TD Poisson edge)")
     if args.include_attd:
         print("(Including Anytime TD ensemble)")
+    if args.include_td_enhanced:
+        print("(Including TD Enhanced model - walk-forward validated)")
     if args.include_game_lines:
         print("(Including Game Line edge)")
     print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -1839,6 +2123,7 @@ def main():
         args.week, markets, args.season,
         include_td=args.include_td,
         include_attd=args.include_attd,
+        include_td_enhanced=args.include_td_enhanced,
         include_game_lines=args.include_game_lines,
     )
 

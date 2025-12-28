@@ -2912,16 +2912,16 @@ class FeatureEngine:
         return injuries
 
     def _load_depth_charts(self) -> pd.DataFrame:
-        """Load depth chart data."""
+        """Load depth chart data using canonical loader."""
         if self.cache_enabled and self._depth_charts_cache is not None:
             return self._depth_charts_cache
 
-        path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
-        if not path.exists():
-            logger.warning(f"Depth charts data not found")
+        try:
+            from nfl_quant.data.depth_chart_loader import get_depth_charts
+            depth = get_depth_charts()
+        except Exception as e:
+            logger.warning(f"Failed to load depth charts: {e}")
             return pd.DataFrame()
-
-        depth = pd.read_parquet(path)
 
         if self.cache_enabled:
             self._depth_charts_cache = depth

@@ -43,25 +43,18 @@ class DynamicParameterProvider:
     def weekly_data(self) -> pd.DataFrame:
         """Load weekly player stats."""
         if self._weekly_data is None:
-            # Prefer 2024+2025 combined data for current season predictions
-            path = self.data_dir / "player_stats_2024_2025.parquet"
-            if path.exists():
-                self._weekly_data = pd.read_parquet(path)
-                # Rename columns to match expected format
-                if 'team' in self._weekly_data.columns and 'recent_team' not in self._weekly_data.columns:
-                    self._weekly_data['recent_team'] = self._weekly_data['team']
-            else:
-                # Fall back to weekly_2024
-                path = self.data_dir / "weekly_2024.parquet"
-                if path.exists():
-                    self._weekly_data = pd.read_parquet(path)
-                else:
-                    # Fall back to CSV
-                    csv_path = self.data_dir / "weekly_2024.csv"
-                    if csv_path.exists():
-                        self._weekly_data = pd.read_csv(csv_path)
-                    else:
-                        raise FileNotFoundError(f"No weekly data found at {path}")
+            # No fallback - fail if player_stats.parquet is missing
+            path = self.data_dir / "player_stats.parquet"
+            if not path.exists():
+                raise FileNotFoundError(
+                    f"Player stats file not found: {path}. "
+                    "Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data."
+                )
+
+            self._weekly_data = pd.read_parquet(path)
+            # Rename columns to match expected format
+            if 'team' in self._weekly_data.columns and 'recent_team' not in self._weekly_data.columns:
+                self._weekly_data['recent_team'] = self._weekly_data['team']
         return self._weekly_data
 
     @property

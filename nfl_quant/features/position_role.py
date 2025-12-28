@@ -28,7 +28,7 @@ _POSITION_ROLES_CACHE = None  # Computed position roles by team/week
 
 def load_depth_charts(force_reload: bool = False) -> pd.DataFrame:
     """
-    Load depth charts parquet file with caching.
+    Load depth charts using canonical loader with caching.
 
     Returns:
         DataFrame with columns: gsis_id, club_code, week, season, position, depth_team
@@ -38,20 +38,20 @@ def load_depth_charts(force_reload: bool = False) -> pd.DataFrame:
     if _DEPTH_CHARTS_CACHE is not None and not force_reload:
         return _DEPTH_CHARTS_CACHE
 
-    path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
-
-    if not path.exists():
-        logger.warning(f"Depth charts not found at {path}")
+    try:
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        df = get_depth_charts()
+    except Exception as e:
+        logger.warning(f"Failed to load depth charts: {e}")
         return pd.DataFrame()
-
-    df = pd.read_parquet(path)
 
     # Rename club_code to team for consistency with other datasets
     if 'club_code' in df.columns and 'team' not in df.columns:
         df = df.rename(columns={'club_code': 'team'})
 
     # Ensure depth_team is integer where possible
-    df['depth_team'] = pd.to_numeric(df['depth_team'], errors='coerce')
+    if 'depth_team' in df.columns:
+        df['depth_team'] = pd.to_numeric(df['depth_team'], errors='coerce')
 
     _DEPTH_CHARTS_CACHE = df
     logger.info(f"Loaded depth charts: {len(df):,} records")

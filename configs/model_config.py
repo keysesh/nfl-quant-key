@@ -25,7 +25,7 @@ import numpy as np
 # =============================================================================
 # VERSION CONFIGURATION - THE ONLY PLACE VERSION IS DEFINED
 # =============================================================================
-MODEL_VERSION = "31"  # V31: Remove noisy behavioral features from weak markets (Dec 27, 2025)
+MODEL_VERSION = "32"  # V32: Hybrid model routing - XGBoost for receptions, Edge for pass_attempts/rush_yds (Dec 28, 2025)
 
 # Derived version strings (DO NOT hardcode elsewhere)
 MODEL_VERSION_FULL = f"V{MODEL_VERSION}"  # "V19"
@@ -520,15 +520,18 @@ def get_market_filter(market: str) -> Optional[MarketFilter]:
 #   - player_rush_attempts: 48.3% WR, -7.8% ROI
 #   - player_pass_yds: excluded entirely, -15.8% ROI
 #
+# V32: Only train XGBoost classifier on markets where it's profitable
+# Other markets use Edge or TD_ENHANCED (see MARKET_MODEL_ROUTING above)
 CLASSIFIER_MARKETS = [
-    'player_receptions',         # ✅ Profitable
-    'player_rush_yds',           # ❌ -1.5% ROI (filtered by bet_filters)
-    'player_reception_yds',      # ✅ Profitable
-    'player_rush_attempts',      # ❌ -7.8% ROI (filtered by bet_filters)
-    'player_pass_attempts',      # ✅ Profitable with UNDER_ONLY constraint
-    'player_pass_completions',   # ✅ Profitable with UNDER_ONLY constraint
+    'player_receptions',         # ✅ XGBoost: 74.0% WR, +41.3% ROI
+    'player_reception_yds',      # ✅ XGBoost: 67.5% WR, +28.8% ROI
+    # Removed - now use Edge model:
+    # 'player_rush_yds',         # Edge: 55.2% WR, +5.4% ROI (XGB -3.6%)
+    # 'player_pass_attempts',    # Edge: 55.0% WR, +4.9% ROI (XGB -7.2%)
+    # Removed - disabled entirely (negative ROI everywhere):
+    # 'player_rush_attempts',    # -7.0% to -9.1% ROI
+    # 'player_pass_completions', # -9.4% to -10.5% ROI
     # player_pass_yds excluded: -15.8% ROI in holdout
-    # player_pass_tds excluded: binary distribution wrong for XGBoost
 ]
 
 # =============================================================================
@@ -561,9 +564,10 @@ _MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = {
     'player_rush_attempts': 'BOTH',          # Model doesn't help, but UNDER not strong either
     'player_pass_attempts': 'UNDER_ONLY',    # V31: UNDER 54.3% WR vs OVER 42.6%
     'player_pass_completions': 'UNDER_ONLY', # V31: UNDER 55.2% WR vs OVER 48.9%
-    # TD props - can only bet YES (player scores), never NO
-    'player_anytime_td': 'OVER_ONLY',        # Anytime TD = YES only
+    # TD props
+    'player_anytime_td': 'OVER_ONLY',        # Anytime TD = YES only (bet player scores)
     'player_1st_td': 'OVER_ONLY',            # First TD = YES only
+    'player_pass_tds': 'UNDER_ONLY',         # TD Poisson: UNDER @ 58%+: 62.8% WR, +20.0% ROI
 }
 
 # Export: Returns 'BOTH' for all markets if constraints disabled
@@ -575,6 +579,67 @@ MARKET_DIRECTION_CONSTRAINTS: Dict[str, str] = (
 
 # Markets for Monte Carlo simulation (all markets)
 SIMULATOR_MARKETS = SUPPORTED_MARKETS
+
+# =============================================================================
+# V32 HYBRID MODEL ROUTING - Walk-Forward Validated (Dec 28, 2025)
+# =============================================================================
+# Based on rigorous walk-forward backtest comparing XGBoost vs Edge (LVT+PlayerBias):
+#
+# XGBoost DOMINANT (use XGBoost):
+#   - player_receptions: XGB 74.0% WR +41.3% ROI vs Edge 52.7% WR +0.6% ROI
+#   - player_reception_yds: XGB 67.5% WR +28.8% ROI vs Edge 53.9% WR +2.9% ROI
+#
+# Edge WINS (use Edge at 55% threshold):
+#   - player_pass_attempts: Edge 55.0% WR +4.9% ROI vs XGB 48.6% WR -7.2% ROI
+#   - player_rush_yds: Edge 55.2% WR +5.4% ROI vs XGB 50.5% WR -3.6% ROI
+#
+# DISABLE (negative ROI everywhere):
+#   - player_pass_completions: Edge -9.4%, XGB -10.5% ROI
+#   - player_rush_attempts: Edge -9.1%, XGB -7.0% ROI
+#
+MARKET_MODEL_ROUTING = {
+    # XGBoost markets (highly profitable)
+    'player_receptions': 'XGBOOST',
+    'player_reception_yds': 'XGBOOST',
+
+    # Edge markets (Edge outperforms XGBoost)
+    'player_pass_attempts': 'EDGE',
+    'player_rush_yds': 'EDGE',
+
+    # Disabled markets (negative ROI in both models)
+    'player_pass_completions': 'DISABLED',
+    'player_rush_attempts': 'DISABLED',
+
+    # TD markets (separate models for different use cases)
+    'player_anytime_td': 'TD_ENHANCED',  # Binary: Did RB/WR/TE score TD? (RB @ 60%: 58.2% WR, +6.6% ROI)
+    'player_pass_tds': 'TD_POISSON',     # Count: QB pass TDs Over/Under 1.5 (UNDER @ 58%: 62.8% WR, +20.0% ROI)
+}
+
+# Confidence thresholds by model type (walk-forward validated)
+MODEL_CONFIDENCE_THRESHOLDS = {
+    'XGBOOST': 0.60,      # 60%+ for XGBoost (validated profitable)
+    'EDGE': 0.55,         # 55%+ for Edge (validated profitable)
+    'TD_ENHANCED': 0.60,  # 60%+ for TD Enhanced (RB: 58.2% WR, +6.6% ROI)
+    'TD_POISSON': 0.58,   # 58%+ for TD Poisson (UNDER: 62.8% WR, +20.0% ROI)
+}
+
+# Helper to check if market is enabled
+def is_market_enabled(market: str) -> bool:
+    """Check if a market is enabled for betting."""
+    routing = MARKET_MODEL_ROUTING.get(market, 'DISABLED')
+    return routing != 'DISABLED'
+
+# Helper to get model type for market
+def get_market_model_type(market: str) -> str:
+    """Get the model type to use for a given market."""
+    return MARKET_MODEL_ROUTING.get(market, 'DISABLED')
+
+# Update market lists based on routing
+XGBOOST_MARKETS = [m for m, r in MARKET_MODEL_ROUTING.items() if r == 'XGBOOST']
+EDGE_MARKETS = [m for m, r in MARKET_MODEL_ROUTING.items() if r == 'EDGE']
+TD_ENHANCED_MARKETS = [m for m, r in MARKET_MODEL_ROUTING.items() if r == 'TD_ENHANCED']
+TD_POISSON_MARKETS = [m for m, r in MARKET_MODEL_ROUTING.items() if r == 'TD_POISSON']
+TD_MARKETS = TD_ENHANCED_MARKETS + TD_POISSON_MARKETS  # All TD markets
 
 MARKET_TO_STAT = {
     'player_receptions': 'receptions',

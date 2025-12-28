@@ -116,12 +116,21 @@ def get_projection(row, market: str = '', game_history: dict = None) -> float:
     # Try market-specific means
     market_lower = str(market).lower() if market else str(row.get('market', '')).lower()
 
-    # Handle TD markets - use expected_tds from Poisson model
+    # Handle TD markets - use expected_tds from Poisson model or p_attd for anytime TD
     if 'anytime_td' in market_lower or ('td' in market_lower and 'yds' not in market_lower):
         # For TD props, use expected_tds (Poisson lambda parameter)
         proj = safe_float(row.get('expected_tds', 0))
         if proj > 0:
             return proj
+        # For anytime TD, p_attd is the probability - convert to expected TDs
+        # If p_attd = 0.9 (90% chance of TD), expected TDs ≈ -ln(1-p) for geometric dist
+        p_attd = safe_float(row.get('p_attd', 0))
+        if p_attd > 0:
+            # Convert probability to expected TD count (rough approximation)
+            # Higher probability = higher expected TDs
+            import math
+            expected = -math.log(max(0.01, 1 - p_attd)) if p_attd < 0.99 else 2.0
+            return round(expected, 2)
         # Try total_tds_mean as fallback for TD markets
         proj = safe_float(row.get('total_tds_mean', 0))
         if proj > 0:
@@ -17224,10 +17233,17 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
     # Build picks list
     picks_list = []
     filtered_count = 0
+
     for idx, row in player_props_df.iterrows():
         # CRITICAL FIX: Filter out picks where projection conflicts with direction
         # This happens when XGBoost classifier disagrees with Monte Carlo projection
-        projection = float(row.get('model_projection', row.get('projection', row.get('line', 0)))) if pd.notna(row.get('model_projection', row.get('projection'))) else float(row.get('line', 0))
+        market = str(row.get('market', ''))
+
+        # Use get_projection() to properly handle TD markets with p_attd
+        projection = get_projection(row, market)
+        if projection == 0:
+            # Fallback to explicit columns
+            projection = float(row.get('model_projection', row.get('projection', row.get('line', 0)))) if pd.notna(row.get('model_projection', row.get('projection'))) else float(row.get('line', 0))
         line = float(row.get('line', 0)) if pd.notna(row.get('line')) else 0
         pick_direction = str(row.get('pick', row.get('direction', 'OVER'))).upper()
 
@@ -17338,8 +17354,8 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
             for wk in defense_weeks
         ]
 
-        # Calculate projection and edge
-        projection = float(row.get('model_projection', row.get('projection', row.get('line', 0)))) if pd.notna(row.get('model_projection', row.get('projection'))) else float(row.get('line', 0))
+        # Calculate edge using the projection from get_projection() (already calculated above)
+        # DO NOT overwrite projection - it was calculated correctly using p_attd for ATTD markets
         line = float(row.get('line', 0)) if pd.notna(row.get('line')) else 0
         # Normalize pick direction BEFORE edge calculation (handles 'Yes', 'OVER', 'Over', etc.)
         pick_direction = str(row.get('pick', row.get('direction', ''))).upper()
@@ -17389,6 +17405,14 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
             opp_def_allowed = defense_vs_market[opponent][defense_lookup_key].get('allowed')
             opp_def_rank = defense_vs_market[opponent][defense_lookup_key].get('rank')
 
+        # Determine display tier based on confidence
+        if confidence >= 0.60:
+            display_tier = 'TOP_PICK'
+        elif confidence >= 0.55:
+            display_tier = 'STANDARD'
+        else:
+            display_tier = 'OTHER'
+
         pick_data = {
             'id': f"pick-{idx}",
             'player': player_name,
@@ -17406,6 +17430,7 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
             'edge': round(edge, 1),
             'confidence': round(confidence, 2),
             'tier': normalize_tier(row.get('effective_tier', 'moderate')),
+            'display_tier': display_tier,  # TOP_PICK, STANDARD, or OTHER
             'stars': get_stars(confidence),
             'ev': round(float(row.get('roi_pct', row.get('edge_pct', 0))) if pd.notna(row.get('roi_pct', row.get('edge_pct'))) else 0, 1),
             'opp_rank': int(row.get('def_rank', 16)) if pd.notna(row.get('def_rank')) else None,
@@ -17714,23 +17739,36 @@ def generate_dashboard(week: int = None, season: int = 2025):
         print(f"Loaded {len(parlays_df)} parlay recommendations")
     parlay_count = len(parlays_df) if parlays_df is not None else 0
 
-    # TWO-TIER FILTERING SYSTEM (updated 2025-12-08):
-    # - ALL picks: 50%+ confidence (relaxed threshold)
-    # - FEATURED picks: Market-specific higher thresholds (best ROI)
+    # THREE-TIER DISPLAY SYSTEM (updated 2025-12-28):
+    # - TOP picks: 60%+ confidence (validated profitable threshold)
+    # - STANDARD picks: 55-60% confidence (moderate edge)
+    # - OTHER picks: 50-55% confidence (shown but lower priority)
 
     total_before_filter = len(recs_df)
 
-    # TIER 1: Keep picks with 60%+ confidence (validated profitable threshold)
-    # Use model_prob for XGBoost, combined_confidence for TD Enhanced
+    # Get confidence column - use model_prob for XGBoost, combined_confidence for edge recs
     confidence_col = recs_df['model_prob'].fillna(recs_df.get('combined_confidence', 0))
-    all_picks_filter = confidence_col >= 0.60  # 60% threshold for profitable bets
+
+    # Keep picks with 50%+ confidence (include all useful picks)
+    all_picks_filter = confidence_col >= 0.50
 
     # Exclude backup players if column exists (they have unreliable projections)
     if 'calibration_tier' in recs_df.columns:
         all_picks_filter &= ~recs_df['calibration_tier'].str.contains('backup', case=False, na=False)
 
-    # Apply relaxed filter to main dataframe
+    # Apply filter to main dataframe
     recs_df = recs_df[all_picks_filter].copy()
+
+    # Add display tier based on confidence
+    def get_display_tier(conf):
+        if conf >= 0.60:
+            return 'TOP_PICK'
+        elif conf >= 0.55:
+            return 'STANDARD'
+        else:
+            return 'OTHER'
+
+    recs_df['display_tier'] = confidence_col[all_picks_filter].apply(get_display_tier)
 
     # TIER 2: Mark picks that meet FEATURED thresholds (higher confidence for top picks)
     def meets_featured_threshold(row):
@@ -17755,7 +17793,14 @@ def generate_dashboard(week: int = None, season: int = 2025):
 
     # Log filtering stats
     featured_count = recs_df['is_featured'].sum() if 'is_featured' in recs_df.columns else 0
+    top_count = len(recs_df[recs_df['display_tier'] == 'TOP_PICK']) if 'display_tier' in recs_df.columns else 0
+    standard_count_tier = len(recs_df[recs_df['display_tier'] == 'STANDARD']) if 'display_tier' in recs_df.columns else 0
+    other_count = len(recs_df[recs_df['display_tier'] == 'OTHER']) if 'display_tier' in recs_df.columns else 0
+
     print(f"\nAll picks (50%+ confidence): {len(recs_df)} of {total_before_filter}")
+    print(f"  TOP_PICK (60%+): {top_count}")
+    print(f"  STANDARD (55-60%): {standard_count_tier}")
+    print(f"  OTHER (50-55%): {other_count}")
     print(f"Featured picks (market-specific thresholds): {featured_count}")
     print("Featured thresholds:")
     for market, thresh in FEATURED_THRESHOLDS.items():
@@ -18352,13 +18397,16 @@ if __name__ == "__main__":
         from nfl_quant.config import settings
         week = args.week or settings.CURRENT_WEEK
         recs_df = load_edge_recommendations(week)
+        edge_count = len(recs_df)
+        print(f"Loaded {edge_count} edge recommendations (with p_attd={('p_attd' in recs_df.columns) if len(recs_df) > 0 else False})")
 
-        # Fall back to CURRENT_WEEK_RECOMMENDATIONS if edge recs too few
-        if len(recs_df) < 20:
+        # MERGE with XGBoost predictions if edge recs are few (don't replace - preserves p_attd)
+        if edge_count < 20:
             recs_path = PROJECT_ROOT / "reports" / "CURRENT_WEEK_RECOMMENDATIONS.csv"
             if recs_path.exists():
-                print(f"Edge recommendations too few ({len(recs_df)}), using CURRENT_WEEK_RECOMMENDATIONS.csv")
-                recs_df = pd.read_csv(recs_path)
+                print(f"Edge recommendations few ({edge_count}), supplementing with XGBoost predictions")
+                xgb_df = pd.read_csv(recs_path)
+
                 # Map confidence column to tier for proper categorization
                 def map_confidence_to_tier(conf_str):
                     if pd.isna(conf_str):
@@ -18373,36 +18421,44 @@ if __name__ == "__main__":
                     else:
                         return 'MODERATE'
 
-                if 'confidence' in recs_df.columns:
-                    recs_df['effective_tier'] = recs_df['confidence'].apply(map_confidence_to_tier)
-                elif 'model_confidence' in recs_df.columns:
-                    # Use model_confidence (0-100 scale) for tier
-                    recs_df['effective_tier'] = recs_df['model_confidence'].apply(
+                if 'confidence' in xgb_df.columns:
+                    xgb_df['effective_tier'] = xgb_df['confidence'].apply(map_confidence_to_tier)
+                elif 'model_confidence' in xgb_df.columns:
+                    xgb_df['effective_tier'] = xgb_df['model_confidence'].apply(
                         lambda x: 'ELITE' if x >= 85 else ('STRONG' if x >= 70 else 'MODERATE')
                     )
                 else:
-                    recs_df['effective_tier'] = 'MODERATE'
+                    xgb_df['effective_tier'] = 'MODERATE'
 
                 # Add defensive rankings
-                recs_df = add_defensive_rankings_to_df(recs_df, week)
+                xgb_df = add_defensive_rankings_to_df(xgb_df, week)
 
-                # Filter to only picks where projection aligns with pick direction
+                # Filter XGBoost to only picks where projection aligns with pick direction
                 def is_projection_aligned(row):
                     proj = row.get('model_projection', row.get('projection', 0))
                     line = row.get('line', 0)
                     pick = str(row.get('pick', '')).upper()
                     if pd.isna(proj) or pd.isna(line):
                         return True  # Keep if we can't check
-                    # Handle OVER/YES as same direction, UNDER/NO as same
                     if pick in ['OVER', 'YES']:
                         return proj > line
                     elif pick in ['UNDER', 'NO']:
                         return proj < line
                     return True
 
-                original_count = len(recs_df)
-                recs_df = recs_df[recs_df.apply(is_projection_aligned, axis=1)]
-                print(f"Loaded {len(recs_df)} aligned picks from CURRENT_WEEK_RECOMMENDATIONS.csv (filtered {original_count - len(recs_df)} misaligned)")
+                original_count = len(xgb_df)
+                xgb_df = xgb_df[xgb_df.apply(is_projection_aligned, axis=1)]
+                print(f"  XGBoost: {len(xgb_df)} aligned picks (filtered {original_count - len(xgb_df)} misaligned)")
+
+                # MERGE: keep edge recommendations, add XGBoost picks that don't overlap
+                if edge_count > 0:
+                    edge_keys = set(zip(recs_df['player'].str.lower(), recs_df['market']))
+                    xgb_df['_key'] = list(zip(xgb_df['player'].str.lower(), xgb_df['market']))
+                    xgb_new = xgb_df[~xgb_df['_key'].isin(edge_keys)].drop(columns=['_key'])
+                    recs_df = pd.concat([recs_df, xgb_new], ignore_index=True)
+                    print(f"  Merged: {edge_count} edge + {len(xgb_new)} XGBoost = {len(recs_df)} total")
+                else:
+                    recs_df = xgb_df
 
         # Load game lines for JSON export
         game_lines_df = None

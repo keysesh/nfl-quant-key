@@ -32,6 +32,29 @@ import time
 load_dotenv()
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+# NFL 2024 Schedule - Week start dates (Thursday of each week)
+NFL_2024_WEEK_DATES = {
+    1: '2024-09-05',
+    2: '2024-09-12',
+    3: '2024-09-19',
+    4: '2024-09-26',
+    5: '2024-10-03',
+    6: '2024-10-10',
+    7: '2024-10-17',
+    8: '2024-10-24',
+    9: '2024-10-31',
+    10: '2024-11-07',
+    11: '2024-11-14',
+    12: '2024-11-21',
+    13: '2024-11-28',
+    14: '2024-12-05',
+    15: '2024-12-12',
+    16: '2024-12-19',
+    17: '2024-12-25',
+    18: '2025-01-02',
+}
 
 # NFL 2025 Schedule - Week start dates (Thursday of each week)
 NFL_2025_WEEK_DATES = {
@@ -140,9 +163,13 @@ def fetch_historical_event_odds(api_key: str, event_id: str, date: str, markets:
     return response.json()
 
 
-def get_week_dates(week: int) -> tuple:
+def get_week_dates(week: int, season: int = 2025) -> tuple:
     """Get the start and end dates for a given NFL week."""
-    start_date = NFL_2025_WEEK_DATES.get(week)
+    if season == 2024:
+        start_date = NFL_2024_WEEK_DATES.get(week)
+    else:
+        start_date = NFL_2025_WEEK_DATES.get(week)
+
     if not start_date:
         return None, None
 
@@ -192,7 +219,7 @@ def extract_props_from_response(data: dict, week: int, season: int) -> list:
     return props
 
 
-def fetch_week_props(api_key: str, week: int, season: int = 2025, dry_run: bool = False) -> pd.DataFrame:
+def fetch_week_props(api_key: str, week: int, season: int = 2025, dry_run: bool = False, markets: list = None) -> pd.DataFrame:
     """
     Fetch all player props for a given week.
 
@@ -209,9 +236,9 @@ def fetch_week_props(api_key: str, week: int, season: int = 2025, dry_run: bool 
     print(f"Week {week} ({season})")
     print(f"{'='*60}")
 
-    start_date, end_date = get_week_dates(week)
+    start_date, end_date = get_week_dates(week, season)
     if not start_date:
-        print(f"  No schedule data for week {week}")
+        print(f"  No schedule data for week {week} season {season}")
         return pd.DataFrame()
 
     print(f"  Date range: {start_date} to {end_date}")
@@ -248,7 +275,8 @@ def fetch_week_props(api_key: str, week: int, season: int = 2025, dry_run: bool 
             print(f"      Date parse error: {e}")
             snapshot_time = sunday_str
 
-        data = fetch_historical_event_odds(api_key, event_id, snapshot_time, ALL_PROP_MARKETS)
+        fetch_markets = markets or ALL_PROP_MARKETS
+        data = fetch_historical_event_odds(api_key, event_id, snapshot_time, fetch_markets)
 
         if data:
             props = extract_props_from_response(data, week, season)
@@ -352,7 +380,13 @@ def main():
     parser.add_argument('--season', type=int, default=2025, help='NFL season year')
     parser.add_argument('--dry-run', action='store_true', help='Preview without API calls')
     parser.add_argument('--output', type=str, default=None, help='Output CSV path')
+    parser.add_argument('--markets', type=str, default=None, help='Comma-separated markets (e.g., player_pass_attempts,player_pass_completions)')
     args = parser.parse_args()
+
+    # Parse markets if provided
+    markets_list = None
+    if args.markets:
+        markets_list = [m.strip() for m in args.markets.split(',')]
 
     api_key = os.getenv('ODDS_API_KEY')
     if not api_key and not args.dry_run:
@@ -371,13 +405,14 @@ def main():
     print("="*80)
     print(f"Season: {args.season}")
     print(f"Weeks: {weeks}")
+    print(f"Markets: {markets_list or 'ALL (13 markets)'}")
     print(f"Dry run: {args.dry_run}")
 
     # Fetch props for each week
     all_dfs = []
 
     for week in weeks:
-        df = fetch_week_props(api_key, week, args.season, args.dry_run)
+        df = fetch_week_props(api_key, week, args.season, args.dry_run, markets_list)
         if len(df) > 0:
             all_dfs.append(df)
 

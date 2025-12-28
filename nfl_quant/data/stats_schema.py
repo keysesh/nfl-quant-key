@@ -9,6 +9,12 @@ Key Design Principles:
 2. Complete: Includes all stats needed for prediction and backtesting
 3. Extensible: Easy to add new stat types
 4. Parquet-first: Optimized for efficient storage and reading
+
+IMPORTANT - NFLverse Column Naming Convention:
+- Use `attempts` (not `passing_attempts`) for pass attempts
+- Use `carries` (not `rushing_attempts`) for rush attempts
+- Use `completions` (not `passing_completions`) for completions
+These match the official NFLverse data dictionary.
 """
 
 from dataclasses import dataclass, field
@@ -26,16 +32,16 @@ CANONICAL_COLUMNS = [
     "season",             # Year (2023, 2024, 2025)
     "week",               # Week number (1-18)
 
-    # Passing stats
+    # Passing stats (NFLverse naming)
     "passing_yards",
-    "passing_attempts",
-    "passing_completions",
+    "attempts",              # NFLverse uses 'attempts' not 'passing_attempts'
+    "completions",           # NFLverse uses 'completions' not 'passing_completions'
     "passing_tds",
     "interceptions",
 
-    # Rushing stats
+    # Rushing stats (NFLverse naming)
     "rushing_yards",
-    "rushing_attempts",
+    "carries",               # NFLverse uses 'carries' not 'rushing_attempts'
     "rushing_tds",
 
     # Receiving stats
@@ -66,16 +72,16 @@ class PlayerWeeklyStats:
     season: int
     week: int
 
-    # Passing stats
+    # Passing stats (NFLverse naming)
     passing_yards: float = 0.0
-    passing_attempts: float = 0.0
-    passing_completions: float = 0.0
+    attempts: float = 0.0           # NFLverse uses 'attempts'
+    completions: float = 0.0        # NFLverse uses 'completions'
     passing_tds: int = 0
     interceptions: int = 0
 
-    # Rushing stats
+    # Rushing stats (NFLverse naming)
     rushing_yards: float = 0.0
-    rushing_attempts: float = 0.0
+    carries: float = 0.0            # NFLverse uses 'carries'
     rushing_tds: int = 0
 
     # Receiving stats
@@ -99,12 +105,12 @@ class PlayerWeeklyStats:
             "season": self.season,
             "week": self.week,
             "passing_yards": self.passing_yards,
-            "passing_attempts": self.passing_attempts,
-            "passing_completions": self.passing_completions,
+            "attempts": self.attempts,
+            "completions": self.completions,
             "passing_tds": self.passing_tds,
             "interceptions": self.interceptions,
             "rushing_yards": self.rushing_yards,
-            "rushing_attempts": self.rushing_attempts,
+            "carries": self.carries,
             "rushing_tds": self.rushing_tds,
             "receptions": self.receptions,
             "receiving_yards": self.receiving_yards,
@@ -128,8 +134,8 @@ def validate_stats_dataframe(df: pd.DataFrame) -> bool:
     """
     required_columns = [
         "player_id", "player_name", "position", "team", "season", "week",
-        "passing_yards", "passing_attempts", "passing_completions", "passing_tds", "interceptions",
-        "rushing_yards", "rushing_attempts", "rushing_tds",
+        "passing_yards", "attempts", "completions", "passing_tds", "interceptions",
+        "rushing_yards", "carries", "rushing_tds",
         "receptions", "receiving_yards", "receiving_tds", "targets"
     ]
 
@@ -163,7 +169,7 @@ def create_canonical_dataframe(records: list[dict]) -> pd.DataFrame:
         if col not in df.columns:
             if col in ["opponent", "game_id", "source"]:
                 df[col] = None
-            elif "yards" in col or "attempts" in col or "completions" in col:
+            elif "yards" in col or col in ["attempts", "completions", "carries"]:
                 df[col] = 0.0
             else:
                 df[col] = 0

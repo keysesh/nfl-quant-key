@@ -4306,6 +4306,14 @@ def save_recommendations(df: pd.DataFrame):
     # Archive existing recommendations first
     archive_existing_recommendations()
 
+    # V32: Filter to only CLASSIFIER_MARKETS (XGBoost-profitable markets)
+    # Other markets (pass_attempts, rush_yds) use Edge model via separate script
+    before_filter = len(df)
+    df = df[df['market'].isin(CLASSIFIER_MARKETS)].copy()
+    if before_filter > len(df):
+        logger.info(f"V32 MARKET ROUTING: Filtered {before_filter - len(df)} non-XGBoost markets (handled by Edge model)")
+        logger.info(f"  XGBoost markets: {CLASSIFIER_MARKETS}")
+
     # Calculate model confidence scores
     df['model_confidence'] = df.apply(calculate_model_confidence, axis=1)
     df['model_confidence_label'] = df['model_confidence'].apply(get_confidence_label)

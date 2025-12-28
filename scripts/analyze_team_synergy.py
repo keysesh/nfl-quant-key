@@ -84,12 +84,13 @@ def load_data(season: int = 2025):
             data['injuries'] = pd.DataFrame()
             logger.warning("No injury data found")
 
-    # Depth charts
-    depth_path = DATA_DIR / 'nflverse' / 'depth_charts.parquet'
-    if depth_path.exists():
-        data['depth_charts'] = pd.read_parquet(depth_path)
+    # Depth charts - use canonical loader
+    try:
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        data['depth_charts'] = get_depth_charts()
         logger.info(f"Loaded depth_charts: {len(data['depth_charts'])} rows")
-    else:
+    except Exception as e:
+        logger.warning(f"Failed to load depth charts: {e}")
         data['depth_charts'] = None
 
     # Snap counts

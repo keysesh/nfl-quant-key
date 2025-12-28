@@ -380,10 +380,10 @@ if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(level=logging.INFO)
 
-    # Load sample PBP data
-    pbp_path = Path('data/nflverse/pbp_2025.parquet')
+    # Load PBP data (no fallback - fail if missing)
+    pbp_path = Path('data/nflverse/pbp.parquet')
     if not pbp_path.exists():
-        logger.error(f"PBP file not found: {pbp_path}")
+        logger.error(f"PBP file not found: {pbp_path}. Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data.")
         sys.exit(1)
 
     pbp_df = pd.read_parquet(pbp_path)

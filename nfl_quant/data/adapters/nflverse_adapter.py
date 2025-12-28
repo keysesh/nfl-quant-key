@@ -7,6 +7,12 @@ NFLverse Format (Parquet):
   carries, rushing_yards, rushing_tds,
   receptions, targets, receiving_yards, receiving_tds,
   opponent_team, ...
+
+IMPORTANT - NFLverse Column Naming Convention:
+- Use `attempts` (not `passing_attempts`) for pass attempts
+- Use `carries` (not `rushing_attempts`) for rush attempts
+- Use `completions` (not `passing_completions`) for completions
+These match the official NFLverse data dictionary.
 """
 
 from pathlib import Path
@@ -66,13 +72,10 @@ class NFLVerseAdapter(StatsAdapter):
         canonical["season"] = season
         canonical["week"] = week
 
-        # Passing stats (NFLverse: attempts, completions, passing_yards, passing_tds, interceptions)
+        # Passing stats (NFLverse native column names: attempts, completions, passing_yards, passing_tds, interceptions)
         canonical["passing_yards"] = pd.to_numeric(week_data["passing_yards"] if "passing_yards" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
-        canonical["passing_attempts"] = pd.to_numeric(week_data["attempts"] if "attempts" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
-        canonical["passing_completions"] = pd.to_numeric(week_data["completions"] if "completions" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
-        # ALIAS: Also provide 'attempts' and 'completions' for backward compatibility with simulation code
-        canonical["attempts"] = canonical["passing_attempts"]
-        canonical["completions"] = canonical["passing_completions"]
+        canonical["attempts"] = pd.to_numeric(week_data["attempts"] if "attempts" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
+        canonical["completions"] = pd.to_numeric(week_data["completions"] if "completions" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
         canonical["passing_tds"] = pd.to_numeric(week_data["passing_tds"] if "passing_tds" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0).astype(int)
         # Handle both 'interceptions' and 'passing_interceptions' column names
         if "interceptions" in week_data.columns:
@@ -82,11 +85,9 @@ class NFLVerseAdapter(StatsAdapter):
         else:
             canonical["interceptions"] = pd.Series([0] * len(week_data), dtype=int)
 
-        # Rushing stats (NFLverse: carries, rushing_yards, rushing_tds)
+        # Rushing stats (NFLverse native column names: carries, rushing_yards, rushing_tds)
         canonical["rushing_yards"] = pd.to_numeric(week_data["rushing_yards"] if "rushing_yards" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
-        canonical["rushing_attempts"] = pd.to_numeric(week_data["carries"] if "carries" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
-        # ALIAS: Also provide 'carries' for backward compatibility with simulation code
-        canonical["carries"] = canonical["rushing_attempts"]
+        canonical["carries"] = pd.to_numeric(week_data["carries"] if "carries" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0.0)
         canonical["rushing_tds"] = pd.to_numeric(week_data["rushing_tds"] if "rushing_tds" in week_data.columns else pd.Series([0] * len(week_data)), errors='coerce').fillna(0).astype(int)
 
         # Receiving stats (NFLverse: receptions, targets, receiving_yards, receiving_tds)

@@ -31,14 +31,22 @@ class TrailingStatsExtractor:
             pbp_path: Path to play-by-play parquet file
             season: Season to load (defaults to current season)
         """
+        # Use FRESH generic PBP as primary source (not stale season-specific files)
         if pbp_path is None:
-            if season is None:
-                from nfl_quant.utils.season_utils import get_current_season
-                season = get_current_season()
-            pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')
+            pbp_path = Path('data/nflverse/pbp.parquet')
+            if not pbp_path.exists():
+                raise FileNotFoundError(
+                    f"PBP file not found: {pbp_path}. "
+                    "Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data."
+                )
 
         logger.info(f"Loading PBP data from {pbp_path}")
         self.pbp_df = pd.read_parquet(pbp_path)
+
+        # Filter to requested season if provided
+        if season is not None and 'season' in self.pbp_df.columns:
+            self.pbp_df = self.pbp_df[self.pbp_df['season'] == season]
+            logger.info(f"Filtered to season {season}")
         logger.info(f"Loaded {len(self.pbp_df):,} plays")
 
         # Pre-compute player-week aggregations for fast lookup
@@ -590,8 +598,8 @@ def merge_edge_trailing_stats(
     Merge trailing stats from stats_df into main DataFrame.
 
     For predictions, we need the PRIOR week's trailing stats to avoid leakage.
-    E.g., for week 16 predictions, use trailing stats computed for week 15
-    (which uses data from weeks 1-14).
+    Uses MOST RECENT available trailing stats per player (not exact week match).
+    This handles incomplete weeks (e.g., week 17 in progress -> uses week 16 stats).
 
     Args:
         df: Main DataFrame with player_norm, season, week columns
@@ -614,20 +622,22 @@ def merge_edge_trailing_stats(
         warnings.warn("No trailing columns found in stats_df")
         return df
 
-    # Merge using PRIOR week's trailing stats (week - 1) to avoid leakage
-    # For week 16 predictions, use week 15 trailing stats
+    # Get most recent trailing stats per player (handles incomplete weeks)
+    # Sort by season, week descending to get most recent first
     merge_cols = ['player_norm', 'season', 'week'] + trailing_cols
-    stats_subset = stats_df[merge_cols].drop_duplicates(
-        subset=['player_norm', 'season', 'week']
-    ).copy()
+    stats_subset = stats_df[merge_cols].copy()
+    stats_subset = stats_subset.sort_values(['player_norm', 'season', 'week'], ascending=[True, False, False])
 
-    # Shift week forward in stats so it aligns with prediction week
-    # stats week 15 -> joins with odds week 16
-    stats_subset['week'] = stats_subset['week'] + 1
+    # Get the most recent row per player (first after sorting desc)
+    latest_stats = stats_subset.groupby('player_norm').first().reset_index()
 
+    # Drop season/week from latest_stats - we just want player_norm + trailing_cols
+    latest_stats = latest_stats[['player_norm'] + trailing_cols]
+
+    # Merge on player_norm only (uses most recent available stats)
     result = df.merge(
-        stats_subset,
-        on=['player_norm', 'season', 'week'],
+        latest_stats,
+        on=['player_norm'],
         how='left',
         suffixes=('', '_stats')
     )

@@ -405,10 +405,10 @@
       "_note": "Maximum 5% probability adjustment from win% difference"
     },
     "minimum_edge_thresholds": {
-      "spread": 0.0,
-      "total": 0.0,
+      "spread": 8.0,
+      "total": 100.0,
       "moneyline": 2.0,
-      "_note": "Minimum edge % to recommend. Moneyline has higher threshold due to vig impact."
+      "_note": "UPDATED 2025-12-28: Spread 8% (~5pt edge) based on backtest (62.2% WR). Totals disabled (no edge found: -16.4% ROI)."
     },
     "confidence_tiers_post_shrinkage": {
       "_comment": "Adjusted thresholds accounting for shrinkage reducing raw probabilities",

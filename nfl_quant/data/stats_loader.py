@@ -45,10 +45,15 @@ def load_weekly_stats(
     Returns:
         DataFrame in canonical format with columns:
             player_id, player_name, position, team, season, week,
-            passing_yards, passing_attempts, passing_completions, passing_tds, interceptions,
-            rushing_yards, rushing_attempts, rushing_tds,
+            passing_yards, attempts, completions, passing_tds, interceptions,
+            rushing_yards, carries, rushing_tds,
             receptions, receiving_yards, receiving_tds, targets,
             opponent, game_id, source
+
+        Note: Uses NFLverse column naming convention:
+            - `attempts` (not `passing_attempts`) for pass attempts
+            - `carries` (not `rushing_attempts`) for rush attempts
+            - `completions` (not `passing_completions`) for completions
 
     Raises:
         FileNotFoundError: If no data available for the given week/season

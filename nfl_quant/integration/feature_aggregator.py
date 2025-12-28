@@ -154,15 +154,16 @@ class FeatureAggregator:
         except Exception as e:
             logger.warning(f"Could not load NGS data: {e}")
 
-        # Play-by-play for QB connections
+        # Play-by-play for QB connections (no fallback - fail if missing)
         self._pbp = None
-        try:
-            path = NFLVERSE_DIR / "pbp_2025.parquet"
-            if path.exists():
-                self._pbp = pd.read_parquet(path)
-                logger.info(f"Loaded PBP 2025: {len(self._pbp)} plays")
-        except Exception as e:
-            logger.warning(f"Could not load PBP data: {e}")
+        path = NFLVERSE_DIR / "pbp.parquet"
+        if not path.exists():
+            raise FileNotFoundError(
+                f"PBP file not found: {path}. "
+                "Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data."
+            )
+        self._pbp = pd.read_parquet(path)
+        logger.info(f"Loaded PBP: {len(self._pbp)} plays from {path.name}")
 
     def _load_team_locations(self) -> Dict[str, Dict[str, float]]:
         """Load team location data for travel calculations."""
