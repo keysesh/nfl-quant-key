@@ -675,7 +675,8 @@ class ParlayRecommender:
         result = []
 
         for i, parlay in enumerate(parlays, 1):
-            legs_str = " | ".join([leg.name for leg in parlay.legs])
+            # Use format_leg_name to include market type (e.g., "Receptions Tee Higgins UNDER 4.5")
+            legs_str = " | ".join([format_leg_name(leg) for leg in parlay.legs])
 
             result.append({
                 'rank': i,
