@@ -1,7 +1,9 @@
 # NFL QUANT Framework
 
-**Status**: Production | **Updated**: 2025-12-20
-**Current Model**: V28 | **Features**: 55
+**Status**: Production | **Updated**: 2025-12-26
+**Current Model**: V29 | **Features**: 57
+
+> **Documentation**: See [.context/substrate.md](.context/substrate.md) for navigation hub
 
 ---
 
@@ -29,8 +31,8 @@ python scripts/predict/generate_edge_recommendations.py --week <WEEK> --include-
 
 | Setting | Description |
 |---------|-------------|
-| `MODEL_VERSION` | Current version (28) |
-| `FEATURES` | 55 feature columns |
+| `MODEL_VERSION` | Current version (29) |
+| `FEATURES` | 57 feature columns |
 | `CLASSIFIER_MARKETS` | Markets for training |
 | `MODEL_PARAMS` | XGBoost hyperparameters |
 | `MARKET_SNR_CONFIG` | Signal-to-noise thresholds |
@@ -77,7 +79,7 @@ ODDS_API_KEY=your_key_here  # From the-odds-api.com
 | **TD Poisson Edge** | `data/models/td_poisson_edge.joblib` |
 | **Training Data** | `data/backtest/combined_odds_actuals_ENRICHED.csv` |
 | **Pipeline Runner** | `scripts/run_pipeline.py` |
-| **NFLverse Data Guidelines** | `architecture/claude.md` |
+| **Architecture Docs** | `.context/architecture/overview.md` |
 
 ---
 
@@ -115,8 +117,11 @@ python scripts/train/train_td_poisson_edge.py
 - `player_pass_tds` - **Poisson model** (62% hit rate on OVER @ 58%+ conf)
 
 **Disabled:**
-- `player_pass_completions` - ~0 predictive power
-- `player_pass_attempts` - Can't distinguish starters
+- `player_pass_yds` - -15.8% ROI in holdout, failing both directions (Dec 2025)
+
+**Re-enabled (Dec 2025):**
+- `player_pass_completions` - Added back to CLASSIFIER_MARKETS with filters
+- `player_pass_attempts` - Added back to CLASSIFIER_MARKETS with filters
 
 ### Market Direction Constraints (V27)
 
@@ -151,13 +156,50 @@ Rscript scripts/fetch/fetch_nflverse_data.R
 | `player_id` / `gsis_id` | Primary player identifier (same field) |
 | `game_id` | Format: `{season}_{week}_{away}_{home}` (STRING, not int!) |
 
-**Data path priority** (always use cascading lookup):
+**Data files - NO FALLBACK, fail if missing**:
+
+| Data Type | Required File |
+|-----------|---------------|
+| Play-by-play | `data/nflverse/pbp.parquet` |
+| Depth charts | `data/nflverse/depth_charts.parquet` |
+| Player stats | `data/nflverse/player_stats.parquet` |
+| Weekly stats | `data/nflverse/weekly_stats.parquet` |
+| Rosters | `data/nflverse/rosters.parquet` |
+
 ```python
-pbp_path = Path('data/nflverse/pbp.parquet')           # Fresh (daily)
+# NO FALLBACK - fail explicitly if file is missing
+pbp_path = Path('data/nflverse/pbp.parquet')
 if not pbp_path.exists():
-    pbp_path = Path(f'data/nflverse/pbp_{season}.parquet')  # Season-specific
-if not pbp_path.exists():
-    pbp_path = Path(f'data/processed/pbp_{season}.parquet') # May be stale
+    raise FileNotFoundError(
+        f"PBP file not found: {pbp_path}. "
+        "Run 'Rscript scripts/fetch/fetch_nflverse_data.R' to fetch fresh data."
+    )
+```
+
+**WHY**: R script creates these generic files fresh daily. Season-specific files (`*_2025.parquet`) are stale and should NOT be used as fallback.
+
+---
+
+## NFLverse Column Naming Convention
+
+**CRITICAL**: Use NFLverse native column names when reading raw data:
+
+| Correct (NFLverse) | Wrong (Legacy) | Description |
+|--------------------|----------------|-------------|
+| `carries` | `rushing_attempts` | Rush attempts |
+| `attempts` | `passing_attempts` | Pass attempts |
+| `completions` | `passing_completions` | Completions |
+
+**Stats columns** (all use NFLverse naming):
+- `passing_yards`, `passing_tds`, `interceptions`
+- `rushing_yards`, `rushing_tds`
+- `receiving_yards`, `receiving_tds`, `receptions`, `targets`
+
+**Depth charts** (2025+ format uses `dt` timestamp):
+```python
+# Sort by dt (timestamp) to get most recent depth chart
+depth_df = depth_df.sort_values('dt', ascending=False)
+# Key columns: player_name, team, pos_name, pos_rank
 ```
 
 ---
@@ -198,6 +240,7 @@ SEQUENTIAL: Dashboard
 | Walk-forward Validation Gap | Dec 15 | Same historical cutoff for train and test |
 | TD Poisson Edge | Dec 15 | Proper model for count data (62% hit rate) |
 | V27 MarketFilter | Dec 15 | Game context filtering (spread, TE, bye) |
+| No-Fallback Data Files | Dec 26 | Use generic files only, fail if missing (no stale fallbacks) |
 
 ---
 
@@ -209,7 +252,7 @@ SEQUENTIAL: Dashboard
 | Model not found | Run `python scripts/train/train_model.py` |
 | Stale data | Run `Rscript scripts/fetch/fetch_nflverse_data.R` |
 | ODDS_API_KEY error | Add key to `.env` file |
-| >50% zeros in EPA | Check PBP path uses cascading lookup |
+| >50% zeros in EPA | Check pbp.parquet exists (run R fetch script) |
 | All picks filtered | Check bye week filter team name format |
 
 ### Quick Health Check
@@ -259,9 +302,26 @@ df['market_under_rate'] = df['under_hit'].shift(1).expanding().mean()  # GOOD
 
 ## Related Documentation
 
-- `ARCHITECTURE.md` - System design, data flows, component relationships
-- `architecture/claude.md` - NFLverse data validation guidelines
-- `architecture/field_validation_report.md` - Latest codebase audit
+### Primary Documentation (.context pattern)
+
+| Document | Purpose |
+|----------|---------|
+| [.context/substrate.md](.context/substrate.md) | Navigation hub - start here |
+| [.context/architecture/overview.md](.context/architecture/overview.md) | System design, bounded contexts |
+| [.context/architecture/invariants.md](.context/architecture/invariants.md) | Rules that must never break |
+| [.context/data/contracts.md](.context/data/contracts.md) | Data file schemas |
+
+### Modular Rules (.claude/rules/)
+
+| Rule | Scope |
+|------|-------|
+| [.claude/rules/data-freshness.md](.claude/rules/data-freshness.md) | No fallbacks, use generic files |
+| [.claude/rules/nflverse-naming.md](.claude/rules/nflverse-naming.md) | Column naming conventions |
+| [.claude/rules/anti-leakage.md](.claude/rules/anti-leakage.md) | Feature engineering patterns |
+
+### Legacy Documentation
+
+- `ARCHITECTURE.md` - Detailed system architecture
 - `CHANGELOG.md` - Version history
 
 ---
@@ -274,4 +334,4 @@ df['market_under_rate'] = df['under_hit'].shift(1).expanding().mean()  # GOOD
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2025-12-26

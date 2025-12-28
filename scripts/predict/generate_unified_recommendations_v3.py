@@ -4144,10 +4144,10 @@ def generate_recommendations(week: int, season: int = None) -> pd.DataFrame:
         if elite_count > 0:
             logger.info(f"  ELITE BETS (lines 0-3): {elite_count} bets (81.2% historical win rate)")
 
-        # OPTIONAL: Hard filter (comment out to keep all bets with flag)
-        # Uncomment to ONLY output filtered bets:
-        # df = df[df['wf_filter_passed'] == True]
-        # logger.info(f"  After hard filter: {len(df)} bets remaining")
+        # HARD FILTER: Only output bets that pass CONSERVATIVE_FILTER
+        # This removes pass_yds (-15.8% ROI) and other excluded markets
+        df = df[df['wf_filter_passed'] == True]
+        logger.info(f"  After hard filter: {len(df)} bets remaining")
 
     except Exception as e:
         df['wf_filter_passed'] = True  # Don't filter if error
