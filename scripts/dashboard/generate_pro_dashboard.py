@@ -17231,6 +17231,17 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                             continue  # Already handled multi-position case
 
                         # Single position case
+                        if len(depth_stats) == 0:
+                            # If depth1 had no stats but the position had players, record 0
+                            if depth_rank == 1:
+                                pos_played_weeks = set(pos_stats['week'].unique())
+                                for wk in pos_played_weeks:
+                                    if wk not in defense_weekly[opp_team]:
+                                        defense_weekly[opp_team][wk] = {}
+                                    if depth_market_key not in defense_weekly[opp_team][wk]:
+                                        defense_weekly[opp_team][wk][depth_market_key] = 0.0
+                            continue
+
                         if aggregate_cols:
                             valid_cols = [c for c in aggregate_cols if c in depth_stats.columns]
                             if not valid_cols:
@@ -17248,6 +17259,17 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                                 if wk not in defense_weekly[opp_team]:
                                     defense_weekly[opp_team][wk] = {}
                                 defense_weekly[opp_team][wk][depth_market_key] = round(float(total), 1)
+
+                            # For weeks where position played but depth1 had no stats, record 0
+                            if depth_rank == 1:
+                                weeks_with_stats = set(weekly_totals.keys())
+                                pos_played_weeks = set(pos_stats['week'].unique())
+                                for wk in pos_played_weeks:
+                                    if wk not in weeks_with_stats:
+                                        if wk not in defense_weekly[opp_team]:
+                                            defense_weekly[opp_team][wk] = {}
+                                        if depth_market_key not in defense_weekly[opp_team][wk]:
+                                            defense_weekly[opp_team][wk][depth_market_key] = 0.0
 
                     # Note: We only store depth-specific keys (e.g., player_receptions_TE_1)
                     # No fallback keys are stored - if exact data isn't available, show None
@@ -17392,6 +17414,11 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
         # This shows the defense the player is facing THIS week, not past opponents
         market_key = str(row.get('market', ''))
         current_opponent = str(row.get('opponent', row.get('opponent_abbr', '')))
+
+        # Normalize team abbreviations (picks may use LAR, stats use LA)
+        TEAM_ABBR_MAP = {'LAR': 'LA', 'JAC': 'JAX', 'WSH': 'WAS'}
+        current_opponent = TEAM_ABBR_MAP.get(current_opponent, current_opponent)
+
         position = str(row.get('position', ''))
 
         # Get player's depth position for depth-filtered defense lookup
@@ -17418,7 +17445,8 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
         defense_weeks = []
         if current_opponent and current_opponent in defense_weekly:
             # Get sorted weeks for this opponent (most recent first)
-            opp_weeks = sorted(defense_weekly[current_opponent].keys(), reverse=True)
+            # Ensure weeks are integers (groupby may return numpy types)
+            opp_weeks = sorted([int(w) for w in defense_weekly[current_opponent].keys()], reverse=True)
             # Always take 6 most recent weeks for defense trend
             recent_weeks = opp_weeks[:6]
             # Reverse to chronological order (oldest to newest)

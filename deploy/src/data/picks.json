@@ -1,6 +1,6 @@
 {
   "week": "18",
-  "generated_at": "2025-12-28T15:04:30.714097",
+  "generated_at": "2025-12-28T15:04:48.895705",
   "stats": {
     "total_picks": 17,
     "avg_edge": 7.7,
@@ -900,7 +900,7 @@
           0
         ],
         "defense_allowed": [
-          null,
+          0.0,
           0.0,
           1.0,
           2.0,
@@ -1211,7 +1211,7 @@
         ],
         "defense_allowed": [
           1.0,
-          null,
+          0.0,
           0.0,
           0.0,
           0.0,
