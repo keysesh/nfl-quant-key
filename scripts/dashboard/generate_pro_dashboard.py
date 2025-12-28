@@ -17035,14 +17035,14 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
 
                 # Build week boundaries from schedule
                 week_dates = {}
-                for week in sorted(sched_2025['week'].unique()):
-                    week_games = sched_2025[sched_2025['week'] == week]
-                    if 'gameday' in week_games.columns:
-                        min_date = pd.to_datetime(week_games['gameday'].min())
-                        week_dates[week] = min_date
+                for wk in sorted(sched_2025['week'].unique()):
+                    wk_games = sched_2025[sched_2025['week'] == wk]
+                    if 'gameday' in wk_games.columns:
+                        min_date = pd.to_datetime(wk_games['gameday'].min())
+                        week_dates[wk] = min_date
 
                 # For each week, get depth chart snapshot from that week
-                for week, game_date in week_dates.items():
+                for wk, game_date in week_dates.items():
                     game_dt = pd.Timestamp(game_date, tz='UTC')
                     # Get snapshots before this week's games
                     valid_snapshots = raw_depth[raw_depth['dt_parsed'] <= game_dt]
@@ -17050,7 +17050,7 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                     if len(valid_snapshots) == 0:
                         continue
 
-                    week_team_depth[week] = {}
+                    week_team_depth[wk] = {}
 
                     for team in valid_snapshots['team'].unique():
                         team_data = valid_snapshots[valid_snapshots['team'] == team]
@@ -17058,13 +17058,13 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                         latest_dt = team_data['dt_parsed'].max()
                         team_latest = team_data[team_data['dt_parsed'] == latest_dt]
 
-                        week_team_depth[week][team] = {}
+                        week_team_depth[wk][team] = {}
 
                         for pos in ['TE', 'WR', 'RB', 'QB']:
                             pos_players = team_latest[team_latest['pos_abb'] == pos]
                             if len(pos_players) > 0:
                                 pos_players = pos_players.sort_values('pos_rank')
-                                week_team_depth[week][team][pos] = [
+                                week_team_depth[wk][team][pos] = [
                                     (row['player_name'], int(row['pos_rank']))
                                     for _, row in pos_players.iterrows()
                                 ]
