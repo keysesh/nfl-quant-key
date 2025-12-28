@@ -659,6 +659,13 @@ def merge_edge_trailing_stats(
     trailing_cols = [EDGE_TRAILING_COL_MAP.get(m) for m in markets if m in EDGE_TRAILING_COL_MAP]
     trailing_cols = [c for c in trailing_cols if c in stats_df.columns]
 
+    # Add RB-specific features for player_rush_attempts market (V32)
+    if 'player_rush_attempts' in markets:
+        rb_features = ['trailing_ypc', 'trailing_cv_carries', 'trailing_rb_snap_share']
+        for feat in rb_features:
+            if feat in stats_df.columns and feat not in trailing_cols:
+                trailing_cols.append(feat)
+
     if not trailing_cols:
         warnings.warn("No trailing columns found in stats_df")
         return df
