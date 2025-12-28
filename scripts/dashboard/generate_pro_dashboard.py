@@ -102,10 +102,11 @@ def get_projection(row, market: str = '', game_history: dict = None) -> float:
 
     Priority:
     1. model_projection (if exists)
-    2. Market-specific mean (receiving_yards_mean, rushing_yards_mean, etc.)
-    3. trailing_stat
-    4. Game history average (loads from data if not provided)
-    5. 0 as last resort
+    2. expected_tds (for TD markets from Poisson model)
+    3. Market-specific mean (receiving_yards_mean, rushing_yards_mean, etc.)
+    4. trailing_stat
+    5. Game history average (loads from data if not provided)
+    6. 0 as last resort
     """
     # Try model_projection first
     proj = safe_float(row.get('model_projection', 0))
@@ -114,6 +115,17 @@ def get_projection(row, market: str = '', game_history: dict = None) -> float:
 
     # Try market-specific means
     market_lower = str(market).lower() if market else str(row.get('market', '')).lower()
+
+    # Handle TD markets - use expected_tds from Poisson model
+    if 'anytime_td' in market_lower or ('td' in market_lower and 'yds' not in market_lower):
+        # For TD props, use expected_tds (Poisson lambda parameter)
+        proj = safe_float(row.get('expected_tds', 0))
+        if proj > 0:
+            return proj
+        # Try total_tds_mean as fallback for TD markets
+        proj = safe_float(row.get('total_tds_mean', 0))
+        if proj > 0:
+            return proj
 
     if 'reception_yds' in market_lower or 'receiving' in market_lower:
         proj = safe_float(row.get('receiving_yards_mean', 0))
@@ -164,11 +176,28 @@ def get_projection(row, market: str = '', game_history: dict = None) -> float:
             vals = game_history.get('rushing_attempts', [])
         elif 'pass_yds' in market_lower or 'passing_yards' in market_lower:
             vals = game_history.get('passing_yards', [])
+        elif 'anytime_td' in market_lower or 'td' in market_lower:
+            # For TD markets, sum rushing + receiving + passing TDs
+            rush_tds = game_history.get('rushing_tds', [])
+            rec_tds = game_history.get('receiving_tds', [])
+            pass_tds = game_history.get('passing_tds', [])
+            # Combine TDs per game
+            n_games = len(game_history.get('weeks', []))
+            if n_games > 0:
+                vals = []
+                for i in range(n_games):
+                    total_td = 0
+                    if rush_tds and i < len(rush_tds): total_td += rush_tds[i] or 0
+                    if rec_tds and i < len(rec_tds): total_td += rec_tds[i] or 0
+                    if pass_tds and i < len(pass_tds): total_td += pass_tds[i] or 0
+                    vals.append(total_td)
+            else:
+                vals = []
         else:
             vals = []
 
         if vals and len(vals) > 0:
-            valid_vals = [v for v in vals if v is not None and v > 0]
+            valid_vals = [v for v in vals if v is not None and v >= 0]  # TDs can be 0, so allow 0
             if valid_vals:
                 return sum(valid_vals) / len(valid_vals)
 
@@ -1155,7 +1184,7 @@ def generate_mini_prop_card(row: pd.Series, format_prop_fn) -> str:
     market = safe_str(row.get('market', ''), '')
     market_display = row.get('market_display', format_prop_fn(market))
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     week = row.get('week', 15)
 
@@ -1389,7 +1418,7 @@ def generate_game_pick_card(row: pd.Series, format_prop_fn, view_prefix: str = '
     market = safe_str(row.get('market', ''), '')
     market_display = format_prop_fn(market)
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     tier = str(row.get('effective_tier', row.get('quality_tier', ''))).upper()
     week = row.get('week', 0)
@@ -1670,7 +1699,7 @@ def generate_compact_game_pick_row(row: pd.Series, format_prop_fn) -> str:
     market = safe_str(row.get('market', ''), '')
     market_display = format_prop_fn(market)
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     week = row.get('week', 0)
     game = safe_str(row.get('game', ''), '')
@@ -1819,7 +1848,7 @@ def generate_game_pick_row(row: pd.Series, format_prop_fn) -> str:
     market = safe_str(row.get('market', ''), '')
     market_display = row.get('market_display', format_prop_fn(market))
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     projection = get_projection(row, market)
     trailing_stat = row.get('trailing_stat', 0)
@@ -2016,7 +2045,7 @@ def generate_featured_pick_card(row: pd.Series, format_prop_fn) -> str:
     market = safe_str(row.get('market', ''), '')
     market_display = row.get('market_display', format_prop_fn(market))
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     projection = get_projection(row, market)
     tier = str(row.get('effective_tier', row.get('quality_tier', ''))).upper()
@@ -2277,7 +2306,7 @@ def generate_featured_pick_table_row(row: pd.Series, format_prop_fn) -> str:
     market = safe_str(row.get('market', ''), '')
     market_display = row.get('market_display', format_prop_fn(market))
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     projection = get_projection(row, market)
     tier = str(row.get('quality_tier', row.get('effective_tier', ''))).upper()
@@ -2440,7 +2469,7 @@ def generate_featured_prop_card(row: pd.Series, format_prop_fn, headshot_lookup:
     market = safe_str(row.get('market', ''), '')
     market_display = row.get('market_display', format_prop_fn(market))
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     projection = get_projection(row, market)
     game = safe_str(row.get('game', ''), '')
@@ -2611,7 +2640,7 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn, headshot_lookup: di
     market = safe_str(row.get('market', ''), '')
     market_display = row.get('market_display', format_prop_fn(market))
     line = row.get('line', 0)
-    confidence = row.get('model_prob', 0.5)
+    confidence = row.get('calibrated_prob') or row.get('model_prob') or row.get('combined_confidence') or 0.5
     edge = row.get('edge_pct', 0)
     projection = get_projection(row, market)
     game = safe_str(row.get('game', ''), '')
@@ -2675,7 +2704,8 @@ def generate_cheat_sheet_row(row: pd.Series, format_prop_fn, headshot_lookup: di
     team_logo_url = f"https://a.espncdn.com/i/teamlogos/nfl/500/{team_abbrev.lower()}.png"
 
     # Generate star rating (1-5 stars based on confidence)
-    star_count = round(conf_pct / 20)
+    conf_for_stars = conf_pct if not pd.isna(conf_pct) else 50
+    star_count = max(0, min(5, round(conf_for_stars / 20)))
     stars_html = ''.join(f'<span class="star filled">★</span>' for _ in range(star_count))
     stars_html += ''.join(f'<span class="star">★</span>' for _ in range(5 - star_count))
 
@@ -16751,11 +16781,12 @@ def load_tracking_data() -> dict:
     }
 
 
-def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> Path:
+def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
+                      game_lines_df: pd.DataFrame = None, parlays_df: pd.DataFrame = None) -> Path:
     """Export picks data to JSON for Next.js dashboard.
 
     Outputs a JSON file in the format expected by the Next.js dashboard at
-    deploy/web/src/data/picks.json
+    deploy/src/data/picks.json
     """
     if len(recs_df) == 0:
         print("No picks to export to JSON")
@@ -16859,27 +16890,19 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
     # Load depth chart for player depth positions (WR1, RB2, etc.)
     depth_chart_lookup = {}  # (player_name, team) -> depth_position
     try:
-        # Use fresh depth_charts.parquet first (updated daily), fallback to season-specific
-        depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
-        if not depth_path.exists():
-            depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts_2025.parquet'
-        if depth_path.exists():
-            depth_df = pd.read_parquet(depth_path)
+        # Use canonical depth chart loader
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        depth_df = get_depth_charts()
+
+        if not depth_df.empty:
             # Only get offensive skill positions
             skill_positions = ['Wide Receiver', 'Running Back', 'Tight End', 'Quarterback']
-            depth_df = depth_df[depth_df['pos_name'].isin(skill_positions)]
-
-            # NFLverse 2025+ uses 'dt' timestamp for freshness (season may be NaN for current data)
-            # Sort by dt descending (most recent first) to get latest depth chart
-            if 'dt' in depth_df.columns:
-                depth_df = depth_df.sort_values('dt', ascending=False, na_position='last')
-            elif 'week' in depth_df.columns:
-                # Fallback for older data format
-                depth_df['week_sort'] = depth_df['week'].fillna(0)
-                depth_df = depth_df.sort_values('week_sort', ascending=False)
+            if 'pos_name' in depth_df.columns:
+                depth_df = depth_df[depth_df['pos_name'].isin(skill_positions)]
 
             # Keep only the most recent entry for each (player, team, position)
-            depth_df = depth_df.drop_duplicates(subset=['player_name', 'team', 'pos_name'], keep='first')
+            if 'player_name' in depth_df.columns and 'team' in depth_df.columns and 'pos_name' in depth_df.columns:
+                depth_df = depth_df.drop_duplicates(subset=['player_name', 'team', 'pos_name'], keep='first')
 
             # Build lookup: (player_name, team) -> "WR1", "RB2", etc.
             pos_abbrev_map = {
@@ -16987,25 +17010,25 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
     player_depth_lookup = {}  # player_id -> pos_rank (most recent)
     player_name_depth = {}    # (player_name, team) -> pos_rank (fallback)
     try:
-        depth_path = PROJECT_ROOT / 'data' / 'nflverse' / 'depth_charts.parquet'
-        if depth_path.exists():
-            depth_df = pd.read_parquet(depth_path)
+        # Use canonical depth chart loader
+        from nfl_quant.data.depth_chart_loader import get_depth_charts
+        depth_df = get_depth_charts()
+
+        if not depth_df.empty:
             # Filter to skill positions
             pos_map = {'Wide Receiver': 'WR', 'Running Back': 'RB', 'Tight End': 'TE', 'Quarterback': 'QB'}
-            depth_df = depth_df[depth_df['pos_name'].isin(pos_map.keys())]
-            depth_df = depth_df[depth_df['player_name'].notna() & depth_df['pos_rank'].notna()]
-
-            # Sort by dt (most recent first) to get current depth chart
-            if 'dt' in depth_df.columns:
-                depth_df = depth_df.sort_values('dt', ascending=False)
+            if 'pos_name' in depth_df.columns:
+                depth_df = depth_df[depth_df['pos_name'].isin(pos_map.keys())]
+            if 'player_name' in depth_df.columns and 'pos_rank' in depth_df.columns:
+                depth_df = depth_df[depth_df['player_name'].notna() & depth_df['pos_rank'].notna()]
 
             # Build lookups - most recent entry wins
             for _, row in depth_df.iterrows():
                 pid = row.get('gsis_id', '')
                 pname = row.get('player_name', '')
                 team = row.get('team', '')
-                pos_rank = int(row['pos_rank'])
-                pos = pos_map.get(row['pos_name'], '')
+                pos_rank = int(row['pos_rank']) if pd.notna(row.get('pos_rank')) else 1
+                pos = pos_map.get(row.get('pos_name', ''), '')
 
                 # Primary lookup by player_id
                 if pid and pid not in player_depth_lookup:
@@ -17247,6 +17270,7 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
         # This shows the defense the player is facing THIS week, not past opponents
         market_key = str(row.get('market', ''))
         current_opponent = str(row.get('opponent', row.get('opponent_abbr', '')))
+        position = str(row.get('position', ''))
 
         # Get player's depth position for depth-filtered defense lookup
         player_depth_rank = None
@@ -17322,8 +17346,12 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
         is_over = pick_direction in ['OVER', 'YES']
         edge = projection - line if is_over else line - projection
 
-        # Confidence
-        confidence = float(row.get('combined_confidence', row.get('model_prob', 0.55))) if pd.notna(row.get('combined_confidence', row.get('model_prob'))) else 0.55
+        # Confidence - use calibrated_prob (XGBoost), combined_confidence (TD Enhanced), or model_prob
+        conf_raw = row.get('calibrated_prob') if pd.notna(row.get('calibrated_prob')) else (
+            row.get('combined_confidence') if pd.notna(row.get('combined_confidence')) else
+            row.get('model_prob') if pd.notna(row.get('model_prob')) else 0.55
+        )
+        confidence = float(conf_raw) if pd.notna(conf_raw) else 0.55
 
         # L5 rate calculation
         l5_rate = None
@@ -17442,6 +17470,116 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
     except Exception as e:
         print(f"  Warning: Could not load schedule data: {e}")
 
+    # Build game lines list from game_lines_df
+    game_lines_list = []
+    if game_lines_df is not None and len(game_lines_df) > 0:
+        for idx, row in game_lines_df.iterrows():
+            game_str = str(row.get('game', ''))
+            home_team = game_str.split(' @ ')[-1] if ' @ ' in game_str else ''
+            away_team = game_str.split(' @ ')[0] if ' @ ' in game_str else ''
+
+            game_line = {
+                'id': f"gameline-{idx}",
+                'game': game_str,
+                'bet_type': str(row.get('bet_type', '')),
+                'pick': str(row.get('pick', '')),
+                'line': safe_float(row.get('market_line', 0)),
+                'fair_line': round(safe_float(row.get('model_fair_line', 0)), 1),
+                'confidence': round(safe_float(row.get('model_prob', 0.5)), 2),
+                'edge': round(safe_float(row.get('edge_pct', 0)), 1),
+                'ev': round(safe_float(row.get('expected_roi', 0)), 1),
+                'tier': str(row.get('confidence_tier', 'MODERATE')).lower(),
+                'kelly_units': round(safe_float(row.get('recommended_units', 0)), 2),
+                'home_team': home_team,
+                'away_team': away_team,
+                # Additional model data for modal
+                'home_win_prob': round(safe_float(row.get('home_win_prob', 0.5)), 3),
+                'home_epa': round(safe_float(row.get('home_epa', 0)), 3),
+                'away_epa': round(safe_float(row.get('away_epa', 0)), 3),
+                'home_elo': round(safe_float(row.get('home_elo', 1500)), 0),
+                'away_elo': round(safe_float(row.get('away_elo', 1500)), 0),
+                'elo_diff': round(safe_float(row.get('elo_diff', 0)), 1),
+                'home_record': str(row.get('home_record', '')),
+                'away_record': str(row.get('away_record', '')),
+                'home_rest_days': int(safe_float(row.get('home_rest_days', 7))),
+                'away_rest_days': int(safe_float(row.get('away_rest_days', 7))),
+                # ATS records
+                'home_ats_record': str(row.get('home_ats_record', '')),
+                'away_ats_record': str(row.get('away_ats_record', '')),
+                'home_last6_ats': str(row.get('home_last6_ats', '')),
+                'away_last6_ats': str(row.get('away_last6_ats', '')),
+                # Defense ranks
+                'home_total_def_rank': int(safe_float(row.get('home_total_def_rank', 16))),
+                'away_total_def_rank': int(safe_float(row.get('away_total_def_rank', 16))),
+                # EPA breakdown
+                'home_pass_epa': round(safe_float(row.get('home_pass_epa', 0)), 3),
+                'away_pass_epa': round(safe_float(row.get('away_pass_epa', 0)), 3),
+                'home_rush_epa': round(safe_float(row.get('home_rush_epa', 0)), 3),
+                'away_rush_epa': round(safe_float(row.get('away_rush_epa', 0)), 3),
+                'home_def_epa': round(safe_float(row.get('home_def_epa', 0)), 3),
+                'away_def_epa': round(safe_float(row.get('away_def_epa', 0)), 3),
+            }
+            game_lines_list.append(game_line)
+        # Sort by confidence descending
+        game_lines_list.sort(key=lambda x: x['confidence'], reverse=True)
+
+    # Build parlays list from parlays_df
+    parlays_list = []
+    if parlays_df is not None and len(parlays_df) > 0:
+        for idx, row in parlays_df.iterrows():
+            # Parse recommended_units - may have 'u' suffix like "0.50u"
+            units_val = str(row.get('recommended_units', '0')).replace('u', '').replace('U', '').strip()
+            try:
+                units_float = float(units_val) if units_val else 0
+            except ValueError:
+                units_float = 0
+
+            parlay = {
+                'id': f"parlay-{idx}",
+                'rank': safe_int(row.get('rank', idx + 1)),
+                'featured': str(row.get('featured', '')).upper() == 'YES',
+                'legs': str(row.get('legs', '')),
+                'num_legs': safe_int(row.get('num_legs', 0)),
+                'true_odds': safe_int(row.get('true_odds', 0)),
+                'model_odds': safe_int(row.get('model_odds', 0)),
+                'true_prob': str(row.get('true_prob', '')),
+                'model_prob': str(row.get('model_prob', '')),
+                'edge': str(row.get('edge', '')),
+                'stake': str(row.get('recommended_stake', '')),
+                'potential_win': str(row.get('potential_win', '')),
+                'ev': str(row.get('expected_value', '')),
+                'games': str(row.get('games', '')),
+                'sources': str(row.get('sources', '')),
+                'units': round(units_float, 2),
+            }
+            parlays_list.append(parlay)
+
+    # Load team colors and logos from NFLverse
+    teams_data = {}
+    try:
+        teams_path = PROJECT_ROOT / 'data' / 'nflverse' / 'teams.parquet'
+        if teams_path.exists():
+            teams_df = pd.read_parquet(teams_path)
+            for _, row in teams_df.iterrows():
+                abbr = str(row.get('team_abbr', '')).upper()
+                if abbr:
+                    teams_data[abbr] = {
+                        'name': str(row.get('team_name', '')),
+                        'nick': str(row.get('team_nick', '')),
+                        'color': str(row.get('team_color', '#333333')),
+                        'color2': str(row.get('team_color2', '#666666')),
+                        'color3': str(row.get('team_color3', '')) if pd.notna(row.get('team_color3')) else None,
+                        'color4': str(row.get('team_color4', '')) if pd.notna(row.get('team_color4')) else None,
+                        'logo': str(row.get('team_logo_espn', '')),
+                        'logoSquared': str(row.get('team_logo_squared', '')),
+                        'wordmark': str(row.get('team_wordmark', '')),
+                        'conf': str(row.get('team_conf', '')),
+                        'division': str(row.get('team_division', '')),
+                    }
+            print(f"  Loaded {len(teams_data)} team colors and logos from NFLverse")
+    except Exception as e:
+        print(f"  Warning: Could not load team data: {e}")
+
     # Build final JSON structure
     dashboard_data = {
         'week': week,
@@ -17453,19 +17591,22 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025) -> P
             'elite_count': elite_count,
             'strong_count': strong_count,
         },
+        'teams': teams_data,
         'games': games_metadata,
         'picks': picks_list,
+        'gameLines': game_lines_list,
+        'parlays': parlays_list,
     }
 
-    # Output path for Next.js app
-    output_dir = PROJECT_ROOT / 'deploy' / 'web' / 'src' / 'data'
+    # Output path for Next.js app (at deploy root, not web subdirectory)
+    output_dir = PROJECT_ROOT / 'deploy' / 'src' / 'data'
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / 'picks.json'
 
     with open(output_path, 'w') as f:
         json.dump(dashboard_data, f, indent=2, default=str)
 
-    print(f"JSON export: {output_path} ({len(picks_list)} picks, filtered {filtered_count} conflicting)")
+    print(f"JSON export: {output_path} ({len(picks_list)} picks, {len(game_lines_list)} game lines, {len(parlays_list)} parlays)")
     return output_path
 
 
@@ -17476,19 +17617,32 @@ def generate_dashboard(week: int = None, season: int = 2025):
 
     # Load data - prefer edge recommendations (new pipeline)
     recs_df = load_edge_recommendations(week)
+    edge_count = len(recs_df)
 
-    # Fall back to old format if edge recommendations not found OR too few
-    if len(recs_df) < 20:
+    # If edge recommendations are few, MERGE with XGBoost predictions (not replace)
+    # This preserves TD Poisson picks while adding more continuous stat picks
+    if edge_count < 20:
         recs_path = PROJECT_ROOT / "reports" / "CURRENT_WEEK_RECOMMENDATIONS.csv"
         if recs_path.exists():
-            print(f"Edge recommendations too few ({len(recs_df)}), falling back to XGBoost predictions")
-            recs_df = pd.read_csv(recs_path)
+            print(f"Edge recommendations ({edge_count}), supplementing with XGBoost predictions")
+            xgb_df = pd.read_csv(recs_path)
             # Apply multi-factor scoring for tier only (keeps CAUTION flags)
-            recs_df['effective_tier'] = recs_df.apply(get_adjusted_tier, axis=1)
-            recs_df['confidence'] = recs_df['effective_tier']
+            xgb_df['effective_tier'] = xgb_df.apply(get_adjusted_tier, axis=1)
+            xgb_df['confidence'] = xgb_df['effective_tier']
             # Add defensive rankings (same logic as edge recommendations)
-            recs_df = add_defensive_rankings_to_df(recs_df, week)
-        else:
+            xgb_df = add_defensive_rankings_to_df(xgb_df, week)
+
+            if edge_count > 0:
+                # Merge: keep edge recommendations, add XGBoost picks that don't overlap
+                # Identify by (player, market) combination
+                edge_keys = set(zip(recs_df['player'].str.lower(), recs_df['market']))
+                xgb_df['_key'] = list(zip(xgb_df['player'].str.lower(), xgb_df['market']))
+                xgb_new = xgb_df[~xgb_df['_key'].isin(edge_keys)].drop(columns=['_key'])
+                recs_df = pd.concat([recs_df, xgb_new], ignore_index=True)
+                print(f"  Merged: {edge_count} edge + {len(xgb_new)} XGBoost = {len(recs_df)} total")
+            else:
+                recs_df = xgb_df
+        elif edge_count == 0:
             print(f"Error: No recommendations found for week {week}")
             return None
 
@@ -17566,8 +17720,10 @@ def generate_dashboard(week: int = None, season: int = 2025):
 
     total_before_filter = len(recs_df)
 
-    # TIER 1: Keep ALL picks with 50%+ confidence
-    all_picks_filter = recs_df['model_prob'] >= ALL_PICKS_THRESHOLD
+    # TIER 1: Keep picks with 60%+ confidence (validated profitable threshold)
+    # Use model_prob for XGBoost, combined_confidence for TD Enhanced
+    confidence_col = recs_df['model_prob'].fillna(recs_df.get('combined_confidence', 0))
+    all_picks_filter = confidence_col >= 0.60  # 60% threshold for profitable bets
 
     # Exclude backup players if column exists (they have unreliable projections)
     if 'calibration_tier' in recs_df.columns:
@@ -18179,7 +18335,7 @@ def generate_dashboard(week: int = None, season: int = 2025):
     print(f"Dashboard generated: {output_path}")
 
     # Also export JSON for Next.js dashboard
-    export_picks_json(recs_df, week, season)
+    export_picks_json(recs_df, week, season, game_lines_df=game_lines_df, parlays_df=parlays_df)
 
     return output_path
 
@@ -18248,8 +18404,27 @@ if __name__ == "__main__":
                 recs_df = recs_df[recs_df.apply(is_projection_aligned, axis=1)]
                 print(f"Loaded {len(recs_df)} aligned picks from CURRENT_WEEK_RECOMMENDATIONS.csv (filtered {original_count - len(recs_df)} misaligned)")
 
+        # Load game lines for JSON export
+        game_lines_df = None
+        game_lines_paths = [
+            PROJECT_ROOT / "reports" / f"WEEK{week}_GAME_LINE_RECOMMENDATIONS.csv",
+            PROJECT_ROOT / "reports" / f"game_lines_predictions_week{week}.csv",
+        ]
+        for path in game_lines_paths:
+            if path.exists():
+                game_lines_df = pd.read_csv(path)
+                print(f"Loaded {len(game_lines_df)} game line recommendations")
+                break
+
+        # Load parlays for JSON export
+        parlays_df = None
+        parlay_path = PROJECT_ROOT / "reports" / f"parlay_recommendations_week{week}_2025.csv"
+        if parlay_path.exists():
+            parlays_df = pd.read_csv(parlay_path)
+            print(f"Loaded {len(parlays_df)} parlay recommendations")
+
         if len(recs_df) > 0:
-            export_picks_json(recs_df, week)
+            export_picks_json(recs_df, week, game_lines_df=game_lines_df, parlays_df=parlays_df)
         else:
             print(f"No recommendations found for week {week}")
     else:
