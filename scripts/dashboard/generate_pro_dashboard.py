@@ -17146,34 +17146,10 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
                                     defense_weekly[opp_team][wk] = {}
                                 defense_weekly[opp_team][wk][depth_market_key] = round(float(total), 1)
 
-                    # For multi-position markets, also store position-only keys (no depth filter)
-                    # e.g., player_receptions_TE (all TEs regardless of depth rank)
-                    if len(positions) > 1:
-                        for pos in positions:
-                            pos_only_stats = pos_stats[pos_stats['position'] == pos]
-                            if len(pos_only_stats) == 0:
-                                continue
-                            pos_only_key = f"{market}_{pos}"
+                    # Note: We only store depth-specific keys (e.g., player_receptions_TE_1)
+                    # No fallback keys are stored - if exact data isn't available, show None
 
-                            if aggregate_cols:
-                                valid_cols = [c for c in aggregate_cols if c in pos_only_stats.columns]
-                                if not valid_cols:
-                                    continue
-                                pos_only_stats = pos_only_stats.copy()
-                                pos_only_stats['_agg_total'] = pos_only_stats[valid_cols].fillna(0).sum(axis=1)
-                                pos_weekly_totals = pos_only_stats.groupby('week')['_agg_total'].sum()
-                            elif col and col in pos_only_stats.columns:
-                                pos_weekly_totals = pos_only_stats.groupby('week')[col].sum()
-                            else:
-                                continue
-
-                            if len(pos_weekly_totals) > 0:
-                                for wk, total in pos_weekly_totals.items():
-                                    if wk not in defense_weekly[opp_team]:
-                                        defense_weekly[opp_team][wk] = {}
-                                    defense_weekly[opp_team][wk][pos_only_key] = round(float(total), 1)
-
-                    # Also store non-depth-filtered totals as fallback (original market key)
+                    # Also store non-depth-filtered totals for aggregate stats (original market key)
                     if aggregate_cols:
                         valid_cols = [c for c in aggregate_cols if c in pos_stats.columns]
                         if not valid_cols:
@@ -17352,30 +17328,21 @@ def export_picks_json(recs_df: pd.DataFrame, week: int, season: int = 2025,
             if market_key == 'player_anytime_td' and position in ['RB', 'WR', 'TE', 'QB']:
                 defense_market_key = f"{market_key}_{position}"
 
-            # Try depth-filtered key first, then position-only, then generic
+            # Only use exact depth-specific key - no fallbacks
             depth_market_key = None
-            position_only_key = None
             if player_depth_rank and player_depth_rank <= 3:
                 # Multi-position markets need position in key: player_receptions_WR_1
                 if market_key in ['player_receptions', 'player_reception_yds', 'player_rush_yds']:
                     depth_market_key = f"{market_key}_{position}_{player_depth_rank}"
-                    position_only_key = f"{market_key}_{position}"  # Fallback: all TEs/WRs
                 else:
                     # Single-position markets: player_pass_yds_1
                     depth_market_key = f"{defense_market_key}_{player_depth_rank}"
-            elif position and market_key in ['player_receptions', 'player_reception_yds', 'player_rush_yds']:
-                # No depth rank available, but still use position-specific key
-                position_only_key = f"{market_key}_{position}"
 
             for def_week in recent_weeks:
                 week_data = defense_weekly[current_opponent].get(def_week, {})
-                # Try depth-specific first, then position-only, then generic
+                # Only use exact depth-specific key - show None if not available
                 if depth_market_key and depth_market_key in week_data:
                     defense_trend.append(week_data[depth_market_key])
-                elif position_only_key and position_only_key in week_data:
-                    defense_trend.append(week_data[position_only_key])
-                elif defense_market_key in week_data:
-                    defense_trend.append(week_data[defense_market_key])
                 else:
                     defense_trend.append(None)
 
