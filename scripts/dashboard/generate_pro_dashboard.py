@@ -3176,7 +3176,7 @@ def generate_game_lines_card(game_data: dict, away_team: str, home_team: str, ga
             temp_val = float(temp)
             wind_val = float(wind) if wind and not pd.isna(wind) else 0
             weather_icon = '☀️'
-            if conditions:
+            if conditions and isinstance(conditions, str):
                 cond_lower = conditions.lower()
                 if 'rain' in cond_lower or 'shower' in cond_lower:
                     weather_icon = '🌧️'
