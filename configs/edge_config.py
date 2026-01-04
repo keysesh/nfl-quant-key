@@ -294,7 +294,7 @@ MARKET_FILTERS: Dict[str, MarketFilter] = {
         min_prob=0.55,
     ),
     'player_rush_attempts': MarketFilter(
-        enabled=False,  # Edge: -9.1%, XGB: -7.0% ROI
+        enabled=True,   # Enabled with UNDER_ONLY constraint
         direction='UNDER',
         min_prob=0.55,
     ),

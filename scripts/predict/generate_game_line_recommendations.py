@@ -44,6 +44,7 @@ from nfl_quant.utils.ats_tracker import get_team_ats_context
 from nfl_quant.utils.defensive_rankings import get_team_defensive_ranks
 from nfl_quant.features.team_power_ratings import TeamPowerRatings
 from nfl_quant.features.team_strength import EnhancedEloCalculator
+from nfl_quant.utils.team_names import normalize_team_name
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
@@ -84,6 +85,35 @@ HIGH_THRESHOLD = _confidence_tiers.get('high_threshold', 0.57)
 STANDARD_THRESHOLD = _confidence_tiers.get('standard_threshold', 0.53)
 
 print(f"Loaded game line config: shrinkage={WIN_PROB_SHRINKAGE:.0%}/{SPREAD_COVER_SHRINKAGE:.0%}/{TOTAL_OVER_SHRINKAGE:.0%}")
+
+
+def normalize_game_id(game_id: str) -> str:
+    """
+    Normalize team codes in a game_id string.
+
+    Converts game_ids like '2025_17_LAR_ATL' to use consistent team codes.
+    The schedule uses 'LA' but odds API uses 'LAR' for the Rams.
+
+    Args:
+        game_id: Game ID in format 'YYYY_WW_AWAY_HOME'
+
+    Returns:
+        Normalized game ID with consistent team codes
+    """
+    if not isinstance(game_id, str):
+        return game_id
+
+    parts = game_id.split('_')
+    if len(parts) != 4:
+        return game_id
+
+    season, week, away, home = parts
+    # Normalize team codes (LAR -> LA for schedule compatibility)
+    away_normalized = 'LA' if away == 'LAR' else away
+    home_normalized = 'LA' if home == 'LAR' else home
+
+    return f"{season}_{week}_{away_normalized}_{home_normalized}"
+
 
 # Initialize power ratings system (combines Elo + EPA + SOS)
 _power_ratings: TeamPowerRatings = None
@@ -1214,6 +1244,9 @@ def generate_game_line_recommendations():
         raise FileNotFoundError(f"Odds file not found: {ODDS_FILE}")
 
     odds_df = pd.read_csv(ODDS_FILE)
+    # Normalize game_ids to match schedule format (LAR -> LA)
+    if 'game_id' in odds_df.columns:
+        odds_df['game_id'] = odds_df['game_id'].apply(normalize_game_id)
     print(f"Loaded odds for {len(odds_df)} lines")
 
     # Load schedule to get game info

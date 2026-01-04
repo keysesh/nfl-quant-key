@@ -175,7 +175,7 @@ def load_depth_charts(season: int = 2025) -> pd.DataFrame:
     """
     # Use canonical depth chart loader
     from nfl_quant.data.depth_chart_loader import get_depth_charts
-    dc = get_depth_charts(season=season, mode='BETTING')
+    dc = get_depth_charts(season=season)
 
     if dc.empty:
         raise ValueError("Empty depth chart data returned from canonical loader")

@@ -1053,6 +1053,8 @@ FEATURED_THRESHOLDS = {
     'player_pass_yds': 0.60,         # Higher bar for pass yards
     'player_pass_attempts': 0.55,    # Moderate threshold
     'player_pass_completions': 0.55, # Moderate threshold
+    'player_pass_tds': 0.55,         # TD Poisson model
+    'player_anytime_td': 0.35,       # ATTD - lower threshold (edge-based)
 }
 DEFAULT_FEATURED_THRESHOLD = 0.60  # Fallback for unknown markets
 ALL_PICKS_THRESHOLD = 0.50  # Minimum for showing any pick
@@ -17891,7 +17893,14 @@ def generate_dashboard(week: int = None, season: int = 2025):
     confidence_col = recs_df['model_prob'].fillna(recs_df.get('combined_confidence', 0))
 
     # Keep picks with 50%+ confidence (include all useful picks)
-    all_picks_filter = confidence_col >= 0.50
+    # Exception: ATTD picks use lower threshold (edge-based, not pure probability)
+    def get_min_threshold(market):
+        if 'anytime_td' in str(market).lower():
+            return 0.30  # ATTD uses edge, model probs are inherently lower
+        return 0.50
+
+    market_thresholds = recs_df['market'].apply(get_min_threshold) if 'market' in recs_df.columns else 0.50
+    all_picks_filter = confidence_col >= market_thresholds
 
     # Exclude backup players if column exists (they have unreliable projections)
     if 'calibration_tier' in recs_df.columns:
