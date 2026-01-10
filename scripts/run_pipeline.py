@@ -230,7 +230,7 @@ def setup_run_resolver(run_id: str) -> bool:
 
 def main():
     parser = argparse.ArgumentParser(description='NFL QUANT Pipeline')
-    parser.add_argument('week', type=int, help='NFL week number (1-18)')
+    parser.add_argument('week', type=int, help='NFL week number (1-18 regular season, 19-22 playoffs)')
     parser.add_argument('--edge-mode', action='store_true',
                         help='Use edge-based ensemble (LVT + Player Bias + TD Poisson)')
     parser.add_argument('--unified-mode', action='store_true', default=True,
@@ -244,9 +244,14 @@ def main():
     args = parser.parse_args()
 
     week = args.week
-    if not 1 <= week <= 18:
-        print(f"Error: Week must be 1-18, got {week}")
+    # Support regular season (1-18) and playoffs (19=Wild Card, 20=Divisional, 21=Conference, 22=Super Bowl)
+    if not 1 <= week <= 22:
+        print(f"Error: Week must be 1-22, got {week}")
         sys.exit(1)
+
+    # Label playoff weeks
+    playoff_labels = {19: "Wild Card", 20: "Divisional", 21: "Conference Championships", 22: "Super Bowl"}
+    week_label = playoff_labels.get(week, f"Week {week}")
 
     # Generate run ID if not provided
     if args.run_id:
@@ -262,7 +267,7 @@ def main():
     print(f"""
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                           NFL QUANT PIPELINE                                 ║
-║                         Week {week:2d} - {datetime.now().strftime('%Y-%m-%d %H:%M')}                              ║
+║                         {week_label:<20} - {datetime.now().strftime('%Y-%m-%d %H:%M')}                         ║
 ║                         Model: {model_mode:<18}                              ║
 ║                         Run ID: {run_id:<35}               ║
 ╚══════════════════════════════════════════════════════════════════════════════╝

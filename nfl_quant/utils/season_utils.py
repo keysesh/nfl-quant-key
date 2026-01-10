@@ -173,7 +173,7 @@ def get_current_week(season: Optional[int] = None) -> int:
         season: Season to check (default: current season)
 
     Returns:
-        int: Current week number (1-18 for regular season)
+        int: Current week number (1-18 regular season, 19-22 playoffs)
 
     Examples:
         >>> # If today is November 16, 2025 (Week 11 games)
@@ -218,6 +218,11 @@ def get_current_week(season: Optional[int] = None) -> int:
             16: datetime(2025, 12, 16), # Week 16: Dec 18-22
             17: datetime(2025, 12, 23), # Week 17: Dec 25-29
             18: datetime(2025, 12, 30), # Week 18: Jan 1-5
+            # Playoffs
+            19: datetime(2026, 1, 7),   # Wild Card: Jan 10-13
+            20: datetime(2026, 1, 14),  # Divisional: Jan 17-18
+            21: datetime(2026, 1, 21),  # Conference: Jan 25-26
+            22: datetime(2026, 2, 4),   # Super Bowl: Feb 8
         },
         2024: {
             1: datetime(2024, 9, 3),
@@ -236,7 +241,8 @@ def get_current_week(season: Optional[int] = None) -> int:
             else:
                 break
 
-        return min(current_week, 18)
+        # Cap at 22 (Super Bowl week) to include playoffs
+        return min(current_week, 22)
 
     # Fallback: estimate based on season start
     season_start = datetime(season, 9, 7)
@@ -247,7 +253,7 @@ def get_current_week(season: Optional[int] = None) -> int:
     days_since_start = (now - season_start).days
     weeks_elapsed = (days_since_start // 7) + 1
 
-    return min(max(1, weeks_elapsed), 18)
+    return min(max(1, weeks_elapsed), 22)
 
 
 def get_weeks_completed(season: Optional[int] = None,

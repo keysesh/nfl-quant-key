@@ -72,11 +72,30 @@ def get_week_games(week: int, season: int = None):
 
     sched = pd.read_parquet(sched_file)
 
-    # Filter to specified week and season, regular season games only
+    # Determine game type based on week
+    # Weeks 1-18: Regular season (REG)
+    # Week 19: Wild Card (WC)
+    # Week 20: Divisional (DIV)
+    # Week 21: Conference Championships (CON)
+    # Week 22: Super Bowl (SB)
+    if week <= 18:
+        game_types = ['REG']
+    elif week == 19:
+        game_types = ['WC']
+    elif week == 20:
+        game_types = ['DIV']
+    elif week == 21:
+        game_types = ['CON']
+    elif week == 22:
+        game_types = ['SB']
+    else:
+        game_types = ['REG', 'WC', 'DIV', 'CON', 'SB']  # Fallback to all types
+
+    # Filter to specified week and season
     week_games = sched[
         (sched['season'] == season) &
         (sched['week'] == week) &
-        (sched['game_type'] == 'REG')
+        (sched['game_type'].isin(game_types))
     ]
 
     if week_games.empty:

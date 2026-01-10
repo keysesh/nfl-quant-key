@@ -1309,28 +1309,34 @@ def generate_game_line_recommendations():
 
     # Process games in parallel using ThreadPoolExecutor
     all_results = []
-    num_workers = min(len(upcoming_games), 4)  # Cap at 4 workers
 
-    with ThreadPoolExecutor(max_workers=num_workers) as executor:
-        # Submit all games for processing
-        future_to_game = {
-            executor.submit(process_single_game, game, context): game
-            for game in upcoming_games
-        }
+    # Handle case when no upcoming games
+    if len(upcoming_games) == 0:
+        print("  No upcoming games to process")
+        all_results = []
+    else:
+        num_workers = min(len(upcoming_games), 4)  # Cap at 4 workers
 
-        # Collect results as they complete
-        for future in as_completed(future_to_game):
-            game = future_to_game[future]
-            game_key = f"{game['away_team']} @ {game['home_team']}"
-            try:
-                game_results = future.result()
-                all_results.extend(game_results)
-                if game_results:
-                    print(f"  ✅ {game_key}: {len(game_results)} recommendations")
-                else:
-                    print(f"  ⚠️  {game_key}: No odds or predictions found")
-            except Exception as e:
-                print(f"  ❌ {game_key}: Error - {e}")
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            # Submit all games for processing
+            future_to_game = {
+                executor.submit(process_single_game, game, context): game
+                for game in upcoming_games
+            }
+
+            # Collect results as they complete
+            for future in as_completed(future_to_game):
+                game = future_to_game[future]
+                game_key = f"{game['away_team']} @ {game['home_team']}"
+                try:
+                    game_results = future.result()
+                    all_results.extend(game_results)
+                    if game_results:
+                        print(f"  ✅ {game_key}: {len(game_results)} recommendations")
+                    else:
+                        print(f"  ⚠️  {game_key}: No odds or predictions found")
+                except Exception as e:
+                    print(f"  ❌ {game_key}: Error - {e}")
 
     results = all_results
 

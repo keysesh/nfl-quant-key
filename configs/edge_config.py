@@ -109,12 +109,17 @@ LVT_THRESHOLDS: Dict[str, LVTThreshold] = {
 
 
 # XGBoost parameters for LVT edge (conservative to prevent overfitting)
+# V33: Added strong regularization to close train/test gap
 LVT_MODEL_PARAMS = {
-    'n_estimators': 50,      # Fewer trees
-    'max_depth': 3,          # Shallower trees
-    'learning_rate': 0.05,   # Slower learning
-    'subsample': 0.7,
-    'colsample_bytree': 0.8,
+    'n_estimators': 30,        # Fewer trees (was 50)
+    'max_depth': 2,            # Shallower trees (was 3)
+    'learning_rate': 0.03,     # Slower learning (was 0.05)
+    'subsample': 0.6,          # More subsampling (was 0.7)
+    'colsample_bytree': 0.6,   # Fewer features per tree (was 0.8)
+    'min_child_weight': 20,    # Require more samples per leaf (was default 1)
+    'reg_alpha': 1.0,          # L1 regularization (was 0)
+    'reg_lambda': 5.0,         # L2 regularization (was 1)
+    'gamma': 0.5,              # Min loss reduction for split (was 0)
     'random_state': 42,
     'verbosity': 0,
 }
@@ -211,13 +216,18 @@ PLAYER_BIAS_THRESHOLDS: Dict[str, PlayerBiasThreshold] = {
 }
 
 
-# XGBoost parameters for Player Bias edge (standard params)
+# XGBoost parameters for Player Bias edge
+# V33: Added strong regularization to close 16-28% train/test gap
 PLAYER_BIAS_MODEL_PARAMS = {
-    'n_estimators': 100,
-    'max_depth': 4,
-    'learning_rate': 0.08,
-    'subsample': 0.8,
-    'colsample_bytree': 0.8,
+    'n_estimators': 50,        # Fewer trees (was 100)
+    'max_depth': 2,            # Much shallower (was 4)
+    'learning_rate': 0.03,     # Slower learning (was 0.08)
+    'subsample': 0.6,          # More subsampling (was 0.8)
+    'colsample_bytree': 0.6,   # Fewer features per tree (was 0.8)
+    'min_child_weight': 25,    # Require more samples per leaf
+    'reg_alpha': 1.5,          # L1 regularization
+    'reg_lambda': 5.0,         # L2 regularization
+    'gamma': 0.5,              # Min loss reduction for split
     'random_state': 42,
     'verbosity': 0,
 }
@@ -229,16 +239,15 @@ PLAYER_BIAS_MODEL_PARAMS = {
 
 # V32 HYBRID ROUTING: Edge only handles markets where it outperforms XGBoost
 # XGBoost handles: player_receptions (74.0% WR), player_reception_yds (67.5% WR)
-# Edge handles: player_pass_attempts (55.0% WR), player_rush_yds (55.2% WR)
-# DISABLED: player_pass_completions, player_rush_attempts (negative ROI everywhere)
+# Edge handles: player_pass_attempts (55.0% WR)
+# DISABLED: player_rush_yds, player_pass_completions, player_rush_attempts
 EDGE_MARKETS: List[str] = [
     'player_pass_attempts',  # Edge: 55.0% WR, +4.9% ROI (XGB: -7.2% ROI)
-    'player_rush_yds',       # Edge: 55.2% WR, +5.4% ROI (XGB: -3.6% ROI)
-    'player_rush_attempts',  # V32: 59.6% WR, +7.6% ROI with RB-specific features
     # Moved to XGBoost (more profitable there):
     # 'player_receptions',     # XGB: 74.0% WR, +41.3% ROI (Edge: +0.6% ROI)
     # 'player_reception_yds',  # XGB: 67.5% WR, +28.8% ROI (Edge: +2.9% ROI)
-    # DISABLED (no profitable subset found):
+    # DISABLED (not validated / negative ROI):
+    # 'player_rush_yds',       # DISABLED Jan 2026: LVT confidence not calibrated, only 54% actual hit rate
     # 'player_rush_attempts',  # Edge: -9.1%, XGB: -7.0% ROI
     # 'player_pass_completions',  # Edge: -9.4%, XGB: -10.5% ROI
 ]
